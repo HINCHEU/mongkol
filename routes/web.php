@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\GoogleController;
+use App\Http\Controllers\Auth\LoginLinkController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Dashboard\LocaleController;
 use Illuminate\Support\Facades\Route;
@@ -14,6 +15,8 @@ Route::middleware('guest')->group(function () {
     Route::get('/auth/google', [GoogleController::class, 'redirect'])->name('auth.google');
     Route::get('/auth/google/callback', [GoogleController::class, 'callback']);
 });
+
+Route::get('/auth/link/{user}', LoginLinkController::class)->middleware(['signed', 'throttle:10,1'])->name('auth.link');
 
 Route::post('/logout', LogoutController::class)->middleware('auth')->name('logout');
 

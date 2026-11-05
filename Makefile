@@ -12,7 +12,7 @@ DC    := docker compose -f compose.yaml$(shell grep -qE '^PROXY_NETWORK=.+' .env
 ART   := $(DC) exec -T app php artisan
 
 .DEFAULT_GOAL := help
-.PHONY: help install deploy migrate doctor backup restore logs shell tinker down up
+.PHONY: help install deploy migrate doctor login-link backup restore logs shell tinker down up
 
 help:
 	@echo "Mongkol"
@@ -21,6 +21,7 @@ help:
 	@echo "  deploy         Back up, pull, build, migrate"
 	@echo "  doctor         Check the deployment — run after every deploy"
 	@echo "  migrate        Run pending migrations"
+	@echo "  login-link     Sign-in link without Google (make login-link email=you@example.com)"
 	@echo "  backup         Dump the database and storage to backups/"
 	@echo "  restore        Restore a database dump (make restore f=backups/db-....sql.gz)"
 	@echo "  logs           Follow logs   (make logs s=app)"
@@ -86,6 +87,10 @@ deploy: backup
 
 migrate:
 	$(ART) migrate --force
+
+login-link:
+	@[ -n "$(email)" ] || { echo "Usage: make login-link email=you@example.com"; exit 1; }
+	@$(ART) user:login-link "$(email)"
 
 # -------------------------------------------------------------- doctor ---
 #
