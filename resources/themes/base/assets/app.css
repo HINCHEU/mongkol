@@ -1,0 +1,2 @@
+/* shortcut: Tailwind scans the whole repo, so this bundle also holds dashboard classes; scope with @source once theme views exist (M3). */
+@import 'tailwindcss';
