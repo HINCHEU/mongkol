@@ -37,7 +37,13 @@ class HandleInertiaRequests extends Middleware
     {
         return [
             ...parent::share($request),
-            //
+            'auth' => [
+                'user' => $request->user()?->only('name', 'email', 'avatar_url'),
+            ],
+            'locale' => app()->getLocale(),
+            'flash' => [
+                'error' => fn () => $request->session()->get('error'),
+            ],
         ];
     }
 }

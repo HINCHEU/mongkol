@@ -80,6 +80,9 @@ return [
 
     'locale' => env('APP_LOCALE', 'en'),
 
+    // Comma-separated Google emails allowed into /admin (also needs role = admin).
+    'admin_emails' => array_values(array_filter(array_map('trim', explode(',', strtolower((string) env('ADMIN_EMAILS')))))),
+
     'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
 
     'faker_locale' => env('APP_FAKER_LOCALE', 'en_US'),
