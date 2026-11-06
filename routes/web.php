@@ -7,10 +7,13 @@ use App\Http\Controllers\Dashboard\EditorController;
 use App\Http\Controllers\Dashboard\InvitationController;
 use App\Http\Controllers\Dashboard\LocaleController;
 use App\Http\Controllers\Public\ThemeController;
+use App\Models\Theme;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('welcome', [
+        'themes' => Theme::where('is_active', true)->orderBy('sort')->orderBy('name')->get(),
+    ]);
 });
 
 Route::get('/themes', [ThemeController::class, 'index'])->name('themes.index');
