@@ -17,7 +17,7 @@ ART   := $(DC) exec -T app php artisan
 help:
 	@echo "Mongkol"
 	@echo
-	@echo "  install        First deploy: .env checks, key, build, migrate"
+	@echo "  install        First deploy: .env checks, key, build, migrate, seed plans"
 	@echo "  deploy         Back up, pull, build, migrate"
 	@echo "  doctor         Check the deployment — run after every deploy"
 	@echo "  migrate        Run pending migrations"
@@ -64,6 +64,7 @@ install:
 	$(DC) build
 	$(DC) up -d --wait --remove-orphans
 	$(ART) migrate --force
+	$(ART) db:seed --class=ReferenceDataSeeder --force
 	@echo
 	@echo "==> Installed at $$(grep ^APP_URL .env | cut -d= -f2)"
 	@echo "      Sign in with Google using an ADMIN_EMAILS address, then open /admin."
@@ -81,12 +82,14 @@ deploy: backup
 	@# is deploying keep browsing to check the result.
 	$(ART) down --secret="deploy-check"
 	$(ART) migrate --force
+	$(ART) db:seed --class=ReferenceDataSeeder --force
 	$(ART) up
 	@echo "==> Deployed."
 	@$(MAKE) --no-print-directory doctor
 
 migrate:
 	$(ART) migrate --force
+	$(ART) db:seed --class=ReferenceDataSeeder --force
 
 login-link:
 	@[ -n "$(email)" ] || { echo "Usage: make login-link email=you@example.com"; exit 1; }

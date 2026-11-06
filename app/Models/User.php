@@ -7,6 +7,7 @@ use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
@@ -47,9 +48,19 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
     }
 
     // Both checks, so removing an email from ADMIN_EMAILS or demoting the role each revokes access.
-    public function canAccessPanel(Panel $panel): bool
+    public function isAdmin(): bool
     {
         return $this->role === 'admin' && $this->isAllowlistedAdmin();
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return $this->isAdmin();
+    }
+
+    public function invitations(): HasMany
+    {
+        return $this->hasMany(Invitation::class);
     }
 
     public function getFilamentAvatarUrl(): ?string
