@@ -48,6 +48,7 @@ class MediaController extends Controller
 
     public function destroy(Invitation $invitation, Media $media): RedirectResponse
     {
+        abort_if($media->kind === MediaKind::Proof, 404); // payment proofs belong to the payment
         $media->delete();
         $invitation->touch(); // the KHQR's account isn't touched by the nulled column, so clear the cached view here
 

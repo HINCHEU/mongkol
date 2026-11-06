@@ -9,11 +9,14 @@ use App\Http\Controllers\Dashboard\InvitationController;
 use App\Http\Controllers\Dashboard\LocaleController;
 use App\Http\Controllers\Dashboard\MediaController;
 use App\Http\Controllers\Dashboard\ShareController;
+use App\Http\Controllers\Dashboard\UpgradeController;
 use App\Http\Controllers\Public\InvitationController as PublicInvitationController;
 use App\Http\Controllers\Public\ThemeController;
+use App\Models\Payment;
 use App\Models\Theme;
 use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 Route::get('/', function () {
     return view('welcome', [
@@ -66,7 +69,22 @@ Route::middleware('auth')->prefix('app')->group(function () {
 
         Route::get('/share', [ShareController::class, 'show'])->name('share');
         Route::put('/share', [ShareController::class, 'update'])->name('share.update');
+
+        Route::get('/upgrade', [UpgradeController::class, 'show'])->name('upgrade');
+        Route::post('/upgrade', [UpgradeController::class, 'store'])->name('upgrade.store');
+        Route::scopeBindings()->group(function () {
+            Route::post('/upgrade/{payment}/proof', [UpgradeController::class, 'proof'])->middleware('throttle:20,1')->name('upgrade.proof');
+            Route::delete('/upgrade/{payment}', [UpgradeController::class, 'destroy'])->name('upgrade.destroy');
+        });
     });
+
+    // A payment screenshot, for the admin only, through a short-lived signed link from the Payments list.
+    Route::get('/admin/payments/{payment}/proof', function (Payment $payment) {
+        abort_unless(request()->user()->isAdmin(), 403);
+        abort_unless($payment->proof && Storage::disk('local')->exists($payment->proof->path), 404);
+
+        return Storage::disk('local')->response($payment->proof->path);
+    })->middleware('signed')->name('admin.payment-proof');
 });
 
 // Guest-facing invitation links. Registered last: `/{slug}` would otherwise swallow every route above.

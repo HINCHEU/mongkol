@@ -1,4 +1,4 @@
-{{-- Shown on a paused (trial over, not paid) or ended invitation. Styled in Morodok Snaeha royal calm aesthetic. --}}
+{{-- Shown on a paused (trial over, not paid) or ended invitation. Neutral by rule: no names, dates or photos. --}}
 <!DOCTYPE html>
 <html lang="km">
 <head>
@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="theme-color" content="#7B1122">
     <meta name="robots" content="noindex, nofollow">
-    <title>{{ $vm->coupleNames('km') }} · មង្គល</title>
+    <title>មង្គល · Mongkol</title>
 
     <!-- Favicon & Touch Icons -->
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
@@ -48,9 +48,9 @@
             </svg>
         </div>
 
-        <!-- Couple Names -->
+        <!-- Neutral heading: the couple's names, date and photos never show here -->
         <h1 class="text-lg sm:text-xl font-normal text-stone-900 font-moul leading-relaxed" lang="km">
-            {{ $vm->coupleNames('km') }}
+            ធៀបការ
         </h1>
 
         <!-- Delicate Gold Lotus Divider -->

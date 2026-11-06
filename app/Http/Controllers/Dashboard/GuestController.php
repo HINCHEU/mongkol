@@ -8,6 +8,7 @@ use App\Http\Requests\Guests\GuestRequest;
 use App\Http\Requests\Guests\ImportGuestsRequest;
 use App\Models\Guest;
 use App\Models\Invitation;
+use App\Services\PlanLimits;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -33,7 +34,7 @@ class GuestController extends Controller
             ]),
             'titles' => Guest::TITLES,
             'suffixes' => Guest::SUFFIXES,
-            'max' => GuestRequest::MAX_GUESTS,
+            'max' => PlanLimits::for($invitation)->maxGuests(),
             // Rows parsed by preview(), shown once for the couple to check before importing.
             'preview' => $request->session()->get('guest_preview'),
         ]);

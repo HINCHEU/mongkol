@@ -6,6 +6,7 @@ use App\Enums\InvitationState;
 use App\Http\Controllers\Controller;
 use App\Models\Guest;
 use App\Models\Invitation;
+use App\Services\PlanLimits;
 use App\Services\Themes\InvitationViewModel;
 use App\Services\Themes\KhmerFormat;
 use App\Services\Themes\ThemeRenderer;
@@ -28,15 +29,13 @@ class InvitationController extends Controller
         $state = $invitation->state();
 
         if (in_array($state, [InvitationState::Paused, InvitationState::Ended], true)) {
-            return $this->noindex(response()->view('public.unavailable', [
-                'vm' => InvitationViewModel::fromInvitation($invitation),
-                'state' => $state,
-            ]));
+            // Neutral by rule: nothing about the couple is passed, so nothing can leak.
+            return $this->noindex(response()->view('public.unavailable', ['state' => $state]));
         }
 
         $vm = InvitationViewModel::fromInvitation($invitation)->withGuest($guest);
 
-        return $this->noindex(response($renderer->render($invitation->theme->slug, $vm, [
+        return $this->noindex(response($renderer->render(PlanLimits::for($invitation)->themeSlug(), $vm, [
             'calendarUrl' => url("{$slug}/calendar.ics"),
             // Only personal links count opens; the generic one is shared in groups.
             'beaconUrl' => $guest ? url("{$slug}/{$guest->code}/opened") : null,

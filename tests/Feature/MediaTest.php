@@ -115,7 +115,7 @@ it('attaches a KHQR to the couple’s own account and removes it with the accoun
 it('caps the gallery at the plan’s photo count', function () {
     $invitation = withMedia();
     $plan = Plan::orderBy('price_usd_cents')->first();
-    $invitation->forceFill(['plan_id' => $plan->id])->save();
+    $invitation->forceFill(['plan_id' => $plan->id, 'paid_at' => now()])->save();
     foreach (range(1, $plan->features['gallery_photos']) as $i) {
         $invitation->media()->create(['kind' => 'gallery', 'path' => "x{$i}.webp", 'variants' => [960 => "x{$i}.webp"]]);
     }

@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Editor;
 
 use App\Enums\MediaKind;
+use App\Services\PlanLimits;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
 
@@ -26,13 +27,14 @@ class StoreMediaRequest extends EditorRequest
     public function after(): array
     {
         return [function (Validator $validator) {
-            if ($this->input('kind') !== MediaKind::Gallery->value) {
-                return;
+            $limits = PlanLimits::for($this->invitation());
+
+            if ($this->input('kind') === MediaKind::Music->value && ! $limits->allows('own_music')) {
+                $validator->errors()->add('file', __('Your own music needs the Premium plan.'));
             }
-            // shortcut: plan's photo cap, Premium's 30 during the trial; M6's PlanLimits replaces this.
-            $limit = $this->invitation()->plan?->features['gallery_photos'] ?? 30;
-            if ($this->invitation()->media()->where('kind', 'gallery')->count() >= $limit) {
-                $validator->errors()->add('file', __('validation.max.array', ['attribute' => 'gallery', 'max' => $limit]));
+            if ($this->input('kind') === MediaKind::Gallery->value
+                && $this->invitation()->media()->where('kind', 'gallery')->count() >= $limits->galleryPhotos()) {
+                $validator->errors()->add('file', __('validation.max.array', ['attribute' => 'gallery', 'max' => $limits->galleryPhotos()]));
             }
         }];
     }

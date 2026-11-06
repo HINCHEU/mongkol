@@ -27,6 +27,18 @@ services:
       mysql:
         condition: service_healthy
 
+  # Laravel's scheduler (trial reminder emails). Same image; it runs `schedule:work` instead of PHP-FPM.
+  scheduler:
+    image: mongkol-app
+    env_file: .env
+    restart: unless-stopped
+    # As www-data, like PHP-FPM, so the logs and cache it writes stay writable for the app.
+    command: ["su", "-s", "/bin/sh", "-c", "php artisan schedule:work", "www-data"]
+    volumes:
+      - app-storage:/var/www/html/storage/app
+    depends_on:
+      - app
+
   mysql:
     image: mysql:8.4
     restart: unless-stopped

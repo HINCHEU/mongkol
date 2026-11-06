@@ -42,6 +42,7 @@ class Invitation extends Model
             'content' => 'array',
             'wedding_date' => 'date',
             'trial_ends_at' => 'datetime',
+            'trial_reminded_at' => 'datetime',
             'paid_at' => 'datetime',
             'live_until' => 'datetime',
             'suspended_at' => 'datetime',

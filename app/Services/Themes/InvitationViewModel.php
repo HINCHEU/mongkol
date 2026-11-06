@@ -8,6 +8,7 @@ use App\Models\Guest;
 use App\Models\Invitation;
 use App\Models\Media;
 use App\Services\LunarDate;
+use App\Services\PlanLimits;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
@@ -180,6 +181,8 @@ final class InvitationViewModel
         // Images still processing have no URL yet and are left out.
         $url = fn (?Media $media, ?int $width = null) => $media?->url($width);
         $media = $invitation->media->groupBy(fn ($m) => $m->kind->value);
+        // What the plan doesn't include is kept but not shown, so an upgrade brings it back.
+        $limits = PlanLimits::for($invitation);
 
         return [
             'slug' => $invitation->slug,
@@ -201,14 +204,17 @@ final class InvitationViewModel
             'venues' => $invitation->venues->map(fn ($v) => $v->only('name', 'address', 'maps_url'))->values()->all(),
             'cover' => $url($media->get(MediaKind::Cover->value)?->first()),
             // shortcut: one 960px size per photo; the 480/1600 variants exist for a srcset when a theme wants one.
-            'gallery' => $media->get(MediaKind::Gallery->value, collect())->map(fn ($m) => $url($m, 960))->filter()->values()->all(),
-            'music' => $url($media->get(MediaKind::Music->value)?->first()),
-            'video_url' => $invitation->content['video_url'] ?? null,
+            'gallery' => $media->get(MediaKind::Gallery->value, collect())->take($limits->galleryPhotos())
+                ->map(fn ($m) => $url($m, 960))->filter()->values()->all(),
+            // shortcut: no built-in music library yet, so a plan without own_music plays none.
+            'music' => $limits->allows('own_music') ? $url($media->get(MediaKind::Music->value)?->first()) : null,
+            'video_url' => $limits->allows('video') ? ($invitation->content['video_url'] ?? null) : null,
             'gift_accounts' => $invitation->giftAccounts->map(fn ($g) => [
                 ...$g->only('owner', 'bank', 'account_name', 'account_number'),
                 'khqr' => $url($g->khqr),
             ])->all(),
-            'show_credit' => ! ($invitation->plan?->features['hide_credit'] ?? false),
+            // The trial runs on Premium limits but still carries the credit.
+            'show_credit' => ! ($limits->isPaid() && $limits->allows('hide_credit')),
         ];
     }
 }

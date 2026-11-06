@@ -62,6 +62,9 @@ class ReferenceDataSeeder extends Seeder
 
         Setting::firstOrCreate(['key' => 'trial_days'], ['value' => 2]);
         Setting::firstOrCreate(['key' => 'trial_guest_cap'], ['value' => 10]);
+        // Shown on the upgrade page; the KHQR images ({USD: url, KHR: url}) are set from admin settings.
+        Setting::firstOrCreate(['key' => 'payment_instructions'], ['value' => "Scan the KHQR and pay the exact amount.\nWrite the reference (e.g. KW-12) in the transfer note, then upload a screenshot below.\nសូមស្កេន KHQR ហើយបង់ចំនួនទឹកប្រាក់ឱ្យត្រឹមត្រូវ។ សូមសរសេរលេខយោងក្នុងចំណាំផ្ទេរប្រាក់ រួចផ្ញើរូបថតអេក្រង់ខាងក្រោម។"]);
+        Setting::firstOrCreate(['key' => 'payment_khqr'], ['value' => ['USD' => null, 'KHR' => null]]);
 
         // Themes are files; this keeps their rows in step on every install and deploy.
         Artisan::call('themes:sync');

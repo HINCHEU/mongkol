@@ -147,6 +147,10 @@ const showPreview = ref(false);
                 <span>Share</span>
                 <span class="text-[11px] text-amber-800 font-kantumruy" lang="km">(ចែករំលែក)</span>
             </Link>
+            <!-- Plain; for the design pass -->
+            <Link :href="`/app/invitations/${invitation.id}/upgrade`" class="inline-flex min-h-[44px] items-center rounded-lg border px-3.5 py-2 text-xs sm:text-sm font-semibold">
+                {{ invitation.state === 'live' ? 'Plan' : 'Upgrade' }} (ដំឡើងកញ្ចប់)
+            </Link>
         </nav>
 
         <!-- Main Editor Workspace: Form (Left) & Phone Mockup (Right) -->

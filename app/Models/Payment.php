@@ -7,6 +7,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Payment extends Model
 {
+    public const PENDING = 'pending';
+
+    public const APPROVED = 'approved';
+
+    public const REJECTED = 'rejected';
+
     // status, reviewed_by, reviewed_at and reference are set by the approve/reject actions only.
     protected $fillable = ['plan_id', 'amount_minor', 'currency', 'method', 'proof_media_id'];
 
@@ -15,9 +21,25 @@ class Payment extends Model
         return ['reviewed_at' => 'datetime'];
     }
 
+    /** A plan's list price in minor units: US cents, or riel (no decimals). */
+    public static function price(Plan $plan, string $currency): int
+    {
+        return $currency === 'KHR' ? $plan->price_khr : $plan->price_usd_cents;
+    }
+
+    public static function format(int $minor, string $currency): string
+    {
+        return $currency === 'KHR' ? number_format($minor).'៛' : '$'.number_format($minor / 100, 2);
+    }
+
+    public function amount(): string
+    {
+        return self::format($this->amount_minor, $this->currency);
+    }
+
     public function invitation(): BelongsTo
     {
-        return $this->belongsTo(Invitation::class);
+        return $this->belongsTo(Invitation::class)->withTrashed();
     }
 
     public function user(): BelongsTo

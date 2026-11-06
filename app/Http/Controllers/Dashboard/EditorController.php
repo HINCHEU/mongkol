@@ -18,6 +18,7 @@ use App\Models\InvitationPerson;
 use App\Models\Media;
 use App\Models\Theme;
 use App\Services\LunarDate;
+use App\Services\PlanLimits;
 use App\Services\Themes\InvitationViewModel;
 use App\Services\Themes\KhmerFormat;
 use App\Services\Themes\ThemeRenderer;
@@ -174,7 +175,7 @@ class EditorController extends Controller
     {
         $data = InvitationViewModel::fromInvitation($invitation)->data;
 
-        return $renderer->render($invitation->theme->slug, new InvitationViewModel($data, isPreview: $invitation->paid_at === null), [
+        return $renderer->render(PlanLimits::for($invitation)->themeSlug(), new InvitationViewModel($data, isPreview: $invitation->paid_at === null), [
             'skipIntro' => true,
         ]);
     }

@@ -1,9 +1,9 @@
 <?php
 
 use App\Actions\CreateInvitation;
-use App\Http\Requests\Guests\GuestRequest;
 use App\Models\Guest;
 use App\Models\Invitation;
+use App\Models\Plan;
 use App\Models\Theme;
 use App\Models\User;
 use Database\Seeders\ReferenceDataSeeder;
@@ -24,6 +24,8 @@ function guestList(): Invitation
         'groom' => ['name_km' => 'ចាន់ សុខា', 'name_en' => 'Chan Sokha'],
         'bride' => ['name_km' => 'លី ដារ៉ា', 'name_en' => 'Ly Dara'],
     ]);
+    // Paid Premium: the trial's 10-link cap is PaymentsTest's concern.
+    $invitation->forceFill(['paid_at' => now(), 'plan_id' => Plan::where('slug', 'premium')->value('id')])->save();
     test()->actingAs($invitation->user);
 
     return $invitation;
@@ -112,9 +114,10 @@ it('lists, edits, ticks and deletes only the couple’s own guests', function ()
     expect(Guest::find($guest->id))->toBeNull()->and($other->fresh())->not->toBeNull();
 });
 
-it('stops at the guest ceiling', function () {
+it('stops at the Basic plan’s 300 personal links', function () {
     $invitation = guestList();
-    Guest::insert(collect(range(1, GuestRequest::MAX_GUESTS))->map(fn ($i) => [
+    $invitation->forceFill(['plan_id' => Plan::where('slug', 'basic')->value('id')])->save();
+    Guest::insert(collect(range(1, 300))->map(fn ($i) => [
         'invitation_id' => $invitation->id, 'code' => str_pad((string) $i, 6, 'A'), 'name' => "g{$i}",
     ])->all());
 
