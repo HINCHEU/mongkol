@@ -10,6 +10,9 @@ class Media extends Model
 {
     protected $table = 'media';
 
+    // Saving touches the invitation, whose saved event clears its cached view.
+    protected $touches = ['invitation'];
+
     protected $fillable = ['kind', 'path', 'variants', 'sort'];
 
     protected function casts(): array

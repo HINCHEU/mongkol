@@ -23,13 +23,8 @@ class DemoSeeder extends Seeder
 
         $user = User::firstOrCreate(['email' => 'demo@mongkol.test'], ['name' => 'Demo Couple']);
 
-        // shortcut: stands in for the base theme until `themes:sync` exists (M3), which will own this row.
-        $theme = Theme::firstOrCreate(['slug' => 'base'], [
-            'name' => 'Morodok Snaeha',
-            'version' => '1.0.0',
-            'manifest' => ['slug' => 'base', 'sections' => ['cover', 'invitation', 'date', 'program', 'venues', 'gallery', 'gift']],
-            'is_active' => true,
-        ]);
+        // ReferenceDataSeeder runs first and syncs the theme rows from their folders.
+        $theme = Theme::where('slug', 'base')->firstOrFail();
 
         $invitation = new Invitation([
             'slug' => 'sokha-dara',

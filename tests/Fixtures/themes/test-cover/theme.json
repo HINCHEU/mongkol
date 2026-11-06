@@ -1,0 +1,6 @@
+{
+  "slug": "test-cover",
+  "name": "Test Cover",
+  "version": "1.0.0",
+  "extends": "base"
+}

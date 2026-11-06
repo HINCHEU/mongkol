@@ -6,6 +6,7 @@ use App\Models\EventPreset;
 use App\Models\Plan;
 use App\Models\Setting;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Artisan;
 
 // Data the app needs to run, safe on production and on every deploy:
 // firstOrCreate only adds what is missing, so prices and wording edited in admin are kept.
@@ -61,5 +62,8 @@ class ReferenceDataSeeder extends Seeder
 
         Setting::firstOrCreate(['key' => 'trial_days'], ['value' => 2]);
         Setting::firstOrCreate(['key' => 'trial_guest_cap'], ['value' => 10]);
+
+        // Themes are files; this keeps their rows in step on every install and deploy.
+        Artisan::call('themes:sync');
     }
 }

@@ -1,0 +1,17 @@
+{
+  "slug": "base",
+  "name": "Morodok Snaeha",
+  "version": "1.0.0",
+  "tier": "standard",
+  "intro": "envelope",
+  "sections": ["cover", "invitation", "date", "program", "venues", "gallery", "gift", "rsvp", "wishes"],
+  "fonts": {
+    "display": ["Playfair Display", "Moul"],
+    "body": ["Plus Jakarta Sans", "Kantumruy Pro"]
+  },
+  "options": {
+    "palette": { "type": "select", "choices": ["crimson", "jade", "sapphire"], "default": "crimson" },
+    "show_countdown": { "type": "bool", "default": true },
+    "petals": { "type": "bool", "default": false }
+  }
+}

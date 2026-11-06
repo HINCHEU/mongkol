@@ -1,0 +1,37 @@
+{
+  "slug": "demo-base",
+  "locale": "km",
+  "wedding_date": "2026-12-12",
+  "theme_settings": {},
+  "guest": { "title": "លោក", "name": "ចាន់ ថា", "suffix": "និងភរិយា" },
+  "people": {
+    "groom": { "title": null, "name_km": "ចាន់ សុខា", "name_en": "Chan Sokha", "is_late": false },
+    "bride": { "title": null, "name_km": "លី ដារ៉ា", "name_en": "Ly Dara", "is_late": false },
+    "groom_father": { "title": "លោក", "name_km": "ចាន់ វណ្ណា", "name_en": "Chan Vanna", "is_late": false },
+    "groom_mother": { "title": "លោកស្រី", "name_km": "សៀង សុភា", "name_en": "Seang Sophea", "is_late": false },
+    "bride_father": { "title": "លោក", "name_km": "លី ហុង", "name_en": "Ly Hong", "is_late": true },
+    "bride_mother": { "title": "លោកស្រី", "name_km": "ម៉ៅ ចន្ធូ", "name_en": "Mao Chanthou", "is_late": false }
+  },
+  "content": {},
+  "events": [
+    { "title_km": "ពិធីហែជំនូន", "title_en": "Gift procession", "starts_at": "2026-12-12T00:00:00Z", "venue": 0 },
+    { "title_km": "ពិធីសូត្រមន្តចម្រើនព្រះបរិត្ត", "title_en": "Monks’ blessing", "starts_at": "2026-12-12T02:00:00Z", "venue": 0 },
+    { "title_km": "ពិធីកាត់សក់បង្កក់សិរី", "title_en": "Hair-cutting ceremony", "starts_at": "2026-12-12T03:30:00Z", "venue": 0 },
+    { "title_km": "ពិធីសំពះផ្ទឹម", "title_en": "Sampeah Phtem", "starts_at": "2026-12-12T06:30:00Z", "venue": 0 },
+    { "title_km": "ពិធីចងដៃ", "title_en": "Knot-tying ceremony", "starts_at": "2026-12-12T08:00:00Z", "venue": 0 },
+    { "title_km": "ពិធីជប់លៀងអាពាហ៍ពិពាហ៍", "title_en": "Wedding reception", "starts_at": "2026-12-12T10:00:00Z", "venue": 1, "note": "សម្លៀកបំពាក់ប្រពៃណី · Traditional attire" }
+  ],
+  "venues": [
+    { "name": "គេហដ្ឋានខាងស្រី", "address": "ភូមិ ១, សង្កាត់ ទឹកល្អក់ ១, ខណ្ឌ ទួលគោក, ភ្នំពេញ", "maps_url": "https://maps.google.com/?q=11.5700,104.8900" },
+    { "name": "Mongkol Garden Hall", "address": "Phnom Penh", "maps_url": "https://maps.google.com/?q=11.5560,104.9282" }
+  ],
+  "cover": null,
+  "gallery": [],
+  "music": null,
+  "video_url": null,
+  "gift_accounts": [
+    { "owner": "groom", "bank": "ABA Bank", "account_name": "CHAN SOKHA", "account_number": "000 000 001", "khqr": null },
+    { "owner": "bride", "bank": "ACLEDA Bank", "account_name": "LY DARA", "account_number": "000 000 002", "khqr": null }
+  ],
+  "show_credit": true
+}

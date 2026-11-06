@@ -10,6 +10,7 @@
         "@inertiajs/vue3": "^2.3.29",
         "@tailwindcss/vite": "^4.0.0",
         "@vitejs/plugin-vue": "^6.0.10",
+        "alpinejs": "^3.17.5",
         "axios": "^1.11.0",
         "concurrently": "^9.0.1",
         "laravel-vite-plugin": "^2.0.0",

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\InvitationState;
+use App\Services\Themes\InvitationViewModel;
 use Database\Factories\InvitationFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Cache;
 
 class Invitation extends Model
 {
@@ -24,6 +26,14 @@ class Invitation extends Model
         'content',
         'wedding_date',
     ];
+
+    protected static function booted(): void
+    {
+        // Child models touch the invitation on save, so this also covers people, events, venues, media and gifts.
+        $forget = fn (Invitation $invitation) => Cache::forget(InvitationViewModel::cacheKey($invitation->id));
+        static::saved($forget);
+        static::deleted($forget);
+    }
 
     protected function casts(): array
     {

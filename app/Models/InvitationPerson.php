@@ -11,6 +11,9 @@ class InvitationPerson extends Model
 
     protected $table = 'invitation_people';
 
+    // Saving touches the invitation, whose saved event clears its cached view.
+    protected $touches = ['invitation'];
+
     protected $fillable = ['role', 'title', 'name_km', 'name_en', 'is_late', 'photo_media_id'];
 
     protected function casts(): array

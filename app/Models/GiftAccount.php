@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class GiftAccount extends Model
 {
+    // Saving touches the invitation, whose saved event clears its cached view.
+    protected $touches = ['invitation'];
+
     protected $fillable = ['owner', 'bank', 'account_name', 'account_number', 'khqr_media_id'];
 
     public function invitation(): BelongsTo

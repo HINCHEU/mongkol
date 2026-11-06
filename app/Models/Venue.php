@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Venue extends Model
 {
+    // Saving touches the invitation, whose saved event clears its cached view.
+    protected $touches = ['invitation'];
+
     protected $fillable = ['name', 'address', 'maps_url', 'lat', 'lng'];
 
     public function invitation(): BelongsTo

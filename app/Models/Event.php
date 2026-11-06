@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Event extends Model
 {
+    // Saving touches the invitation, whose saved event clears its cached view.
+    protected $touches = ['invitation'];
+
     protected $fillable = ['preset_key', 'title_km', 'title_en', 'starts_at', 'ends_at', 'venue_id', 'note', 'sort'];
 
     protected function casts(): array
