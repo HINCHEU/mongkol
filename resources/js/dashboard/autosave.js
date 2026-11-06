@@ -1,4 +1,21 @@
 import { inject, watch } from 'vue';
+import { router } from '@inertiajs/vue3';
+
+export const MAX_IMAGE_MB = 15;
+export const MAX_MUSIC_MB = 8;
+
+/**
+ * Upload one file at once (uploads aren't autosaved). Resolves to null, or the validation errors.
+ * State is preserved so a step's unsaved form survives the props reload.
+ */
+export const upload = (url, data) => new Promise((resolve) => router.post(url, data, {
+    forceFormData: true,
+    preserveScroll: true,
+    preserveState: true,
+    onSuccess: () => resolve(null),
+    onError: (errors) => resolve(errors),
+    onFinish: () => resolve(null), // a failed request (e.g. too large for the server) shows Inertia's own error
+}));
 
 /**
  * Autosave one editor step: a debounced PUT of the whole form, one request at a time.

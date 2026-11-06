@@ -15,6 +15,10 @@ return [
 
     'default' => env('FILESYSTEM_DISK', 'local'),
 
+    // Where processed photos, KHQR images and music are served from. Spaces later: install
+    // league/flysystem-aws-s3-v3, point the s3 disk at the Spaces endpoint and set MEDIA_DISK=s3.
+    'media_disk' => env('MEDIA_DISK', 'public'),
+
     /*
     |--------------------------------------------------------------------------
     | Filesystem Disks

@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Dashboard\EditorController;
 use App\Http\Controllers\Dashboard\InvitationController;
 use App\Http\Controllers\Dashboard\LocaleController;
+use App\Http\Controllers\Dashboard\MediaController;
 use App\Http\Controllers\Public\ThemeController;
 use App\Models\Theme;
 use Illuminate\Support\Facades\Route;
@@ -44,5 +45,8 @@ Route::middleware('auth')->prefix('app')->group(function () {
         foreach (EditorController::STEPS as $step) {
             Route::put("/{$step}", [EditorController::class, $step])->name("update.{$step}");
         }
+
+        Route::post('/media', [MediaController::class, 'store'])->middleware('throttle:60,1')->name('media.store');
+        Route::delete('/media/{media}', [MediaController::class, 'destroy'])->scopeBindings()->name('media.destroy');
     });
 });

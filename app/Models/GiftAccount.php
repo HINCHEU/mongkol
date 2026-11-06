@@ -12,6 +12,12 @@ class GiftAccount extends Model
 
     protected $fillable = ['owner', 'bank', 'account_name', 'account_number', 'khqr_media_id'];
 
+    protected static function booted(): void
+    {
+        // The KHQR image belongs to this account only; the column alone would just be nulled.
+        static::deleted(fn (GiftAccount $account) => $account->khqr?->delete());
+    }
+
     public function invitation(): BelongsTo
     {
         return $this->belongsTo(Invitation::class);

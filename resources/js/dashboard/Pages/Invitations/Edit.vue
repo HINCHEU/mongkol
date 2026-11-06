@@ -5,6 +5,7 @@ import AppLayout from '../../Layouts/AppLayout.vue';
 import Couple from '../../Components/Steps/Couple.vue';
 import Venues from '../../Components/Steps/Venues.vue';
 import Program from '../../Components/Steps/Program.vue';
+import Photos from '../../Components/Steps/Photos.vue';
 import Gift from '../../Components/Steps/Gift.vue';
 import Wording from '../../Components/Steps/Wording.vue';
 import Theme from '../../Components/Steps/Theme.vue';
@@ -20,11 +21,12 @@ const props = defineProps({
     publicUrl: String,
 });
 
-const components = { couple: Couple, venues: Venues, program: Program, gift: Gift, wording: Wording, theme: Theme };
+const components = { couple: Couple, venues: Venues, program: Program, photos: Photos, gift: Gift, wording: Wording, theme: Theme };
 const labels = {
     couple: { en: 'Couple & parents', km: 'គូស្នេហ៍ និងមាតាបិតា' },
     venues: { en: 'Venues', km: 'ទីតាំង' },
     program: { en: 'Date & program', km: 'កាលបរិច្ឆេទ & កម្មវិធី' },
+    photos: { en: 'Photos & music', km: 'រូបភាព & តន្ត្រី' },
     gift: { en: 'Gift (ចងដៃ)', km: 'ចំណងដៃ' },
     wording: { en: 'Wording', km: 'ខ្លឹមសារ' },
     theme: { en: 'Theme', km: 'ស្បែករចនា' },

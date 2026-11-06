@@ -69,7 +69,7 @@ it('lists only the user’s own invitations', function () {
 it('opens every editor step for the owner and refuses everyone else', function () {
     $invitation = editable();
 
-    foreach (['couple', 'venues', 'program', 'gift', 'wording', 'theme'] as $step) {
+    foreach (['couple', 'venues', 'program', 'photos', 'gift', 'wording', 'theme'] as $step) {
         $this->actingAs($invitation->user)->get("/app/invitations/{$invitation->id}/edit/{$step}")
             ->assertInertia(fn (AssertableInertia $page) => $page->component('Invitations/Edit', false)->where('step', $step));
     }

@@ -1,9 +1,28 @@
 <script setup>
-import { useForm } from '@inertiajs/vue3';
+import { inject, ref } from 'vue';
+import { router, useForm } from '@inertiajs/vue3';
 import Field from '../Field.vue';
-import { clone, copyIds, useAutosave } from '../../autosave.js';
+import { MAX_IMAGE_MB, clone, copyIds, upload, useAutosave } from '../../autosave.js';
 
 const props = defineProps({ invitation: Object, presets: Array, themes: Array, lunarDate: String });
+
+// KHQR images upload at once, per saved account (they need its id).
+const editor = inject('editor');
+const base = `/app/invitations/${props.invitation.id}`;
+const qrError = ref({});
+async function sendQr(account, input) {
+    const file = input.files[0];
+    qrError.value[account.id] = null;
+    if (file && file.size > MAX_IMAGE_MB * 1024 * 1024) {
+        qrError.value[account.id] = `Larger than ${MAX_IMAGE_MB} MB`;
+    } else if (file) {
+        const failed = await upload(`${base}/media`, { kind: 'khqr', gift_account_id: account.id, file });
+        if (failed) qrError.value[account.id] = failed.file ?? Object.values(failed)[0];
+        else editor.saved();
+    }
+    input.value = '';
+}
+const removeQr = (qr) => router.delete(`${base}/media/${qr.id}`, { preserveScroll: true, preserveState: true, onSuccess: () => editor.saved() });
 
 const form = useForm({ accounts: clone(props.invitation.gift_accounts) });
 useAutosave(form, `/app/invitations/${props.invitation.id}/gift`, {
@@ -89,6 +108,19 @@ const add = () => form.accounts.push({ id: null, owner: 'couple', bank: '', acco
                 <Field label="Account Number (លេខគណនី)" :error="form.errors[`accounts.${i}.account_number`]">
                     <input v-model="account.account_number" inputmode="numeric" class="input font-mono font-medium tracking-wide" placeholder="e.g. 000 123 456" />
                 </Field>
+            </div>
+
+            <div class="mt-4 grid gap-2">
+                <span class="text-xs font-semibold text-stone-700">KHQR image (រូប KHQR)</span>
+                <template v-if="account.id">
+                    <img v-if="invitation.khqr[account.id]?.url" :src="invitation.khqr[account.id].url" alt="" class="w-32 rounded" />
+                    <div class="flex flex-wrap gap-3 items-center">
+                        <input type="file" accept="image/jpeg,image/png,image/webp" @change="sendQr(account, $event.target)" />
+                        <button v-if="invitation.khqr[account.id]" type="button" class="text-xs text-red-700 underline" @click="removeQr(invitation.khqr[account.id])">Remove</button>
+                    </div>
+                    <p v-if="qrError[account.id]" class="text-xs text-red-600">{{ qrError[account.id] }}</p>
+                </template>
+                <p v-else class="text-xs text-stone-600">Saving the account… the KHQR upload appears once it is saved.</p>
             </div>
         </div>
 

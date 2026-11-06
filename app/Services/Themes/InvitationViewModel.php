@@ -6,10 +6,10 @@ use App\Enums\InvitationState;
 use App\Enums\MediaKind;
 use App\Models\Guest;
 use App\Models\Invitation;
+use App\Models\Media;
 use App\Services\LunarDate;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 /**
@@ -177,8 +177,8 @@ final class InvitationViewModel
         $invitation->loadMissing(['people', 'events', 'venues', 'media', 'giftAccounts.khqr', 'plan']);
 
         $venueIndex = $invitation->venues->pluck('id')->flip();
-        // shortcut: the original upload's URL; M4 stores resized WebP variants and serves those instead.
-        $url = fn ($media) => $media ? Storage::url($media->path) : null;
+        // Images still processing have no URL yet and are left out.
+        $url = fn (?Media $media, ?int $width = null) => $media?->url($width);
         $media = $invitation->media->groupBy(fn ($m) => $m->kind->value);
 
         return [
@@ -200,7 +200,8 @@ final class InvitationViewModel
             ])->all(),
             'venues' => $invitation->venues->map(fn ($v) => $v->only('name', 'address', 'maps_url'))->values()->all(),
             'cover' => $url($media->get(MediaKind::Cover->value)?->first()),
-            'gallery' => $media->get(MediaKind::Gallery->value, collect())->map($url)->values()->all(),
+            // shortcut: one 960px size per photo; the 480/1600 variants exist for a srcset when a theme wants one.
+            'gallery' => $media->get(MediaKind::Gallery->value, collect())->map(fn ($m) => $url($m, 960))->filter()->values()->all(),
             'music' => $url($media->get(MediaKind::Music->value)?->first()),
             'video_url' => $invitation->content['video_url'] ?? null,
             'gift_accounts' => $invitation->giftAccounts->map(fn ($g) => [

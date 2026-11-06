@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Actions\SyncChildren;
+use App\Enums\MediaKind;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Editor\UpdateCoupleRequest;
 use App\Http\Requests\Editor\UpdateGiftRequest;
+use App\Http\Requests\Editor\UpdatePhotosRequest;
 use App\Http\Requests\Editor\UpdateProgramRequest;
 use App\Http\Requests\Editor\UpdateThemeRequest;
 use App\Http\Requests\Editor\UpdateVenuesRequest;
@@ -13,6 +15,7 @@ use App\Http\Requests\Editor\UpdateWordingRequest;
 use App\Models\EventPreset;
 use App\Models\Invitation;
 use App\Models\InvitationPerson;
+use App\Models\Media;
 use App\Models\Theme;
 use App\Services\LunarDate;
 use App\Services\Themes\InvitationViewModel;
@@ -29,11 +32,13 @@ use Inertia\Response;
 class EditorController extends Controller
 {
     // Venues come before the program, so ceremonies can be placed at them.
-    public const STEPS = ['couple', 'venues', 'program', 'gift', 'wording', 'theme'];
+    public const STEPS = ['couple', 'venues', 'program', 'photos', 'gift', 'wording', 'theme'];
 
     public function edit(Invitation $invitation, string $step = 'couple'): Response
     {
-        $invitation->load(['people', 'venues', 'events', 'giftAccounts']);
+        $invitation->load(['people', 'venues', 'events', 'giftAccounts.khqr', 'media']);
+        $media = fn (?Media $m) => $m ? ['id' => $m->id, 'url' => $m->url(480)] : null;
+        $byKind = fn (MediaKind $kind) => $invitation->media->where('kind', $kind)->values();
         $people = $invitation->people->keyBy('role');
 
         return Inertia::render('Invitations/Edit', [
@@ -58,6 +63,14 @@ class EditorController extends Controller
                     'time' => $e->starts_at->setTimezone(KhmerFormat::TIMEZONE)->format('H:i'),
                 ])->values(),
                 'gift_accounts' => $invitation->giftAccounts->map->only('id', 'owner', 'bank', 'account_name', 'account_number')->values(),
+                // Uploads, kept apart from the autosaved fields: they change through their own requests.
+                'khqr' => $invitation->giftAccounts->mapWithKeys(fn ($g) => [$g->id => $media($g->khqr)]),
+                'media' => [
+                    'cover' => $media($byKind(MediaKind::Cover)->first()),
+                    'gallery' => $byKind(MediaKind::Gallery)->map($media),
+                    'music' => $media($byKind(MediaKind::Music)->first()),
+                ],
+                'video_url' => $invitation->content['video_url'] ?? null,
                 'content' => [
                     'locale' => $invitation->content['locale'] ?? 'km',
                     'lunar_date' => $invitation->content['lunar_date'] ?? null,
@@ -115,6 +128,19 @@ class EditorController extends Controller
         DB::transaction(function () use ($request, $invitation, $events) {
             $invitation->update(['wedding_date' => $request->validated('wedding_date')]);
             SyncChildren::handle($invitation->events(), $events, sorted: true);
+        });
+
+        return back();
+    }
+
+    public function photos(UpdatePhotosRequest $request, Invitation $invitation): RedirectResponse
+    {
+        DB::transaction(function () use ($request, $invitation) {
+            foreach ($request->validated('gallery', []) as $sort => $id) {
+                $invitation->media()->whereKey($id)->update(['sort' => $sort]);
+            }
+            $invitation->content = [...$invitation->content ?? [], 'video_url' => $request->validated('video_url')];
+            $invitation->touch(); // saves even when only the order changed (a query update fires no events), clearing the cached view
         });
 
         return back();
