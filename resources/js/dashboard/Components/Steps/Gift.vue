@@ -110,17 +110,84 @@ const add = () => form.accounts.push({ id: null, owner: 'couple', bank: '', acco
                 </Field>
             </div>
 
-            <div class="mt-4 grid gap-2">
-                <span class="text-xs font-semibold text-stone-700">KHQR image (រូប KHQR)</span>
-                <template v-if="account.id">
-                    <img v-if="invitation.khqr[account.id]?.url" :src="invitation.khqr[account.id].url" alt="" class="w-32 rounded" />
-                    <div class="flex flex-wrap gap-3 items-center">
-                        <input type="file" accept="image/jpeg,image/png,image/webp" @change="sendQr(account, $event.target)" />
-                        <button v-if="invitation.khqr[account.id]" type="button" class="text-xs text-red-700 underline" @click="removeQr(invitation.khqr[account.id])">Remove</button>
+            <!-- KHQR Image Section -->
+            <div class="mt-5 rounded-xl border border-stone-200/90 bg-stone-50/80 p-4">
+                <div class="flex items-center justify-between mb-3 border-b border-stone-200/60 pb-2.5">
+                    <div class="flex items-center gap-2">
+                        <div class="flex size-7 items-center justify-center rounded-lg bg-amber-100 text-amber-800">
+                            <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="7" height="7"></rect>
+                                <rect x="14" y="3" width="7" height="7"></rect>
+                                <rect x="14" y="14" width="7" height="7"></rect>
+                                <rect x="3" y="14" width="7" height="7"></rect>
+                            </svg>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold text-stone-800">KHQR image (រូប KHQR)</span>
+                            <span class="hidden sm:inline text-[11px] text-stone-500 ml-1.5 font-kantumruy" lang="km">(Bakong / Bank KHQR up to {{ MAX_IMAGE_MB }} MB)</span>
+                        </div>
                     </div>
-                    <p v-if="qrError[account.id]" class="text-xs text-red-600">{{ qrError[account.id] }}</p>
+                    <span v-if="account.id && invitation.khqr[account.id]?.url" class="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-800">
+                        <span class="size-1.5 rounded-full bg-emerald-600"></span>
+                        Active QR
+                    </span>
+                </div>
+
+                <template v-if="account.id">
+                    <div v-if="invitation.khqr[account.id]?.url" class="mb-3 flex items-start gap-3.5">
+                        <div class="relative group w-32 rounded-lg overflow-hidden border border-amber-300/80 bg-white p-1.5 shadow-xs">
+                            <img :src="invitation.khqr[account.id].url" alt="" class="w-full aspect-square object-contain" />
+                            <div class="absolute inset-0 bg-stone-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-1">
+                                <button
+                                    type="button"
+                                    class="rounded-md bg-white/95 px-2 py-1 text-[11px] font-semibold text-red-700 shadow-xs hover:bg-white hover:text-red-900 transition-colors cursor-pointer"
+                                    @click="removeQr(invitation.khqr[account.id])"
+                                >
+                                    Remove
+                                </button>
+                            </div>
+                        </div>
+                        <div class="text-xs text-stone-600 space-y-1">
+                            <p class="font-semibold text-stone-800">KHQR Ready for Instant Chong Dai</p>
+                            <p class="font-kantumruy text-[11px] text-stone-500" lang="km">រូបភាព QR នេះនឹងបង្ហាញលើផ្ទាំងចំណងដៃ។ ភ្ញៀវអាចស្កេនពីគ្រប់ធនាគារក្នុងប្រទេសកម្ពុជា។</p>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-3 items-center">
+                        <input
+                            type="file"
+                            accept="image/jpeg,image/png,image/webp"
+                            class="block w-full text-xs text-stone-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border file:border-stone-200 file:text-xs file:font-semibold file:bg-white file:text-stone-700 hover:file:bg-amber-50 hover:file:border-amber-300 hover:file:text-amber-900 file:transition-colors file:cursor-pointer cursor-pointer"
+                            @change="sendQr(account, $event.target)"
+                        />
+                        <button
+                            v-if="invitation.khqr[account.id]"
+                            type="button"
+                            class="text-xs font-semibold text-red-700 hover:text-red-900 hover:underline flex items-center gap-1 cursor-pointer"
+                            @click="removeQr(invitation.khqr[account.id])"
+                        >
+                            <svg class="size-3.5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                            </svg>
+                            <span>Remove</span>
+                        </button>
+                    </div>
+
+                    <p v-if="qrError[account.id]" class="mt-2 text-xs font-medium text-red-600 flex items-center gap-1.5 bg-red-50 border border-red-200/80 rounded-lg p-2.5">
+                        <svg class="size-4 shrink-0 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                        </svg>
+                        <span>{{ qrError[account.id] }}</span>
+                    </p>
                 </template>
-                <p v-else class="text-xs text-stone-600">Saving the account… the KHQR upload appears once it is saved.</p>
+
+                <p v-else class="text-xs text-stone-600 flex items-center gap-2">
+                    <svg class="size-3.5 animate-spin text-amber-700" viewBox="0 0 24 24" fill="none">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span>Saving the account… the KHQR upload appears once it is saved.</span>
+                </p>
             </div>
         </div>
 
