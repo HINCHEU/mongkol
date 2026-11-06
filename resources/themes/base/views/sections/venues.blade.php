@@ -18,8 +18,8 @@
             @if ($events = $vm->eventsAtVenue($index))
                 <div class="mt-4 border-t border-hairline/60 pt-3">
                     <p class="t-label-sm text-accent-strong mb-2 font-semibold">
-                        <span lang="km">កម្មវិធីប្រារព្ធនៅទីនេះ</span>
-                        <span lang="en">Ceremonies at this venue</span>
+                        <span lang="km" data-l="km">កម្មវិធីប្រារព្ធនៅទីនេះ</span>
+                        <span lang="en" data-l="en">Ceremonies at this venue</span>
                     </p>
                     <ul class="flex flex-wrap gap-2">
                         @foreach ($events as $event)

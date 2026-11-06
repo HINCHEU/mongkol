@@ -3,6 +3,8 @@
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Auth\LoginLinkController;
 use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\Dashboard\EditorController;
+use App\Http\Controllers\Dashboard\InvitationController;
 use App\Http\Controllers\Dashboard\LocaleController;
 use App\Http\Controllers\Public\ThemeController;
 use Illuminate\Support\Facades\Route;
@@ -26,6 +28,18 @@ Route::get('/auth/link/{user}', LoginLinkController::class)->middleware(['signed
 Route::post('/logout', LogoutController::class)->middleware('auth')->name('logout');
 
 Route::middleware('auth')->prefix('app')->group(function () {
-    Route::inertia('/', 'Home')->name('dashboard');
+    Route::get('/', [InvitationController::class, 'index'])->name('dashboard');
     Route::put('/locale', LocaleController::class)->name('locale');
+
+    Route::get('/invitations/create', [InvitationController::class, 'create'])->name('invitations.create');
+    Route::post('/invitations', [InvitationController::class, 'store'])->name('invitations.store');
+
+    Route::middleware('can:update,invitation')->prefix('/invitations/{invitation}')->name('invitations.')->group(function () {
+        Route::get('/edit/{step?}', [EditorController::class, 'edit'])->whereIn('step', EditorController::STEPS)->name('edit');
+        Route::get('/preview', [EditorController::class, 'preview'])->name('preview');
+
+        foreach (EditorController::STEPS as $step) {
+            Route::put("/{$step}", [EditorController::class, $step])->name("update.{$step}");
+        }
+    });
 });

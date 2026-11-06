@@ -10,3 +10,10 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+/* Plain dashboard form control; the dashboard's visual design comes later. */
+@layer components {
+    .input {
+        @apply w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-base;
+    }
+}

@@ -4,7 +4,7 @@
 @endphp
 <!DOCTYPE html>
 <html lang="{{ $vm->data['locale'] === 'en' ? 'en' : 'km' }}" data-palette="{{ $palette }}"
-      data-lang-key="inv-lang:{{ $vm->data['slug'] }}" @class(['has-ribbon' => $vm->isPreview])>
+      data-lang-key="inv-lang:{{ $vm->data['slug'] }}" @class(['has-ribbon' => $vm->isPreview, 'is-open' => $skipIntro])>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">

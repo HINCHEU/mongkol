@@ -159,6 +159,8 @@
   [x-cloak] { display: none !important; }
 
   html:not(.js) .envelope { display: none; }
+  /* The owner preview starts open, so the editor's iframe doesn't replay the intro on every save. */
+  html.is-open .envelope { display: none; }
   html.js:not(.is-open) body { overflow: hidden; }
 }
 

@@ -14,8 +14,8 @@
             <x-base::icon name="gift" class="size-6" />
         </div>
         <p class="t-body-sm text-ink-muted max-w-sm mx-auto leading-relaxed">
-            <span lang="km">ចំណងដៃ និងសព្វសាធុការពរជ័យរបស់លោកអ្នក គឺជាសិរីមង្គលដ៏ខ្ពង់ខ្ពស់សម្រាប់គូស្វាមីភរិយាថ្មី</span>
-            <span lang="en">Your presence, prayers, and wedding gifts are our greatest blessing</span>
+            <span lang="km" data-l="km">ចំណងដៃ និងសព្វសាធុការពរជ័យរបស់លោកអ្នក គឺជាសិរីមង្គលដ៏ខ្ពង់ខ្ពស់សម្រាប់គូស្វាមីភរិយាថ្មី</span>
+            <span lang="en" data-l="en">Your presence, prayers, and wedding gifts are our greatest blessing</span>
         </p>
     </div>
 
