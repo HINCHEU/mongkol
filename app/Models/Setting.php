@@ -17,4 +17,14 @@ class Setting extends Model
     {
         return static::firstWhere('key', $key)?->value ?? $default;
     }
+
+    /** An image setting (e.g. a KHQR): a media-disk path from the admin uploader, or a full URL set by hand. */
+    public static function imageUrl(?string $value): ?string
+    {
+        return match (true) {
+            blank($value) => null,
+            str_starts_with($value, 'http') => $value,
+            default => Media::disk()->url($value),
+        };
+    }
 }

@@ -54,7 +54,8 @@ class UpgradeController extends Controller
             ] : null,
             'rejected' => $rejected && (! $pending || $rejected->id > $pending->id) ? $rejected->only('reference', 'note') : null,
             'instructions' => Setting::read('payment_instructions'),
-            'khqr' => Setting::read('payment_khqr', []), // {USD: url, KHR: url}, set in admin settings
+            // Your KHQR per currency, uploaded in admin Settings.
+            'khqr' => collect(Setting::read('payment_khqr', []))->map(fn ($v) => Setting::imageUrl($v)),
         ]);
     }
 

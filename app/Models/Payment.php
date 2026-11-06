@@ -13,6 +13,9 @@ class Payment extends Model
 
     public const REJECTED = 'rejected';
 
+    // Matches the column default, so a just-created payment reads as pending too.
+    protected $attributes = ['status' => self::PENDING];
+
     // status, reviewed_by, reviewed_at and reference are set by the approve/reject actions only.
     protected $fillable = ['plan_id', 'amount_minor', 'currency', 'method', 'proof_media_id'];
 

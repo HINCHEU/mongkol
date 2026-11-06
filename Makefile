@@ -12,13 +12,14 @@ DC    := docker compose -f compose.yaml$(shell grep -qE '^PROXY_NETWORK=.+' .env
 ART   := $(DC) exec -T app php artisan
 
 .DEFAULT_GOAL := help
-.PHONY: help install deploy migrate doctor login-link backup restore logs shell tinker down up
+.PHONY: help install deploy restart migrate doctor login-link backup restore logs shell tinker down up
 
 help:
 	@echo "Mongkol"
 	@echo
 	@echo "  install        First deploy: .env checks, key, build, migrate, seed plans"
 	@echo "  deploy         Back up, pull, build, migrate"
+	@echo "  restart        Reload .env: recreate app and scheduler (no build)"
 	@echo "  doctor         Check the deployment — run after every deploy"
 	@echo "  migrate        Run pending migrations"
 	@echo "  login-link     Sign-in link without Google (make login-link email=you@example.com)"
@@ -174,6 +175,10 @@ restore:
 		&& echo "==> Restored. Run 'make migrate' if the dump is older than the code."
 
 # ---------------------------------------------------------- day to day ---
+
+# The app reads .env (and caches config) only when its container starts.
+restart:
+	$(DC) up -d --force-recreate --wait app scheduler
 
 logs:
 	$(DC) logs -f --tail=200 $(s)

@@ -2,6 +2,7 @@
 
 namespace App\Actions;
 
+use App\Models\ActivityLog;
 use App\Models\Payment;
 use App\Models\User;
 use App\Notifications\PaymentReviewed;
@@ -25,9 +26,11 @@ class ReviewPayment
             $invitation->forceFill([
                 'paid_at' => $invitation->paid_at ?? now(),
                 'plan_id' => $payment->plan_id,
-                // shortcut: from the wedding date at approval; a later date change needs "Set live-until" (M7).
+                // From the wedding date at approval; if the date moves later, use "Set live-until" in Invitations.
                 'live_until' => $invitation->wedding_date->copy()->shiftTimezone(KhmerFormat::TIMEZONE)->endOfDay()->addDays($days)->utc(),
             ])->save();
+
+            ActivityLog::record('payment.approved', $payment, $invitation->only('plan_id', 'live_until'), $admin);
         });
 
         $payment->user->notify(new PaymentReviewed($payment->fresh()));
@@ -38,6 +41,7 @@ class ReviewPayment
         self::assertPending($payment);
 
         $payment->forceFill(['status' => Payment::REJECTED, 'reviewed_by' => $admin->id, 'reviewed_at' => now(), 'note' => $reason])->save();
+        ActivityLog::record('payment.rejected', $payment, ['reason' => $reason], $admin);
         $payment->user->notify(new PaymentReviewed($payment));
     }
 
