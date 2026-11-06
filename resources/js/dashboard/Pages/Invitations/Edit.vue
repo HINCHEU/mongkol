@@ -108,12 +108,12 @@ const showPreview = ref(false);
         </div>
 
         <!-- Step Navigation Tabs -->
-        <nav class="mt-4 flex flex-wrap gap-2" aria-label="Editor steps">
+        <nav class="mt-4 flex flex-wrap items-center gap-2" aria-label="Editor steps">
             <Link
                 v-for="name in steps"
                 :key="name"
                 :href="`/app/invitations/${invitation.id}/edit/${name}`"
-                class="inline-flex items-center gap-2 rounded-lg border px-3.5 py-2 text-xs sm:text-sm font-medium transition-all duration-150 cursor-pointer"
+                class="inline-flex min-h-[44px] items-center gap-2 rounded-lg border px-3.5 py-2 text-xs sm:text-sm font-medium transition-all duration-150 cursor-pointer"
                 :class="name === step
                     ? 'border-[#7B1122] bg-[#7B1122] text-white shadow-xs font-semibold'
                     : 'border-stone-200 bg-white text-stone-700 hover:border-stone-300 hover:bg-stone-50 hover:text-stone-900'"
@@ -122,9 +122,31 @@ const showPreview = ref(false);
                 <span>{{ labels[name].en }}</span>
                 <span class="text-[11px] opacity-75 font-kantumruy" lang="km">({{ labels[name].km }})</span>
             </Link>
-            <!-- Not autosaved steps: their own pages. -->
-            <Link :href="`/app/invitations/${invitation.id}/guests`" class="inline-flex items-center rounded-lg border border-stone-200 bg-white px-3.5 py-2 text-xs sm:text-sm font-medium">Guests (ភ្ញៀវ)</Link>
-            <Link :href="`/app/invitations/${invitation.id}/share`" class="inline-flex items-center rounded-lg border border-stone-200 bg-white px-3.5 py-2 text-xs sm:text-sm font-medium">Share (ចែករំលែក)</Link>
+
+            <!-- Divider separating autosaved steps from standalone pages -->
+            <div class="hidden sm:block h-6 w-px bg-stone-300 mx-1" aria-hidden="true"></div>
+
+            <!-- Not autosaved steps: their own dedicated pages -->
+            <Link
+                :href="`/app/invitations/${invitation.id}/guests`"
+                class="inline-flex min-h-[44px] items-center gap-1.5 rounded-lg border border-amber-300/80 bg-amber-50/70 px-3.5 py-2 text-xs sm:text-sm font-semibold text-amber-950 shadow-xs hover:bg-amber-100 hover:border-amber-400 transition-all duration-150 cursor-pointer"
+            >
+                <svg class="size-4 text-amber-800 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
+                </svg>
+                <span>Guests</span>
+                <span class="text-[11px] text-amber-800 font-kantumruy" lang="km">(ភ្ញៀវ)</span>
+            </Link>
+            <Link
+                :href="`/app/invitations/${invitation.id}/share`"
+                class="inline-flex min-h-[44px] items-center gap-1.5 rounded-lg border border-amber-300/80 bg-amber-50/70 px-3.5 py-2 text-xs sm:text-sm font-semibold text-amber-950 shadow-xs hover:bg-amber-100 hover:border-amber-400 transition-all duration-150 cursor-pointer"
+            >
+                <svg class="size-4 text-amber-800 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z" />
+                </svg>
+                <span>Share</span>
+                <span class="text-[11px] text-amber-800 font-kantumruy" lang="km">(ចែករំលែក)</span>
+            </Link>
         </nav>
 
         <!-- Main Editor Workspace: Form (Left) & Phone Mockup (Right) -->
