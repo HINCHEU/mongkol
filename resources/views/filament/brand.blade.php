@@ -1,7 +1,7 @@
-<div class="flex items-center gap-3 py-1 group select-none">
-    <!-- Royal Crimson Squircle with Golden Lotus Blossom -->
-    <div class="relative flex items-center justify-center w-10 h-10 shrink-0 rounded-xl bg-gradient-to-br from-[#8B1426] via-[#7B1122] to-[#4C0A13] shadow-[0_2px_10px_rgba(123,17,34,0.35)] ring-1 ring-[#D4AF37]/50 group-hover:ring-[#D4AF37] transition-all duration-300">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6 text-[#F5DE93]" fill="currentColor">
+<div style="display: flex; align-items: center; gap: 10px; height: 38px; text-decoration: none;">
+    <!-- Royal Crimson Squircle with Golden Lotus Emblem -->
+    <div style="width: 36px; height: 36px; min-width: 36px; min-height: 36px; max-width: 36px; max-height: 36px; border-radius: 10px; background: linear-gradient(135deg, #8B1426 0%, #7B1122 50%, #4C0A13 100%); border: 1.5px solid rgba(212, 175, 55, 0.65); display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(123, 17, 34, 0.35); flex-shrink: 0; box-sizing: border-box;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="width: 20px; height: 20px; min-width: 20px; max-width: 20px; display: block;">
             <!-- Center Petal -->
             <path d="M12 3c-2.5 3.5-3 8 0 13c3-5 2.5-9.5 0-13Z" fill="#F5DE93" fill-opacity="0.35" stroke="#F5DE93" stroke-width="1.5" stroke-linejoin="round" />
             <!-- Left Flourish Petal -->
@@ -11,19 +11,16 @@
             <!-- Sacred Seed Bead -->
             <circle cx="12" cy="18" r="1.4" fill="#F5DE93" />
         </svg>
-        <div class="absolute inset-0 rounded-xl pointer-events-none border border-[#FFE49E]/20"></div>
     </div>
 
     <!-- Atelier Typography -->
-    <div class="flex flex-col text-left leading-tight">
-        <div class="flex items-baseline gap-1.5">
-            <span class="font-bold tracking-tight text-stone-900 dark:text-stone-100 text-lg font-['Playfair_Display',serif]">Mongkol</span>
-            <span class="text-sm font-semibold text-[#8B1426] dark:text-[#E87280] font-['Kantumruy_Pro',sans-serif]">មង្គល</span>
+    <div style="display: flex; flex-direction: column; justify-content: center; line-height: 1.15; white-space: nowrap;">
+        <div style="display: flex; align-items: baseline; gap: 5px;">
+            <span style="font-family: 'Playfair Display', Georgia, serif; font-size: 17px; font-weight: 700; color: #1A1412; letter-spacing: -0.01em;">Mongkol</span>
+            <span style="font-family: 'Kantumruy Pro', system-ui, sans-serif; font-size: 14px; font-weight: 700; color: #7B1122;">មង្គល</span>
         </div>
-        <div class="flex items-center gap-1.5 mt-0.5">
-            <span class="text-[9.5px] font-semibold tracking-[0.14em] uppercase text-[#8C6D23] dark:text-[#C5A059]">Royal Wedding Atelier</span>
-            <span class="w-1 h-1 rounded-full bg-[#8C6D23]/50"></span>
-            <span class="text-[9px] font-medium tracking-wider uppercase text-stone-500 dark:text-stone-400">Admin</span>
+        <div style="font-family: 'Plus Jakarta Sans', system-ui, sans-serif; font-size: 8.5px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #8C6D23; margin-top: 2px;">
+            Royal Wedding Atelier
         </div>
     </div>
 </div>

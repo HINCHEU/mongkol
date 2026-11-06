@@ -26,10 +26,11 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
+            ->darkMode(false)
             ->brandName('Mongkol · មង្គល')
             ->brandLogo(fn () => view('filament.brand'))
-            ->brandLogoHeight('2.6rem')
-            ->favicon(asset('favicon.svg'))
+            ->brandLogoHeight('2.4rem')
+            ->favicon('/favicon.svg')
             ->font('Plus Jakarta Sans')
             ->sidebarCollapsibleOnDesktop()
             ->colors([

@@ -17,7 +17,7 @@ class UsersTable
                 ImageColumn::make('avatar_url')
                     ->label('')
                     ->circular()
-                    ->defaultImageUrl(fn () => asset('favicon.svg')),
+                    ->defaultImageUrl(fn () => '/favicon.svg'),
                 TextColumn::make('name')
                     ->searchable()
                     ->weight('bold'),

@@ -7,25 +7,20 @@
     /* ==========================================================================
        1. Base Typography & Khmer Typesetting
        ========================================================================== */
-    body, .fi-body {
-        font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
-        background-color: #FAF7F2 !important;
-        color: #1A1412 !important;
+    :root {
+        color-scheme: light !important;
     }
 
-    html.dark body, html.dark .fi-body {
-        background-color: #14110F !important;
-        color: #FAF6EE !important;
+    body, .fi-body, .fi-main {
+        font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
+        background-color: #FAF6EE !important;
+        color: #1A1412 !important;
     }
 
     h1, h2, h3, .fi-header-heading {
         font-family: 'Playfair Display', Georgia, serif !important;
         letter-spacing: -0.01em !important;
         color: #1A1412 !important;
-    }
-
-    html.dark h1, html.dark h2, html.dark h3, html.dark .fi-header-heading {
-        color: #FAF6EE !important;
     }
 
     /* Strict Khmer Typesetting Rules (DESIGN.md) */
@@ -41,18 +36,27 @@
     }
 
     /* ==========================================================================
-       2. Luxury Sidebar & Navigation
+       2. Brand Logo Size Containment
+       ========================================================================== */
+    .fi-logo {
+        height: 2.4rem !important;
+        max-height: 2.4rem !important;
+        display: flex !important;
+        align-items: center !important;
+        overflow: visible !important;
+    }
+
+    .fi-logo svg {
+        max-height: 100% !important;
+    }
+
+    /* ==========================================================================
+       3. Luxury Sidebar & Navigation
        ========================================================================== */
     .fi-sidebar {
         background-color: #FAF6EE !important;
         border-right: 1px solid rgba(197, 160, 89, 0.28) !important;
         box-shadow: 2px 0 12px -2px rgba(88, 17, 26, 0.03) !important;
-    }
-
-    html.dark .fi-sidebar {
-        background-color: #1A1715 !important;
-        border-right: 1px solid rgba(197, 160, 89, 0.2) !important;
-        box-shadow: 2px 0 12px -2px rgba(0, 0, 0, 0.5) !important;
     }
 
     .fi-sidebar-group-label {
@@ -63,8 +67,9 @@
         font-weight: 700 !important;
     }
 
-    html.dark .fi-sidebar-group-label {
-        color: #D4AF37 !important;
+    .fi-sidebar-item-label {
+        color: #574141 !important;
+        font-weight: 500 !important;
     }
 
     .fi-sidebar-item-btn {
@@ -76,35 +81,35 @@
         background-color: rgba(197, 160, 89, 0.14) !important;
     }
 
+    .fi-sidebar-item:hover .fi-sidebar-item-label {
+        color: #1A1412 !important;
+    }
+
     .fi-sidebar-item-active .fi-sidebar-item-btn {
-        background: linear-gradient(90deg, rgba(123, 17, 34, 0.12) 0%, rgba(212, 175, 55, 0.08) 100%) !important;
+        background: linear-gradient(90deg, rgba(123, 17, 34, 0.08) 0%, rgba(212, 175, 55, 0.06) 100%) !important;
         border-left: 3px solid #7B1122 !important;
+    }
+
+    .fi-sidebar-item-active .fi-sidebar-item-label {
         color: #7B1122 !important;
         font-weight: 600 !important;
     }
 
-    html.dark .fi-sidebar-item-active .fi-sidebar-item-btn {
-        background: linear-gradient(90deg, rgba(218, 69, 87, 0.2) 0%, rgba(212, 175, 55, 0.12) 100%) !important;
-        border-left: 3px solid #DA4557 !important;
-        color: #F8CCD1 !important;
+    .fi-sidebar-item-active .fi-sidebar-item-icon {
+        color: #7B1122 !important;
     }
 
     /* ==========================================================================
-       3. Atelier Topbar Header
+       4. Atelier Topbar Header
        ========================================================================== */
     .fi-topbar {
-        background-color: rgba(250, 246, 238, 0.94) !important;
+        background-color: rgba(250, 246, 238, 0.96) !important;
         backdrop-filter: blur(12px) !important;
         border-bottom: 1px solid rgba(197, 160, 89, 0.25) !important;
     }
 
-    html.dark .fi-topbar {
-        background-color: rgba(26, 23, 21, 0.94) !important;
-        border-bottom: 1px solid rgba(197, 160, 89, 0.2) !important;
-    }
-
     /* ==========================================================================
-       4. Cards, Sections & Widgets
+       5. Cards, Sections & Widgets
        ========================================================================== */
     .fi-section, .fi-wi-stats-overview-stat, .fi-ta-ctn {
         background-color: #FFFFFF !important;
@@ -112,12 +117,6 @@
         border-radius: 0.75rem !important;
         box-shadow: 0 4px 20px -2px rgba(88, 17, 26, 0.04), 0 2px 6px -1px rgba(140, 109, 35, 0.03) !important;
         position: relative;
-    }
-
-    html.dark .fi-section, html.dark .fi-wi-stats-overview-stat, html.dark .fi-ta-ctn {
-        background-color: #1C1917 !important;
-        border: 1px solid rgba(197, 160, 89, 0.22) !important;
-        box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.4) !important;
     }
 
     /* Gold hairline accent on top of cards */
@@ -133,7 +132,7 @@
     }
 
     /* ==========================================================================
-       5. Elevated Tables & Cells
+       6. Elevated Tables & Cells
        ========================================================================== */
     .fi-ta-header-cell {
         background-color: #F7F2E8 !important;
@@ -147,12 +146,6 @@
         padding-bottom: 0.85rem !important;
     }
 
-    html.dark .fi-ta-header-cell {
-        background-color: #24201D !important;
-        color: #D6C7B2 !important;
-        border-bottom: 1px solid rgba(197, 160, 89, 0.2) !important;
-    }
-
     .fi-ta-row {
         transition: background-color 0.15s ease-in-out !important;
     }
@@ -161,12 +154,8 @@
         background-color: rgba(246, 238, 219, 0.45) !important;
     }
 
-    html.dark .fi-ta-row:hover {
-        background-color: rgba(212, 175, 55, 0.06) !important;
-    }
-
     /* ==========================================================================
-       6. Royal Primary Buttons & Badges
+       7. Royal Primary Buttons & Badges
        ========================================================================== */
     .fi-btn.fi-color-primary:not(.fi-btn-outlined) {
         background: linear-gradient(135deg, #8B1426 0%, #7B1122 55%, #58111A 100%) !important;
@@ -192,18 +181,13 @@
     }
 
     /* ==========================================================================
-       7. Form Controls & Focus States
+       8. Form Controls & Focus States
        ========================================================================== */
     .fi-input, .fi-select-input, .fi-textarea {
         border-radius: 0.5rem !important;
         border-color: rgba(197, 160, 89, 0.45) !important;
         background-color: #FFFFFF !important;
         transition: all 0.15s ease-in-out !important;
-    }
-
-    html.dark .fi-input, html.dark .fi-select-input, html.dark .fi-textarea {
-        border-color: rgba(197, 160, 89, 0.25) !important;
-        background-color: #211E1C !important;
     }
 
     .fi-input:focus, .fi-select-input:focus, .fi-textarea:focus {
