@@ -4,11 +4,15 @@ use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Auth\LoginLinkController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Dashboard\EditorController;
+use App\Http\Controllers\Dashboard\GuestController;
 use App\Http\Controllers\Dashboard\InvitationController;
 use App\Http\Controllers\Dashboard\LocaleController;
 use App\Http\Controllers\Dashboard\MediaController;
+use App\Http\Controllers\Dashboard\ShareController;
+use App\Http\Controllers\Public\InvitationController as PublicInvitationController;
 use App\Http\Controllers\Public\ThemeController;
 use App\Models\Theme;
+use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -48,5 +52,31 @@ Route::middleware('auth')->prefix('app')->group(function () {
 
         Route::post('/media', [MediaController::class, 'store'])->middleware('throttle:60,1')->name('media.store');
         Route::delete('/media/{media}', [MediaController::class, 'destroy'])->scopeBindings()->name('media.destroy');
+
+        Route::get('/guests', [GuestController::class, 'index'])->name('guests.index');
+        Route::post('/guests', [GuestController::class, 'store'])->name('guests.store');
+        Route::post('/guests/preview', [GuestController::class, 'preview'])->name('guests.preview');
+        Route::post('/guests/import', [GuestController::class, 'import'])->name('guests.import');
+        Route::get('/guests/export', [GuestController::class, 'export'])->name('guests.export');
+        Route::scopeBindings()->group(function () {
+            Route::put('/guests/{guest}', [GuestController::class, 'update'])->name('guests.update');
+            Route::delete('/guests/{guest}', [GuestController::class, 'destroy'])->name('guests.destroy');
+            Route::put('/guests/{guest}/sent', [GuestController::class, 'sent'])->name('guests.sent');
+        });
+
+        Route::get('/share', [ShareController::class, 'show'])->name('share');
+        Route::put('/share', [ShareController::class, 'update'])->name('share.update');
     });
 });
+
+// Guest-facing invitation links. Registered last: `/{slug}` would otherwise swallow every route above.
+// Reserved words (CreateInvitation::RESERVED_SLUGS) can't become slugs, so they never reach these.
+Route::pattern('slug', '[a-z0-9-]+');
+Route::pattern('code', '[A-Za-z0-9]{6}');
+Route::get('/{slug}/calendar.ics', [PublicInvitationController::class, 'calendar'])->name('invitation.calendar');
+Route::get('/{slug}/{code}/qr.svg', [PublicInvitationController::class, 'qr'])->name('invitation.qr');
+// sendBeacon can't carry the CSRF token; the endpoint only bumps a counter, so it's exempt and throttled.
+Route::post('/{slug}/{code}/opened', [PublicInvitationController::class, 'opened'])
+    ->withoutMiddleware(ValidateCsrfToken::class)->middleware('throttle:30,1')->name('invitation.opened');
+Route::get('/{slug}/{code}', [PublicInvitationController::class, 'show'])->name('invitation.guest');
+Route::get('/{slug}', [PublicInvitationController::class, 'show'])->name('invitation.show');

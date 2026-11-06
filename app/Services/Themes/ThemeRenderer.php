@@ -10,7 +10,7 @@ class ThemeRenderer
     public function __construct(private readonly ThemeRegistry $registry) {}
 
     /**
-     * @param  array{calendarUrl?: ?string, beaconUrl?: ?string, skipIntro?: bool}  $extra
+     * @param  array{calendarUrl?: ?string, beaconUrl?: ?string, skipIntro?: bool, og?: ?array}  $extra
      */
     public function render(string $slug, InvitationViewModel $vm, array $extra = []): View
     {
@@ -39,6 +39,7 @@ class ThemeRenderer
             'calendarUrl' => $extra['calendarUrl'] ?? null,
             'beaconUrl' => $extra['beaconUrl'] ?? null,
             'skipIntro' => $extra['skipIntro'] ?? false,
+            'og' => $extra['og'] ?? null,
         ]);
     }
 }

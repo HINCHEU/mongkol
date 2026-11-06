@@ -122,6 +122,9 @@ const showPreview = ref(false);
                 <span>{{ labels[name].en }}</span>
                 <span class="text-[11px] opacity-75 font-kantumruy" lang="km">({{ labels[name].km }})</span>
             </Link>
+            <!-- Not autosaved steps: their own pages. -->
+            <Link :href="`/app/invitations/${invitation.id}/guests`" class="inline-flex items-center rounded-lg border border-stone-200 bg-white px-3.5 py-2 text-xs sm:text-sm font-medium">Guests (ភ្ញៀវ)</Link>
+            <Link :href="`/app/invitations/${invitation.id}/share`" class="inline-flex items-center rounded-lg border border-stone-200 bg-white px-3.5 py-2 text-xs sm:text-sm font-medium">Share (ចែករំលែក)</Link>
         </nav>
 
         <!-- Main Editor Workspace: Form (Left) & Phone Mockup (Right) -->

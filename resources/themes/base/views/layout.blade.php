@@ -12,6 +12,7 @@
     <meta name="theme-color" content="#7B1122">
     <meta name="robots" content="noindex, nofollow">
     <title>{{ $vm->coupleNames('km') }}</title>
+    @include('partials.og')
 
     <!-- Favicon & Touch Icons -->
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
