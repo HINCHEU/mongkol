@@ -17,13 +17,18 @@ use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use UnitEnum;
 
 // The rows of the settings table that admin edits; read across the app with Setting::read().
 class Settings extends Page
 {
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCog6Tooth;
 
-    protected static ?int $navigationSort = 100;
+    protected static UnitEnum|string|null $navigationGroup = 'Administration · ការគ្រប់គ្រង';
+
+    protected static ?string $navigationLabel = 'Settings · ការកំណត់';
+
+    protected static ?int $navigationSort = 22;
 
     /** @var array<string, mixed> */
     public ?array $data = [];
@@ -50,18 +55,18 @@ class Settings extends Page
             ->maxSize(5120)->acceptedFileTypes(['image/png', 'image/jpeg', 'image/webp']);
 
         return $schema->statePath('data')->components([
-            Section::make('Free preview')->columns(2)->schema([
+            Section::make('Free Preview Experience · កាលកំណត់សាកល្បង')->columns(2)->schema([
                 TextInput::make('trial_days')->label('Trial length (days)')->numeric()->integer()->minValue(1)->maxValue(30)->required()
                     ->helperText('For new invitations; extend one from Invitations.'),
                 TextInput::make('trial_guest_cap')->label('Personal links during the trial')->numeric()->integer()->minValue(1)->required(),
             ]),
-            Section::make('Payment')->schema([
+            Section::make('Payment & KHQR Configuration · គណនីបង់ប្រាក់ KHQR')->schema([
                 Textarea::make('payment_instructions')->rows(4)->required()
                     ->helperText('Shown with the amount and the KW reference on the upgrade page.'),
                 $qr('khqr_usd', 'Your KHQR (USD)'),
                 $qr('khqr_khr', 'Your KHQR (KHR)'),
             ]),
-            Section::make('Alerts')->schema([
+            Section::make('Alerts & Telegram Notifications · ការជូនដំណឹង')->schema([
                 TextInput::make('telegram_chat_id')->label('Telegram chat id')
                     ->helperText('Where new payment proofs are announced. The bot token stays in .env (TELEGRAM_BOT_TOKEN).'),
             ]),

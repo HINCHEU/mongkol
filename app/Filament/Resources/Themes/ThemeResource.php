@@ -17,6 +17,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use UnitEnum;
 
 // Themes are folders in the repo (themes:sync adds their rows); here you choose tier, visibility and order.
 class ThemeResource extends Resource
@@ -24,6 +25,12 @@ class ThemeResource extends Resource
     protected static ?string $model = Theme::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedSwatch;
+
+    protected static UnitEnum|string|null $navigationGroup = 'Catalog · កាតាឡុក';
+
+    protected static ?string $navigationLabel = 'Themes · គំរូធៀបការ';
+
+    protected static ?int $navigationSort = 11;
 
     public static function form(Schema $schema): Schema
     {
@@ -40,15 +47,28 @@ class ThemeResource extends Resource
         return $table
             ->defaultSort('sort')
             ->columns([
-                TextColumn::make('name')->searchable(),
+                TextColumn::make('name')
+                    ->searchable()
+                    ->weight('bold'),
                 TextColumn::make('slug'),
-                TextColumn::make('tier')->badge(),
-                TextColumn::make('version'),
-                IconColumn::make('is_active')->boolean()->label('Shown'),
-                TextColumn::make('sort')->sortable(),
+                TextColumn::make('tier')
+                    ->badge()
+                    ->color(fn (string $state) => $state === 'premium' ? 'warning' : 'gray'),
+                TextColumn::make('version')
+                    ->badge()
+                    ->color('gray'),
+                IconColumn::make('is_active')
+                    ->boolean()
+                    ->label('Shown'),
+                TextColumn::make('sort')
+                    ->label('Sort Order')
+                    ->sortable(),
             ])
             ->recordActions([
-                Action::make('demo')->icon(Heroicon::OutlinedEye)
+                Action::make('demo')
+                    ->icon(Heroicon::OutlinedEye)
+                    ->color('primary')
+                    ->tooltip('View Theme Demo')
                     ->url(fn (Theme $record) => route('themes.show', $record->slug), shouldOpenInNewTab: true),
                 EditAction::make()->after(fn (Theme $record) => ActivityLog::changed($record)),
             ]);

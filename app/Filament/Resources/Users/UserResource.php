@@ -12,12 +12,19 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUsers;
+
+    protected static UnitEnum|string|null $navigationGroup = 'Administration · ការគ្រប់គ្រង';
+
+    protected static ?string $navigationLabel = 'Users · អ្នកប្រើប្រាស់';
+
+    protected static ?int $navigationSort = 20;
 
     public static function form(Schema $schema): Schema
     {

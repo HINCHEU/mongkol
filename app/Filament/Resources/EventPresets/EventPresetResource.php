@@ -15,6 +15,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use UnitEnum;
 
 // The ceremonies couples pick from in the program step. No delete: deactivate instead.
 class EventPresetResource extends Resource
@@ -22,6 +23,12 @@ class EventPresetResource extends Resource
     protected static ?string $model = EventPreset::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedListBullet;
+
+    protected static UnitEnum|string|null $navigationGroup = 'Catalog · កាតាឡុក';
+
+    protected static ?string $navigationLabel = 'Event Presets · កម្មវិធីពិធី';
+
+    protected static ?int $navigationSort = 12;
 
     public static function form(Schema $schema): Schema
     {
@@ -40,7 +47,9 @@ class EventPresetResource extends Resource
         return $table
             ->defaultSort('default_sort')
             ->columns([
-                TextColumn::make('title_km')->label('ខ្មែរ'),
+                TextColumn::make('title_km')
+                    ->label('ខ្មែរ')
+                    ->weight('bold'),
                 TextColumn::make('title_en')->label('English'),
                 TextColumn::make('key'),
                 TextColumn::make('default_sort')->label('Order')->sortable(),

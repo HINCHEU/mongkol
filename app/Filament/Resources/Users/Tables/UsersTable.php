@@ -16,13 +16,17 @@ class UsersTable
             ->columns([
                 ImageColumn::make('avatar_url')
                     ->label('')
-                    ->circular(),
+                    ->circular()
+                    ->defaultImageUrl(fn () => asset('favicon.svg')),
                 TextColumn::make('name')
-                    ->searchable(),
+                    ->searchable()
+                    ->weight('bold'),
                 TextColumn::make('email')
-                    ->searchable(),
+                    ->searchable()
+                    ->copyable(),
                 TextColumn::make('role')
-                    ->badge(),
+                    ->badge()
+                    ->color(fn (string $state) => $state === 'admin' ? 'primary' : 'gray'),
                 TextColumn::make('last_login_at')
                     ->dateTime()
                     ->sortable(),

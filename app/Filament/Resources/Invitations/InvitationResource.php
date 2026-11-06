@@ -17,6 +17,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use UnitEnum;
 
 // Every couple's invitation: find it by state, then extend a trial, move live-until, suspend or preview.
 class InvitationResource extends Resource
@@ -25,31 +26,66 @@ class InvitationResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedEnvelope;
 
+    protected static UnitEnum|string|null $navigationGroup = 'Ceremonies · មង្គលការ';
+
+    protected static ?string $navigationLabel = 'Invitations · សំបុត្រការ';
+
     protected static ?int $navigationSort = 1;
+
+    public static function getNavigationBadge(): ?string
+    {
+        $live = Invitation::live()->count();
+
+        return $live ? (string) $live : null;
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'success';
+    }
 
     public static function table(Table $table): Table
     {
         return $table
             ->modifyQueryUsing(fn (Builder $query) => $query->with(['people', 'user', 'plan', 'theme'])->withCount('guests'))
             ->columns([
-                TextColumn::make('slug')->searchable()
+                TextColumn::make('slug')
+                    ->searchable()
+                    ->icon('heroicon-m-arrow-top-right-on-square')
+                    ->iconPosition('after')
                     ->url(fn (Invitation $record) => url($record->slug), shouldOpenInNewTab: true),
                 TextColumn::make('couple')
-                    ->state(fn (Invitation $record) => $record->people->whereIn('role', ['groom', 'bride'])->sortBy('role', descending: true)->pluck('name_km')->implode(' & ')),
+                    ->state(fn (Invitation $record) => $record->people->whereIn('role', ['groom', 'bride'])->sortBy('role', descending: true)->pluck('name_km')->filter()->implode(' & ') ?: '—')
+                    ->description(fn (Invitation $record) => $record->people->whereIn('role', ['groom', 'bride'])->sortBy('role', descending: true)->pluck('name_en')->filter()->implode(' & ')),
                 TextColumn::make('user.email')->label('Owner')->searchable(),
                 TextColumn::make('state')
                     ->state(fn (Invitation $record) => $record->state()->value)
                     ->badge()
                     ->color(fn (string $state) => match ($state) {
                         'live' => 'success',
-                        'trial' => 'info',
+                        'trial' => 'warning',
                         'paused', 'ended' => 'gray',
                         default => 'danger',
+                    })
+                    ->icon(fn (string $state) => match ($state) {
+                        'live' => 'heroicon-m-check-badge',
+                        'trial' => 'heroicon-m-sparkles',
+                        'paused' => 'heroicon-m-pause',
+                        'ended' => 'heroicon-m-archive-box',
+                        default => 'heroicon-m-no-symbol',
                     }),
-                TextColumn::make('plan.name')->placeholder('—'),
+                TextColumn::make('plan.name')
+                    ->badge()
+                    ->color(fn (?string $state) => $state === 'Premium' ? 'warning' : 'gray')
+                    ->placeholder('—'),
                 TextColumn::make('theme.name')->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('guests_count')->label('Guests')->sortable(),
-                TextColumn::make('wedding_date')->date()->sortable(),
+                TextColumn::make('guests_count')
+                    ->label('Guests')
+                    ->icon('heroicon-m-users')
+                    ->sortable(),
+                TextColumn::make('wedding_date')
+                    ->date('M j, Y')
+                    ->sortable(),
                 TextColumn::make('trial_ends_at')->dateTime()->sortable()->toggleable(),
                 TextColumn::make('live_until')->dateTime()->sortable()->toggleable(),
                 TextColumn::make('created_at')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true),
@@ -64,6 +100,8 @@ class InvitationResource extends Resource
             ->recordActions([
                 Action::make('preview')
                     ->icon(Heroicon::OutlinedEye)
+                    ->color('primary')
+                    ->tooltip('Preview invitation')
                     ->url(fn (Invitation $record) => route('invitations.preview', $record), shouldOpenInNewTab: true),
                 ActionGroup::make([
                     Action::make('extendTrial')
