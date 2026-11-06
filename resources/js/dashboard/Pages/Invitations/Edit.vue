@@ -147,9 +147,22 @@ const showPreview = ref(false);
                 <span>Share</span>
                 <span class="text-[11px] text-amber-800 font-kantumruy" lang="km">(ចែករំលែក)</span>
             </Link>
-            <!-- Plain; for the design pass -->
-            <Link :href="`/app/invitations/${invitation.id}/upgrade`" class="inline-flex min-h-[44px] items-center rounded-lg border px-3.5 py-2 text-xs sm:text-sm font-semibold">
-                {{ invitation.state === 'live' ? 'Plan' : 'Upgrade' }} (ដំឡើងកញ្ចប់)
+            <!-- Upgrade / Plan Button -->
+            <Link
+                :href="`/app/invitations/${invitation.id}/upgrade`"
+                class="inline-flex min-h-[44px] items-center gap-1.5 rounded-lg border transition-all duration-150 cursor-pointer shadow-xs px-3.5 py-2 text-xs sm:text-sm"
+                :class="invitation.state === 'live'
+                    ? 'border-stone-200 bg-white text-stone-700 hover:border-stone-300 hover:bg-stone-50 hover:text-stone-900 font-semibold'
+                    : 'border-amber-400/80 bg-gradient-to-r from-[#7B1122] to-[#58111A] text-white font-bold hover:from-[#6B0F1D] hover:to-[#4A0B14] shadow-sm hover:shadow ring-1 ring-amber-400/40'"
+            >
+                <svg v-if="invitation.state === 'live'" class="size-4 text-emerald-600 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                </svg>
+                <svg v-else class="size-4 text-amber-300 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                </svg>
+                <span>{{ invitation.state === 'live' ? 'Plan' : 'Upgrade' }}</span>
+                <span class="text-[11px] font-kantumruy" :class="invitation.state === 'live' ? 'opacity-75' : 'text-amber-200'" lang="km">(ដំឡើងកញ្ចប់)</span>
             </Link>
         </nav>
 

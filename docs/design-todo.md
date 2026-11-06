@@ -12,12 +12,12 @@ Claude builds features with plain, working markup. This file lists the screens w
 
 ## M6: plans and payment
 
-- [ ] **Upgrade page**: `resources/js/dashboard/Pages/Invitations/Upgrade.vue` (`/app/invitations/{id}/upgrade`)
+- [x] **Upgrade page**: `resources/js/dashboard/Pages/Invitations/Upgrade.vue` (`/app/invitations/{id}/upgrade`)
   - Three states on one page: choose a plan (Basic/Premium radio cards with price, features and the amber "Not shown on Basic: …" warning) and currency; then the pay panel (amount, big `KW-…` reference, the KHQR image, instructions, screenshot upload, "Proof received ✓", cancel); or "You're on the top plan".
   - The red "Payment KW-… was not approved: reason" alert must stay prominent.
   - The reference is what couples type in their bank's transfer note: make it large and easy to read, maybe tap-to-copy.
-- [ ] **Upgrade button in the editor nav**: the plain "Upgrade / Plan" link after Share in `resources/js/dashboard/Pages/Invitations/Edit.vue`. During the trial it should invite the click (it's how the app earns money); once live it can be quiet.
-- [ ] **Unavailable page, again**: `resources/views/public/unavailable.blade.php` now shows a neutral "ធៀបការ" heading instead of the couple's names. By rule, a paused or ended page shows **no names, dates or photos**, and the view no longer receives them. Keep it that way.
+- [x] **Upgrade button in the editor nav**: the plain "Upgrade / Plan" link after Share in `resources/js/dashboard/Pages/Invitations/Edit.vue`. During the trial it should invite the click (it's how the app earns money); once live it can be quiet.
+- [x] **Unavailable page, again**: `resources/views/public/unavailable.blade.php` now shows a neutral "ធៀបការ" heading instead of the couple's names. By rule, a paused or ended page shows **no names, dates or photos**, and the view no longer receives them. Keep it that way.
 
 The admin Payments list (`/admin/payments`) is Filament: no design work.
 

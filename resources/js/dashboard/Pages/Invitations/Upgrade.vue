@@ -52,68 +52,262 @@ const features = (plan) => [
 <template>
     <AppLayout>
         <div class="grid gap-6 max-w-3xl">
-            <div class="flex flex-wrap items-center gap-3">
-                <Link :href="`${base}/edit`" class="text-sm underline">← Editor</Link>
-                <h1 class="text-xl font-bold">Upgrade · ដំឡើងកញ្ចប់</h1>
-            </div>
-
-            <p class="text-sm">
-                /{{ invitation.slug }} is <strong>{{ invitation.state }}</strong><template v-if="invitation.plan"> on {{ invitation.plan }}</template>.
-                <template v-if="invitation.state === 'trial'">Guests see a Preview ribbon until you upgrade.</template>
-                <template v-if="invitation.state === 'paused'">The free preview is over: guests see a notice until you upgrade.</template>
-            </p>
-
-            <p v-if="rejected" role="alert" class="text-sm text-red-700">
-                Payment {{ rejected.reference }} was not approved: {{ rejected.note }}
-            </p>
-
-            <!-- Step 2-3: pay and send proof -->
-            <div v-if="pending" class="card p-5 grid gap-3">
-                <h2 class="font-bold">Pay {{ pending.amount }} for {{ pending.plan }}</h2>
-                <p class="text-sm">Reference · លេខយោង: <strong class="font-mono text-lg">{{ pending.reference }}</strong></p>
-                <img v-if="khqr?.[pending.currency]" :src="khqr[pending.currency]" :alt="`KHQR ${pending.currency}`" class="w-56" />
-                <p v-else class="text-sm text-stone-600">The {{ pending.currency }} KHQR isn't set up yet; contact us to pay.</p>
-                <p v-if="instructions" class="text-sm whitespace-pre-line">{{ instructions }}</p>
-
-                <div class="grid gap-1">
-                    <span class="text-sm font-semibold">{{ pending.has_proof ? 'Proof received ✓ — we will review it soon. You can replace it:' : 'Upload the transfer screenshot · ផ្ញើរូបថតអេក្រង់' }}</span>
-                    <input type="file" accept="image/jpeg,image/png,image/webp" :disabled="uploading" @change="sendProof($event.target)" />
-                    <p v-if="uploading" class="text-xs">Uploading…</p>
-                    <p v-if="proofError" class="text-xs text-red-600">{{ proofError }}</p>
+            <!-- Header Bar -->
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-stone-200/80 pb-4">
+                <div class="flex items-center gap-3">
+                    <Link
+                        :href="`${base}/edit`"
+                        class="flex size-9 items-center justify-center rounded-lg border border-stone-200 bg-white text-stone-600 hover:text-stone-900 hover:border-stone-300 transition-colors shadow-xs"
+                        title="Back to Editor"
+                    >
+                        <svg class="size-4" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        </svg>
+                    </Link>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h1 class="text-xl font-bold tracking-tight text-stone-900">Upgrade Plan · ដំឡើងកញ្ចប់</h1>
+                        </div>
+                        <p class="text-xs text-stone-500 font-kantumruy" lang="km">ដំឡើងកញ្ចប់ដើម្បីផ្សាយសំបុត្រជាផ្លូវការ និងដោះសោមុខងារពិសេសៗទាំងអស់។</p>
+                    </div>
                 </div>
-                <div><button type="button" class="text-sm underline text-red-700" @click="cancel">Cancel and choose another plan</button></div>
             </div>
 
-            <!-- Step 1: plan and currency -->
-            <form v-else-if="plans.length" class="card p-5 grid gap-4" @submit.prevent="choose">
+            <!-- Current State Banner -->
+            <div class="rounded-xl border border-stone-200/90 bg-white p-4 shadow-xs flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="flex size-9 items-center justify-center rounded-lg font-bold text-xs"
+                        :class="invitation.state === 'live'
+                            ? 'bg-emerald-100 text-emerald-800'
+                            : (invitation.state === 'paused' ? 'bg-red-100 text-red-800' : 'bg-amber-100 text-amber-800')"
+                    >
+                        <span v-if="invitation.state === 'live'">✓</span>
+                        <span v-else-if="invitation.state === 'paused'">!</span>
+                        <span v-else>★</span>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="font-mono text-xs font-semibold text-stone-700">/{{ invitation.slug }}</span>
+                            <span
+                                class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider"
+                                :class="invitation.state === 'live'
+                                    ? 'bg-emerald-100 text-emerald-800'
+                                    : (invitation.state === 'paused' ? 'bg-red-100 text-red-800' : 'bg-amber-100 text-amber-900')"
+                            >
+                                {{ invitation.state }}
+                            </span>
+                            <span v-if="invitation.plan" class="text-xs font-medium text-stone-600">
+                                on {{ invitation.plan }}
+                            </span>
+                        </div>
+                        <p class="text-xs text-stone-500 mt-0.5">
+                            <template v-if="invitation.state === 'trial'">Guests see a Preview ribbon until you upgrade to a live plan.</template>
+                            <template v-else-if="invitation.state === 'paused'">The free preview is over: guests see an unavailable notice until you upgrade.</template>
+                            <template v-else-if="invitation.state === 'live'">Your invitation is fully live and accessible to all invited guests.</template>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prominent Payment Rejected Alert -->
+            <div v-if="rejected" role="alert" class="rounded-xl border-2 border-red-300 bg-red-50/90 p-4 sm:p-5 shadow-xs flex items-start gap-3">
+                <div class="flex size-9 items-center justify-center rounded-full bg-red-100 text-red-700 shrink-0 mt-0.5">
+                    <svg class="size-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <div class="space-y-1">
+                    <h2 class="text-sm font-bold text-red-950">Payment Verification Notice · ការទូទាត់មិនត្រូវបានអនុម័ត</h2>
+                    <p class="text-sm font-medium text-red-800">
+                        Payment <strong class="font-mono text-red-950">{{ rejected.reference }}</strong> was not approved: {{ rejected.note }}
+                    </p>
+                    <p class="text-xs text-red-700 font-kantumruy" lang="km">សូមពិនិត្យមើលរូបថតផ្ទេរប្រាក់ និងលេខយោងឡើងវិញ ឬទំនាក់ទំនងមកយើងខ្ញុំដើម្បីជួយសម្រួល។</p>
+                </div>
+            </div>
+
+            <!-- State 2: Pay and send proof (v-if="pending") -->
+            <div v-if="pending" class="card p-6 grid gap-5">
+                <div class="border-b border-stone-100 pb-3 flex items-center justify-between">
+                    <div>
+                        <h2 class="text-lg font-bold text-stone-900">Pay {{ pending.amount }} for {{ pending.plan }}</h2>
+                        <p class="text-xs text-stone-500 font-kantumruy" lang="km">ស្កេនទូទាត់តាម KHQR និងផ្ញើរូបភាពវិក្កយបត្រផ្ទេរប្រាក់</p>
+                    </div>
+                    <span class="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-bold text-amber-900">
+                        Pending verification
+                    </span>
+                </div>
+
+                <!-- Reference Code Card (Large, easy to read, tap-to-copy) -->
+                <div class="rounded-xl border border-amber-300/80 bg-gradient-to-r from-amber-50/70 via-stone-50 to-amber-50/40 p-4">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-amber-900 block mb-1">
+                        Transfer Reference / Remark (លេខយោងសម្គាល់)
+                    </span>
+                    <div class="flex items-center justify-between gap-3">
+                        <strong class="font-mono text-xl sm:text-2xl font-black text-amber-950 tracking-wider select-all">
+                            {{ pending.reference }}
+                        </strong>
+                        <button
+                            type="button"
+                            class="inline-flex min-h-[44px] items-center gap-1.5 rounded-lg border border-amber-300 bg-white px-3 py-1.5 text-xs font-semibold text-amber-900 shadow-xs hover:bg-amber-50 transition-colors cursor-pointer"
+                            @click="navigator.clipboard?.writeText(pending.reference)"
+                        >
+                            <svg class="size-3.5 text-amber-700" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
+                                <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 2H9a3 3 0 01-3-2z" />
+                            </svg>
+                            <span>Copy</span>
+                        </button>
+                    </div>
+                    <p class="text-[11px] text-amber-900/80 mt-1.5 font-kantumruy" lang="km">
+                        * សូមបញ្ចូលលេខយោងនេះក្នុងប្រអប់ចំណាំ (Remark / Note) ពេលផ្ទេរប្រាក់តាមកម្មវិធីធនាគារ។
+                    </p>
+                </div>
+
+                <!-- QR Code Display Area -->
+                <div class="flex flex-col sm:flex-row items-center gap-6 rounded-xl border border-stone-200 bg-stone-50/50 p-5">
+                    <div class="w-56 shrink-0 rounded-xl overflow-hidden border border-amber-300/80 bg-white p-3 shadow-xs">
+                        <img v-if="khqr?.[pending.currency]" :src="khqr[pending.currency]" :alt="`KHQR ${pending.currency}`" class="w-full aspect-square object-contain" />
+                        <p v-else class="text-xs text-stone-600 text-center py-6">The {{ pending.currency }} KHQR isn't set up yet; contact us to pay.</p>
+                        <div class="mt-2 text-center">
+                            <span class="inline-flex items-center gap-1 text-[10px] font-bold text-red-700 uppercase tracking-widest bg-red-50 border border-red-200 px-2 py-0.5 rounded">
+                                Bakong KHQR
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3 text-xs text-stone-700">
+                        <p v-if="instructions" class="whitespace-pre-line leading-relaxed text-stone-800 font-medium">
+                            {{ instructions }}
+                        </p>
+                        <div class="space-y-1 text-stone-500">
+                            <p>1. បើកកម្មវិធីធនាគារណាមួយ (ABA, ACLEDA, Wing, Canadia, etc.)</p>
+                            <p>2. ស្កេន QR Code ខាងលើ និងផ្ទេរចំនួន <strong class="text-stone-900">{{ pending.amount }}</strong></p>
+                            <p>3. ថតរូបអេក្រង់នៃការផ្ទេរប្រាក់ រួចបង្ហោះក្នុងប្រអប់ខាងក្រោម</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upload Transfer Proof Section -->
+                <div class="rounded-xl border border-stone-200 bg-white p-4 shadow-xs grid gap-3">
+                    <div class="flex items-center gap-2">
+                        <svg class="size-4 text-amber-800 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd" />
+                        </svg>
+                        <span class="text-sm font-semibold text-stone-900">
+                            {{ pending.has_proof ? 'Proof received ✓ — we will review it soon. You can replace it:' : 'Upload the transfer screenshot · ផ្ញើរូបថតអេក្រង់' }}
+                        </span>
+                    </div>
+
+                    <div class="flex flex-wrap gap-3 items-center">
+                        <input
+                            type="file"
+                            accept="image/jpeg,image/png,image/webp"
+                            :disabled="uploading"
+                            class="block w-full text-xs text-stone-600 file:mr-3 file:py-2 file:px-3.5 file:rounded-lg file:border file:border-stone-200 file:text-xs file:font-semibold file:bg-stone-50 file:text-stone-700 hover:file:bg-amber-50 hover:file:border-amber-300 hover:file:text-amber-900 file:transition-colors file:cursor-pointer disabled:opacity-50 cursor-pointer"
+                            @change="sendProof($event.target)"
+                        />
+                    </div>
+
+                    <p v-if="uploading" class="text-xs font-medium text-amber-800 flex items-center gap-1.5 animate-pulse">
+                        <svg class="size-3.5 animate-spin" viewBox="0 0 24 24" fill="none">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span>Uploading transfer screenshot…</span>
+                    </p>
+                    <p v-if="proofError" class="text-xs font-medium text-red-600 flex items-center gap-1.5 bg-red-50 border border-red-200 rounded-lg p-2.5">
+                        <svg class="size-4 text-red-500 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                        </svg>
+                        <span>{{ proofError }}</span>
+                    </p>
+                </div>
+
+                <!-- Cancel Button -->
+                <div class="pt-1">
+                    <button
+                        type="button"
+                        class="min-h-[44px] text-xs font-semibold text-red-700 hover:text-red-900 underline cursor-pointer"
+                        @click="cancel"
+                    >
+                        Cancel and choose another plan
+                    </button>
+                </div>
+            </div>
+
+            <!-- State 1: Choose plan and currency (v-else-if="plans.length") -->
+            <form v-else-if="plans.length" class="card p-6 grid gap-5" @submit.prevent="choose">
+                <div class="border-b border-stone-100 pb-3 flex items-center justify-between">
+                    <div>
+                        <h2 class="text-base font-bold text-stone-900">Choose Plan · ជ្រើសរើសកញ្ចប់សំបុត្រ</h2>
+                        <p class="text-xs text-stone-500 font-kantumruy" lang="km">ជ្រើសរើសកញ្ចប់ដែលសមស្របសម្រាប់ពិធីមង្គលការរបស់អ្នក</p>
+                    </div>
+                </div>
+
                 <fieldset class="grid gap-3">
-                    <legend class="font-bold mb-2">Plan · កញ្ចប់</legend>
-                    <label v-for="plan in plans" :key="plan.id" class="flex gap-3 items-start border rounded p-3">
-                        <input v-model="form.plan_id" type="radio" :value="plan.id" />
-                        <span class="grid gap-1">
-                            <strong>{{ plan.name }} · {{ plan.prices[form.currency] }}</strong>
-                            <span class="text-xs">{{ features(plan).join(' · ') }}</span>
-                            <span v-if="plan.beyond.length" class="text-xs text-amber-800">
-                                Not shown on {{ plan.name }}: {{ plan.beyond.join(', ') }}. They stay saved and come back if you upgrade later.
+                    <legend class="sr-only">Plan · កញ្ចប់</legend>
+
+                    <label
+                        v-for="plan in plans"
+                        :key="plan.id"
+                        class="flex gap-4 items-start rounded-xl border p-4 sm:p-5 transition-all duration-150 cursor-pointer min-h-[44px]"
+                        :class="form.plan_id === plan.id
+                            ? 'border-amber-600 bg-amber-50/50 shadow-xs ring-1 ring-amber-500/30'
+                            : 'border-stone-200 bg-white hover:border-stone-300 hover:bg-stone-50/50'"
+                    >
+                        <input
+                            v-model="form.plan_id"
+                            type="radio"
+                            :value="plan.id"
+                            class="size-4.5 text-[#7B1122] accent-[#7B1122] focus:ring-amber-500 mt-1 shrink-0"
+                        />
+                        <span class="grid gap-1.5 flex-1">
+                            <div class="flex items-center justify-between flex-wrap gap-2">
+                                <strong class="text-base font-bold text-stone-900">{{ plan.name }}</strong>
+                                <span class="text-base font-extrabold text-[#7B1122] font-mono">{{ plan.prices[form.currency] }}</span>
+                            </div>
+
+                            <span class="text-xs text-stone-600 leading-relaxed">{{ features(plan).join(' · ') }}</span>
+
+                            <span v-if="plan.beyond.length" class="text-xs text-amber-900 bg-amber-100/70 border border-amber-200/80 rounded-lg p-2.5 mt-1 leading-relaxed">
+                                <strong>Not shown on {{ plan.name }}:</strong> {{ plan.beyond.join(', ') }}. They stay saved and come back if you upgrade later.
                             </span>
                         </span>
                     </label>
                 </fieldset>
+
+                <!-- Currency Selector -->
                 <Field label="Currency · រូបិយប័ណ្ណ" :error="form.errors.currency">
-                    <select v-model="form.currency" class="input">
+                    <select v-model="form.currency" class="input font-semibold min-h-[44px]">
                         <option value="USD">USD ($)</option>
                         <option value="KHR">KHR (៛)</option>
                     </select>
                 </Field>
+
                 <p v-if="form.errors.plan_id" class="text-xs text-red-600">{{ form.errors.plan_id }}</p>
-                <div>
-                    <button type="submit" class="btn-primary" :disabled="form.processing || !chosen">
-                        Continue to pay {{ chosen?.prices[form.currency] }}
+
+                <div class="pt-2">
+                    <button
+                        type="submit"
+                        class="btn-primary min-h-[44px] w-full sm:w-auto"
+                        :disabled="form.processing || !chosen"
+                    >
+                        <span>Continue to pay {{ chosen?.prices[form.currency] }}</span>
                     </button>
                 </div>
             </form>
 
-            <p v-else class="text-sm">You're on the top plan. Thank you!</p>
+            <!-- State 3: On Top Plan (v-else) -->
+            <div v-else class="card p-8 text-center bg-gradient-to-br from-amber-50/70 via-stone-50 to-white border-amber-200 shadow-xs">
+                <div class="mx-auto flex size-12 items-center justify-center rounded-full bg-gradient-to-br from-[#7B1122] to-[#58111A] text-amber-200 shadow-md mb-3">
+                    <svg class="size-6" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                    </svg>
+                </div>
+                <h2 class="text-base font-bold text-stone-900">You're on the top plan. Thank you!</h2>
+                <p class="text-xs text-stone-600 mt-1 font-kantumruy" lang="km">គណនីរបស់អ្នកស្ថិតនៅលើកញ្ចប់ខ្ពស់បំផុតរួចរាល់ហើយ។ សូមអរគុណ!</p>
+            </div>
         </div>
     </AppLayout>
 </template>
