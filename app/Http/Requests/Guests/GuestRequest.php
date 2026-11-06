@@ -34,7 +34,7 @@ class GuestRequest extends EditorRequest
         return [function (Validator $validator) use ($adding, $key) {
             $max = PlanLimits::for($this->invitation())->maxGuests();
             if ($this->invitation()->guests()->count() + $adding > $max) {
-                $validator->errors()->add($key, __('validation.max.array', ['attribute' => 'guests', 'max' => $max]));
+                $validator->errors()->add($key, __('validation.max.array', ['attribute' => __('validation.attributes.guests'), 'max' => $max]));
             }
         }];
     }

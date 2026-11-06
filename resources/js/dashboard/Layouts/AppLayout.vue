@@ -1,9 +1,11 @@
 <script setup>
-import { computed } from 'vue';
+import { computed, watchEffect } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
 
 const page = usePage();
 const user = computed(() => page.props.auth.user);
+// Switching language is an Inertia visit, not a page load, so keep <html lang> in step for fonts and screen readers.
+watchEffect(() => (document.documentElement.lang = page.props.locale));
 const locales = [
     { code: 'km', label: 'ខ្មែរ' },
     { code: 'en', label: 'EN' },
@@ -31,14 +33,14 @@ const locales = [
                             <span class="text-lg font-bold tracking-tight text-stone-900 group-hover:text-[#7B1122] transition-colors">Mongkol</span>
                             <span class="text-xs font-semibold text-amber-700 font-kantumruy" lang="km">មង្គល</span>
                         </div>
-                        <span class="text-[10px] font-medium uppercase tracking-wider text-stone-600">Wedding E-Invitation Studio</span>
+                        <span class="text-[10px] font-medium uppercase tracking-wider text-stone-600">{{ $t('layout.tagline') }}</span>
                     </div>
                 </Link>
 
                 <!-- Right Navigation Elements -->
                 <div class="flex items-center gap-3 sm:gap-4">
                     <!-- Language Switcher Pill -->
-                    <div class="flex overflow-hidden rounded-full border border-stone-200 bg-stone-100/90 p-0.5 text-xs font-semibold shadow-xs" role="group" aria-label="Language">
+                    <div class="flex overflow-hidden rounded-full border border-stone-200 bg-stone-100/90 p-0.5 text-xs font-semibold shadow-xs" role="group" :aria-label="$t('layout.language')">
                         <Link
                             v-for="locale in locales"
                             :key="locale.code"
@@ -74,7 +76,7 @@ const locales = [
                             as="button"
                             class="text-xs font-medium text-stone-700 hover:text-[#7B1122] transition-colors cursor-pointer"
                         >
-                            Log out
+                            {{ $t('layout.logout') }}
                         </Link>
                     </div>
                 </div>

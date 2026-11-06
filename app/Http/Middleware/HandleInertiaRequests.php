@@ -41,6 +41,8 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user()?->only('name', 'email', 'avatar_url'),
             ],
             'locale' => app()->getLocale(),
+            // The dashboard's copy in the user's language, English filling any key Khmer lacks (see i18n.js).
+            'translations' => fn () => array_replace_recursive(trans('dashboard', [], 'en'), trans('dashboard')),
             'flash' => [
                 'error' => fn () => $request->session()->get('error'),
             ],

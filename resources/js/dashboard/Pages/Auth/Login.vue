@@ -13,7 +13,7 @@
             </div>
 
             <h1 class="mt-4 text-2xl font-bold tracking-tight text-stone-900">Mongkol · <span class="font-kantumruy font-semibold text-amber-800" lang="km">មង្គល</span></h1>
-            <p class="mt-1 text-sm text-stone-600 font-kantumruy" lang="km">ចូលគណនីដើម្បីបង្កើត និងគ្រប់គ្រងសំបុត្រអាពាហ៍ពិពាហ៍របស់អ្នក</p>
+            <p class="mt-1 text-sm text-stone-600 font-kantumruy">{{ $t('login.subtitle') }}</p>
 
             <!-- Flash Error Message -->
             <p v-if="$page.props.flash?.error" role="alert" class="mt-4 rounded-lg bg-red-50 p-3 text-xs font-medium text-red-700 border border-red-200 text-left">
@@ -31,11 +31,11 @@
                     <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
                     <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
                 </svg>
-                <span>Continue with Google</span>
+                <span>{{ $t('login.google') }}</span>
             </a>
 
             <p class="mt-6 text-xs text-stone-600">
-                Safe and secure authentication. No password required.
+                {{ $t('login.secure') }}
             </p>
         </div>
     </main>

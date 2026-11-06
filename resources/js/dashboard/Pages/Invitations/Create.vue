@@ -21,10 +21,10 @@ const form = useForm({
                     <svg class="size-3.5" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
                     </svg>
-                    Back to my invitations
+                    {{ $t('common.back_to_invitations') }}
                 </Link>
-                <h1 class="text-2xl font-bold tracking-tight text-stone-900 sm:text-3xl">New invitation</h1>
-                <p class="mt-1 text-sm text-stone-700 font-kantumruy" lang="km">ចាប់ផ្តើមបង្កើតសំបុត្រអាពាហ៍ពិពាហ៍ថ្មី។ អ្នកអាចកែសម្រួលព័ត៌មានទាំងអស់ឡើងវិញបានគ្រប់ពេល។</p>
+                <h1 class="text-2xl font-bold tracking-tight text-stone-900 sm:text-3xl">{{ $t('create.title') }}</h1>
+                <p class="mt-1 text-sm text-stone-700 font-kantumruy">{{ $t('create.subtitle') }}</p>
             </div>
 
             <form class="grid gap-6" @submit.prevent="form.post('/app/invitations')">
@@ -32,8 +32,8 @@ const form = useForm({
                 <div class="card p-6">
                     <div class="flex items-center justify-between mb-4">
                         <div>
-                            <h2 class="text-base font-semibold text-stone-900">Choose a design theme</h2>
-                            <p class="text-xs text-stone-600 font-kantumruy" lang="km">ជ្រើសរើសស្បែករចនាសម្រាប់សំបុត្ររបស់អ្នក</p>
+                            <h2 class="text-base font-semibold text-stone-900">{{ $t('create.theme_title') }}</h2>
+                            <p class="text-xs text-stone-600 font-kantumruy">{{ $t('create.theme_subtitle') }}</p>
                         </div>
                     </div>
 
@@ -53,11 +53,11 @@ const form = useForm({
                                 />
                                 <div>
                                     <span class="font-semibold text-stone-900">{{ theme.name }}</span>
-                                    <span v-if="theme.tier === 'premium'" class="ml-2 inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-900">Premium</span>
+                                    <span v-if="theme.tier === 'premium'" class="ml-2 inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-900">{{ $t('common.premium') }}</span>
                                 </div>
                             </div>
                             <a :href="`/themes/${theme.slug}`" target="_blank" class="text-xs font-semibold text-amber-800 hover:text-amber-900 hover:underline">
-                                View demo ↗
+                                {{ $t('common.view_demo') }} ↗
                             </a>
                         </label>
                     </div>
@@ -70,16 +70,16 @@ const form = useForm({
                     <div class="card p-5">
                         <div class="flex items-center gap-2 mb-3">
                             <div class="flex size-7 items-center justify-center rounded-full bg-amber-100 text-amber-800 text-xs font-bold">1</div>
-                            <h2 class="text-base font-semibold text-stone-900">Groom · កូនកំលោះ</h2>
+                            <h2 class="text-base font-semibold text-stone-900">{{ $t('common.groom') }}</h2>
                         </div>
 
                         <div class="space-y-3">
                             <div>
-                                <label class="block text-xs font-medium text-stone-700 mb-1">Name in Khmer (ឈ្មោះជាភាសាខ្មែរ)</label>
+                                <label class="block text-xs font-medium text-stone-700 mb-1">{{ $t('create.name_km') }}</label>
                                 <input
                                     v-model="form.groom.name_km"
                                     lang="km"
-                                    placeholder="ឧទាហរណ៍៖ ចាន់ សុខា"
+                                    :placeholder="$t('create.example', { name: 'ចាន់ សុខា' })"
                                     class="input font-kantumruy"
                                     required
                                 />
@@ -87,10 +87,10 @@ const form = useForm({
                             </div>
 
                             <div>
-                                <label class="block text-xs font-medium text-stone-700 mb-1">Name in Latin letters (for link)</label>
+                                <label class="block text-xs font-medium text-stone-700 mb-1">{{ $t('create.name_latin') }}</label>
                                 <input
                                     v-model="form.groom.name_en"
-                                    placeholder="e.g. Chan Sokha"
+                                    :placeholder="$t('create.example', { name: 'Chan Sokha' })"
                                     class="input"
                                     required
                                 />
@@ -103,16 +103,16 @@ const form = useForm({
                     <div class="card p-5">
                         <div class="flex items-center gap-2 mb-3">
                             <div class="flex size-7 items-center justify-center rounded-full bg-amber-100 text-amber-800 text-xs font-bold">2</div>
-                            <h2 class="text-base font-semibold text-stone-900">Bride · កូនក្រមុំ</h2>
+                            <h2 class="text-base font-semibold text-stone-900">{{ $t('common.bride') }}</h2>
                         </div>
 
                         <div class="space-y-3">
                             <div>
-                                <label class="block text-xs font-medium text-stone-700 mb-1">Name in Khmer (ឈ្មោះជាភាសាខ្មែរ)</label>
+                                <label class="block text-xs font-medium text-stone-700 mb-1">{{ $t('create.name_km') }}</label>
                                 <input
                                     v-model="form.bride.name_km"
                                     lang="km"
-                                    placeholder="ឧទាហរណ៍៖ លី ដារ៉ា"
+                                    :placeholder="$t('create.example', { name: 'លី ដារ៉ា' })"
                                     class="input font-kantumruy"
                                     required
                                 />
@@ -120,10 +120,10 @@ const form = useForm({
                             </div>
 
                             <div>
-                                <label class="block text-xs font-medium text-stone-700 mb-1">Name in Latin letters (for link)</label>
+                                <label class="block text-xs font-medium text-stone-700 mb-1">{{ $t('create.name_latin') }}</label>
                                 <input
                                     v-model="form.bride.name_en"
-                                    placeholder="e.g. Ly Dara"
+                                    :placeholder="$t('create.example', { name: 'Ly Dara' })"
                                     class="input"
                                     required
                                 />
@@ -135,8 +135,8 @@ const form = useForm({
 
                 <!-- Wedding Date Card -->
                 <div class="card p-6">
-                    <h2 class="text-base font-semibold text-stone-900 mb-1">Wedding date · កាលបរិច្ឆេទមង្គលការ</h2>
-                    <p class="text-xs text-stone-600 mb-3 font-kantumruy" lang="km">ជ្រើសរើសថ្ងៃមង្គលការ។ ប្រព័ន្ធនឹងគណនាថ្ងៃខែចន្ទគតិខ្មែរដោយស្វ័យប្រវត្តិ។</p>
+                    <h2 class="text-base font-semibold text-stone-900 mb-1">{{ $t('create.wedding_date') }}</h2>
+                    <p class="text-xs text-stone-600 mb-3 font-kantumruy">{{ $t('create.wedding_date_hint') }}</p>
 
                     <div>
                         <input
@@ -152,14 +152,14 @@ const form = useForm({
                 <!-- Actions -->
                 <div class="flex items-center justify-between gap-4 pt-2">
                     <Link href="/app" class="btn-secondary">
-                        Cancel
+                        {{ $t('common.cancel') }}
                     </Link>
                     <button
                         type="submit"
                         class="btn-primary"
                         :disabled="form.processing"
                     >
-                        <span>Create invitation & Open editor · បង្កើត និងកែសម្រួល</span>
+                        <span>{{ $t('create.submit') }}</span>
                     </button>
                 </div>
             </form>

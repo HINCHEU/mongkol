@@ -11,8 +11,8 @@ useAutosave(form, `/app/invitations/${props.invitation.id}/theme`);
 <template>
     <div class="card p-6">
         <div class="mb-5 border-b border-stone-100 pb-3">
-            <h2 class="text-base font-bold text-stone-900">Design Theme · ស្បែករចនាសំបុត្រ</h2>
-            <p class="text-xs text-stone-600 mt-1 font-kantumruy" lang="km">អ្នកអាចប្តូរស្បែករចនាបានគ្រប់ពេល។ រាល់ព័ត៌មាន រូបថត និងកម្មវិធីទាំងអស់នឹងរក្សាទុកដដែល។</p>
+            <h2 class="text-base font-bold text-stone-900">{{ $t('theme.title') }}</h2>
+            <p class="text-xs text-stone-600 mt-1 font-kantumruy">{{ $t('theme.hint') }}</p>
         </div>
 
         <div class="grid gap-4 sm:grid-cols-2">
@@ -40,23 +40,20 @@ useAutosave(form, `/app/invitations/${props.invitation.id}/theme`);
                             class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider"
                             :class="theme.tier === 'premium' ? 'bg-amber-100 text-amber-900' : 'bg-stone-100 text-stone-700'"
                         >
-                            {{ theme.tier }}
+                            {{ theme.tier === 'premium' ? $t('common.premium') : $t('theme.standard') }}
                         </span>
                     </div>
 
-                    <p class="text-xs text-stone-600 line-clamp-2">
-                        Royal Khmer ceremony meets editorial stationery; Khmer-first and phone-first.
-                    </p>
                 </div>
 
                 <div class="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between text-xs">
                     <span v-if="form.theme_id === theme.id" class="font-bold text-amber-800 flex items-center gap-1">
-                        <span>Active theme</span>
+                        <span>{{ $t('theme.active') }}</span>
                         <svg class="size-3.5" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                         </svg>
                     </span>
-                    <span v-else class="text-stone-400">Click to select</span>
+                    <span v-else class="text-stone-400">{{ $t('theme.select') }}</span>
 
                     <a
                         :href="`/themes/${theme.slug}`"
@@ -64,7 +61,7 @@ useAutosave(form, `/app/invitations/${props.invitation.id}/theme`);
                         class="font-semibold text-stone-700 hover:text-[#7B1122] hover:underline"
                         @click.stop
                     >
-                        View demo ↗
+                        {{ $t('common.view_demo') }} ↗
                     </a>
                 </div>
             </label>

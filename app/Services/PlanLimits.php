@@ -65,11 +65,14 @@ final class PlanLimits
         $guests = $this->invitation->guests()->count();
 
         return array_values(array_filter([
-            $photos > ($features['gallery_photos'] ?? 0) ? "{$photos} gallery photos ({$plan->name} shows {$features['gallery_photos']})" : null,
-            $plan->max_guests !== null && $guests > $plan->max_guests ? "{$guests} guests ({$plan->name} allows {$plan->max_guests})" : null,
-            empty($features['own_music']) && $this->invitation->media()->where('kind', MediaKind::Music)->exists() ? 'Your own music' : null,
-            empty($features['video']) && ! empty($this->invitation->content['video_url']) ? 'YouTube video' : null,
-            empty($features['premium_themes']) && $this->invitation->theme?->tier === 'premium' ? "Premium theme ({$this->invitation->theme->name})" : null,
+            $photos > ($features['gallery_photos'] ?? 0)
+                ? __(':count gallery photos (:plan shows :max)', ['count' => $photos, 'plan' => $plan->name, 'max' => $features['gallery_photos']]) : null,
+            $plan->max_guests !== null && $guests > $plan->max_guests
+                ? __(':count guests (:plan allows :max)', ['count' => $guests, 'plan' => $plan->name, 'max' => $plan->max_guests]) : null,
+            empty($features['own_music']) && $this->invitation->media()->where('kind', MediaKind::Music)->exists() ? __('Your own music') : null,
+            empty($features['video']) && ! empty($this->invitation->content['video_url']) ? __('YouTube video') : null,
+            empty($features['premium_themes']) && $this->invitation->theme?->tier === 'premium'
+                ? __('Premium theme (:name)', ['name' => $this->invitation->theme->name]) : null,
         ]));
     }
 

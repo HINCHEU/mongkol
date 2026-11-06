@@ -30,18 +30,18 @@ const used = (key) => form.events.some((e) => e.preset_key === key);
     <div class="grid gap-6">
         <!-- Wedding Date & Lunar Calendar Card -->
         <div class="card p-6 border-stone-200/90">
-            <h2 class="text-base font-bold text-stone-900 mb-1">Wedding Date · កាលបរិច្ឆេទមង្គលការ</h2>
-            <p class="text-xs text-stone-600 mb-4 font-kantumruy" lang="km">កាលបរិច្ឆេទនៃថ្ងៃមង្គលការ ដែលប្រើជាគោលសម្រាប់រាប់ថយក្រោយ និងកាលវិភាគពិធី។</p>
+            <h2 class="text-base font-bold text-stone-900 mb-1">{{ $t('create.wedding_date') }}</h2>
+            <p class="text-xs text-stone-600 mb-4 font-kantumruy">{{ $t('program.date_hint') }}</p>
 
             <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
                 <div class="w-full sm:max-w-xs">
-                    <Field label="Solar Date (ថ្ងៃខែឆ្នាំសកល)" :error="form.errors.wedding_date">
+                    <Field :label="$t('program.solar_date')" :error="form.errors.wedding_date">
                         <input v-model="form.wedding_date" type="date" class="input" />
                     </Field>
                 </div>
 
                 <div v-if="lunarDate" class="rounded-lg bg-amber-50 p-3.5 border border-amber-200/70 sm:self-end">
-                    <p class="text-[11px] font-semibold text-amber-800 uppercase tracking-wider">Khmer Lunar Date · ចន្ទគតិ</p>
+                    <p class="text-[11px] font-semibold text-amber-800 uppercase tracking-wider">{{ $t('program.lunar_date') }}</p>
                     <p class="text-xs font-semibold text-amber-950 font-kantumruy mt-0.5" lang="km">{{ lunarDate }}</p>
                 </div>
             </div>
@@ -51,8 +51,8 @@ const used = (key) => form.events.some((e) => e.preset_key === key);
         <div class="card p-6">
             <div class="flex items-center justify-between mb-4 border-b border-stone-100 pb-3">
                 <div>
-                    <h2 class="text-base font-bold text-stone-900">Ceremonies Timeline · កម្មវិធីមង្គលការ</h2>
-                    <p class="text-xs text-stone-600 font-kantumruy" lang="km">រៀបចំលំដាប់ពិធីប្រពៃណី និងពេលវេលា (ម៉ោងនៅកម្ពុជា)។</p>
+                    <h2 class="text-base font-bold text-stone-900">{{ $t('program.title') }}</h2>
+                    <p class="text-xs text-stone-600 font-kantumruy">{{ $t('program.intro') }}</p>
                 </div>
             </div>
 
@@ -62,7 +62,7 @@ const used = (key) => form.events.some((e) => e.preset_key === key);
                     <svg class="size-4 text-amber-700" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd" />
                     </svg>
-                    <span>Quick Traditional Presets · កម្មវិធីប្រពៃណីស្តង់ដារ</span>
+                    <span>{{ $t('program.presets') }}</span>
                 </p>
                 <div class="flex flex-wrap gap-2">
                     <button
@@ -74,26 +74,25 @@ const used = (key) => form.events.some((e) => e.preset_key === key);
                         :class="used(preset.key)
                             ? 'border-stone-200 bg-stone-100 text-stone-400 opacity-60 cursor-not-allowed'
                             : 'border-amber-300 bg-amber-50/80 text-amber-900 hover:bg-amber-100 hover:border-amber-400 active:scale-95'"
-                        lang="km"
                         @click="add(preset)"
                     >
                         <span v-if="used(preset.key)">✓</span>
                         <span v-else>+</span>
-                        {{ preset.title_km }}
+                        {{ $page.props.locale === 'en' ? preset.title_en : preset.title_km }}
                     </button>
                     <button
                         type="button"
                         class="rounded-full border border-stone-300 bg-white px-3 py-1 text-xs font-medium text-stone-700 hover:bg-stone-50 hover:border-stone-400 transition-colors cursor-pointer"
                         @click="add()"
                     >
-                        + Custom Item
+                        + {{ $t('program.custom') }}
                     </button>
                 </div>
             </div>
 
             <!-- Empty State for Program -->
             <div v-if="!form.events.length" class="p-8 text-center border-dashed border-2 border-stone-200 rounded-lg">
-                <p class="text-sm text-stone-600 font-kantumruy" lang="km">មិនទាន់មានកម្មវិធីនៅឡើយទេ។ សូមចុចជ្រើសរើសកម្មវិធីប្រពៃណីខាងលើដើម្បីបន្ថែម។</p>
+                <p class="text-sm text-stone-600 font-kantumruy">{{ $t('program.empty') }}</p>
             </div>
 
             <!-- Ceremony Cards List -->
@@ -107,7 +106,7 @@ const used = (key) => form.events.some((e) => e.preset_key === key);
                     <div class="flex items-center justify-between mb-4 border-b border-stone-100 pb-3">
                         <div class="flex items-center gap-2">
                             <span class="flex size-6 items-center justify-center rounded-full bg-amber-100 text-amber-900 text-xs font-bold">{{ i + 1 }}</span>
-                            <span class="text-sm font-bold text-stone-900 font-kantumruy" lang="km">{{ event.title_km || 'កម្មវិធីថ្មី' }}</span>
+                            <span class="text-sm font-bold text-stone-900 font-kantumruy" lang="km">{{ event.title_km || $t('program.new_item') }}</span>
                         </div>
 
                         <!-- Move and Remove Tools -->
@@ -116,7 +115,7 @@ const used = (key) => form.events.some((e) => e.preset_key === key);
                                 type="button"
                                 class="rounded p-1 text-stone-500 hover:bg-stone-100 hover:text-stone-800 disabled:opacity-30 disabled:hover:bg-transparent cursor-pointer"
                                 :disabled="i === 0"
-                                title="Move up"
+                                :title="$t('common.move_up')"
                                 @click="moveRow(form.events, i, -1)"
                             >
                                 <svg class="size-4" viewBox="0 0 20 20" fill="currentColor">
@@ -127,7 +126,7 @@ const used = (key) => form.events.some((e) => e.preset_key === key);
                                 type="button"
                                 class="rounded p-1 text-stone-500 hover:bg-stone-100 hover:text-stone-800 disabled:opacity-30 disabled:hover:bg-transparent cursor-pointer"
                                 :disabled="i === form.events.length - 1"
-                                title="Move down"
+                                :title="$t('common.move_down')"
                                 @click="moveRow(form.events, i, 1)"
                             >
                                 <svg class="size-4" viewBox="0 0 20 20" fill="currentColor">
@@ -137,7 +136,7 @@ const used = (key) => form.events.some((e) => e.preset_key === key);
                             <button
                                 type="button"
                                 class="rounded p-1 text-red-600 hover:bg-red-50 hover:text-red-800 cursor-pointer ml-1"
-                                title="Remove ceremony"
+                                :title="$t('common.remove')"
                                 @click="form.events.splice(i, 1)"
                             >
                                 <svg class="size-4" viewBox="0 0 20 20" fill="currentColor">
@@ -150,35 +149,35 @@ const used = (key) => form.events.some((e) => e.preset_key === key);
                     <!-- Form Fields -->
                     <div class="grid gap-3">
                         <div class="grid gap-3 sm:grid-cols-2">
-                            <Field label="Ceremony Date (ថ្ងៃប្រារព្ធ)" :error="form.errors[`events.${i}.date`]">
+                            <Field :label="$t('program.event_date')" :error="form.errors[`events.${i}.date`]">
                                 <input v-model="event.date" type="date" class="input" />
                             </Field>
-                            <Field label="Ceremony Time (ម៉ោង)" :error="form.errors[`events.${i}.time`]">
+                            <Field :label="$t('program.event_time')" :error="form.errors[`events.${i}.time`]">
                                 <input v-model="event.time" type="time" class="input" />
                             </Field>
                         </div>
 
                         <div class="grid gap-3 sm:grid-cols-2">
-                            <Field label="Title in Khmer (ឈ្មោះកម្មវិធីជាភាសាខ្មែរ)" :error="form.errors[`events.${i}.title_km`]">
-                                <input v-model="event.title_km" lang="km" placeholder="ឧទាហរណ៍៖ ពិធីហែជំនូន" class="input font-kantumruy" />
+                            <Field :label="$t('program.title_km')" :error="form.errors[`events.${i}.title_km`]">
+                                <input v-model="event.title_km" lang="km" :placeholder="$t('create.example', { name: 'ពិធីហែជំនូន' })" class="input font-kantumruy" />
                             </Field>
-                            <Field label="Title in English (ឈ្មោះកម្មវិធីជាភាសាអង់គ្លេស)" :error="form.errors[`events.${i}.title_en`]">
-                                <input v-model="event.title_en" placeholder="e.g. Gift procession" class="input" />
+                            <Field :label="$t('program.title_en')" :error="form.errors[`events.${i}.title_en`]">
+                                <input v-model="event.title_en" :placeholder="$t('create.example', { name: 'Gift procession' })" class="input" />
                             </Field>
                         </div>
 
                         <div class="grid gap-3 sm:grid-cols-2">
-                            <Field label="Venue Location (ទីតាំង)" :error="form.errors[`events.${i}.venue_id`]">
+                            <Field :label="$t('program.venue')" :error="form.errors[`events.${i}.venue_id`]">
                                 <select v-model="event.venue_id" class="input">
-                                    <option :value="null">— Select venue —</option>
+                                    <option :value="null">— {{ $t('program.select_venue') }} —</option>
                                     <option v-for="venue in invitation.venues" :key="venue.id" :value="venue.id">
                                         {{ venue.name }}
                                     </option>
                                 </select>
                             </Field>
 
-                            <Field label="Special Note (ចំណាំ ឬសម្លៀកបំពាក់)" :error="form.errors[`events.${i}.note`]">
-                                <input v-model="event.note" placeholder="e.g. សម្លៀកបំពាក់ប្រពៃណី · Traditional attire" class="input" />
+                            <Field :label="$t('program.note')" :error="form.errors[`events.${i}.note`]">
+                                <input v-model="event.note" :placeholder="$t('program.note_placeholder')" class="input" />
                             </Field>
                         </div>
                     </div>
@@ -186,7 +185,7 @@ const used = (key) => form.events.some((e) => e.preset_key === key);
             </div>
 
             <p v-if="!invitation.venues.length" class="mt-4 text-xs text-amber-800 bg-amber-50 p-3 rounded-lg border border-amber-200">
-                💡 Hint: Add venues in the "Venues" tab first so you can assign each ceremony to its location.
+                💡 {{ $t('program.venue_hint') }}
             </p>
         </div>
     </div>

@@ -4,11 +4,31 @@ Claude builds features with plain, working markup. This file lists the screens w
 
 ## Rules for every item
 
-- Change markup and classes only. Leave `<script setup>` blocks, `autosave.js` and every PHP file alone.
+- Change markup and classes only. Leave `<script setup>` blocks, `autosave.js` and every PHP file alone, except `lang/*/dashboard.php` (copy) and the Blade views and assets inside `resources/themes/`.
 - Keep every `@click`, `@change`, `@submit`, `v-model`, `v-if`/`v-else`, `v-for` and `:key` binding. You may move one to a new element, but it must stay wired.
-- Keep `accept="…"` on file inputs, `lang="km"` on Khmer text, and `role`/`aria-*` attributes.
+- Keep `accept="…"` on file inputs, `lang="km"` on Khmer data (names, inputs), and `role`/`aria-*` attributes.
+- Dashboard text is translated: write `{{ $t('group.key') }}`, never literal text. Add new keys to both `lang/en/dashboard.php` and `lang/km/dashboard.php` (a test fails if one is missing). Show one language at a time; the ខ្មែរ/EN switch in the header picks it.
 - Phone first: touch targets at least 44px, nothing wider than the screen at 375px.
 - Run `npm run build` before committing; it must pass.
+
+## M8: two more themes
+
+Build two new invitation themes. Each is a folder that **extends base and overrides only the sections it restyles**; everything else (data, envelope, language toggle, music, beacon) comes from base.
+
+- [ ] **Theme 1 (Standard tier)**: a distinct look, e.g. a lighter, modern layout.
+- [ ] **Theme 2 (Premium tier)**: the showpiece; set `"tier": "premium"` in its `theme.json`.
+
+How:
+1. `php artisan make:theme <slug>` (lower-case, e.g. `angkor-gold`) creates `resources/themes/<slug>/` with `theme.json`, `assets/app.css`, `assets/app.js`.
+2. Copy into `views/` only the files you change from `resources/themes/base/views/` (a section, the layout, a component). Don't copy what you don't change.
+3. Add a `demo.json` only if the demo needs different sample content; otherwise base's is used.
+4. `php artisan themes:sync`, then open `/themes/<slug>` to see the demo. New themes start hidden; switch them on in `/admin/themes` once they look right.
+5. Use only the data in `$vm` (see `app/Services/Themes/InvitationViewModel.php`); a theme never queries the database.
+
+Must hold in every theme:
+- A layout override keeps `@include('partials.og')` in `<head>` and `envelope(@js($beaconUrl))` on the envelope (see "Don't remove").
+- Both languages: every text has a `data-l="km"` and a `data-l="en"` version, or uses `<x-base::t>`.
+- Test on a mid-range Android in Telegram's in-app browser: Khmer wraps cleanly (no broken subscripts), fonts load, photos aren't heavy.
 
 ## M6: plans and payment
 

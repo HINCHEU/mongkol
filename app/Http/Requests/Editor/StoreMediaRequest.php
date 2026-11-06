@@ -34,7 +34,7 @@ class StoreMediaRequest extends EditorRequest
             }
             if ($this->input('kind') === MediaKind::Gallery->value
                 && $this->invitation()->media()->where('kind', 'gallery')->count() >= $limits->galleryPhotos()) {
-                $validator->errors()->add('file', __('validation.max.array', ['attribute' => 'gallery', 'max' => $limits->galleryPhotos()]));
+                $validator->errors()->add('file', __('validation.max.array', ['attribute' => __('validation.attributes.gallery'), 'max' => $limits->galleryPhotos()]));
             }
         }];
     }

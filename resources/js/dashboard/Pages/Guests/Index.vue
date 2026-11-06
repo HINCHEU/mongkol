@@ -3,6 +3,7 @@ import { computed, ref, watch } from 'vue';
 import { Link, router, useForm } from '@inertiajs/vue3';
 import AppLayout from '../../Layouts/AppLayout.vue';
 import Field from '../../Components/Field.vue';
+import { t } from '../../i18n.js';
 
 // Plain, functional markup; styling is left to the design pass.
 const props = defineProps({
@@ -31,7 +32,7 @@ function edit(guest) {
     Object.assign(editForm, { title: guest.title ?? '', name: guest.name, suffix: guest.suffix ?? '', side: guest.side ?? '', group: guest.group ?? '', phone: guest.phone ?? '' });
 }
 const saveEdit = (guest) => editForm.put(`${base}/guests/${guest.id}`, { ...keep, onSuccess: () => (editing.value = null) });
-const remove = (guest) => confirm(`Delete ${guest.name}? Their link stops working.`) && router.delete(`${base}/guests/${guest.id}`, keep);
+const remove = (guest) => confirm(t('guests.confirm_delete', { name: guest.name })) && router.delete(`${base}/guests/${guest.id}`, keep);
 const toggleSent = (guest, sent) => router.put(`${base}/guests/${guest.id}/sent`, { sent }, keep);
 
 // Bulk: paste or a file → preview (server-parsed) → import.
@@ -74,7 +75,7 @@ const copy = (text, code) => {
                     <Link
                         :href="`${base}/edit`"
                         class="flex size-9 items-center justify-center rounded-lg border border-stone-200 bg-white text-stone-600 hover:text-stone-900 hover:border-stone-300 transition-colors shadow-xs"
-                        title="Back to Editor"
+                        :title="$t('common.back_to_editor')"
                     >
                         <svg class="size-4" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
@@ -82,12 +83,12 @@ const copy = (text, code) => {
                     </Link>
                     <div>
                         <div class="flex items-center gap-2">
-                            <h1 class="text-xl font-bold tracking-tight text-stone-900">Guests · ភ្ញៀវ</h1>
+                            <h1 class="text-xl font-bold tracking-tight text-stone-900">{{ $t('editor.guests') }}</h1>
                             <span class="inline-flex items-center rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-bold text-amber-900">
                                 {{ guests.length }} / {{ max }}
                             </span>
                         </div>
-                        <p class="text-xs text-stone-500 font-kantumruy" lang="km">គ្រប់គ្រងបញ្ជីភ្ញៀវកិត្តិយស បង្កើតតំណភ្ជាប់សំបុត្រផ្ទាល់ខ្លួន និងតាមដានការបើកមើល។</p>
+                        <p class="text-xs text-stone-500 font-kantumruy">{{ $t('guests.subtitle') }}</p>
                     </div>
                 </div>
 
@@ -96,20 +97,20 @@ const copy = (text, code) => {
                     <a
                         :href="`${base}/guests/export`"
                         class="btn-secondary !py-2 !px-3.5 !text-xs"
-                        title="Export guest list to Excel spreadsheet"
+                        :title="$t('guests.export')"
                     >
                         <svg class="size-3.5 text-emerald-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                             <polyline points="7 10 12 15 17 10" />
                             <line x1="12" y1="15" x2="12" y2="3" />
                         </svg>
-                        <span>Export Excel</span>
+                        <span>{{ $t('guests.export') }}</span>
                     </a>
                     <Link
                         :href="`${base}/share`"
                         class="btn-primary !py-2 !px-3.5 !text-xs"
                     >
-                        <span>Share links →</span>
+                        <span>{{ $t('guests.share_links') }} →</span>
                     </Link>
                 </div>
             </div>
@@ -135,42 +136,42 @@ const copy = (text, code) => {
                             </svg>
                         </div>
                         <div>
-                            <h2 class="text-base font-bold text-stone-900">Add a Guest · បញ្ចូលភ្ញៀវម្នាក់</h2>
-                            <p class="text-xs text-stone-500 font-kantumruy" lang="km">បញ្ចូលឈ្មោះ និងគោរមងារដើម្បីបង្កើតតំណភ្ជាប់សំបុត្រផ្ទាល់ខ្លួន</p>
+                            <h2 class="text-base font-bold text-stone-900">{{ $t('guests.add_one') }}</h2>
+                            <p class="text-xs text-stone-500 font-kantumruy">{{ $t('guests.add_one_hint') }}</p>
                         </div>
                     </div>
                 </div>
 
                 <form class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" @submit.prevent="add">
-                    <Field label="Title (គោរមងារ)" :error="form.errors.title">
+                    <Field :label="$t('guests.title')" :error="form.errors.title">
                         <select v-model="form.title" class="input font-kantumruy">
-                            <option value="">— (គ្មាន)</option>
+                            <option value="">— {{ $t('guests.no_title') }}</option>
                             <option v-for="t in titles" :key="t" :value="t">{{ t }}</option>
                         </select>
                     </Field>
 
-                    <Field label="Name (ឈ្មោះ) *" :error="form.errors.name">
-                        <input v-model="form.name" class="input font-kantumruy" required placeholder="ឧទាហរណ៍៖ សុខ សំណាង" />
+                    <Field :label="`${$t('guests.name')} *`" :error="form.errors.name">
+                        <input v-model="form.name" class="input font-kantumruy" required :placeholder="$t('create.example', { name: 'សុខ សំណាង' })" />
                     </Field>
 
-                    <Field label="Suffix (បន្ថែម)" :error="form.errors.suffix">
-                        <input v-model="form.suffix" class="input font-kantumruy" list="guest-suffixes" placeholder="ឧទាហរណ៍៖ និងភរិយា" />
+                    <Field :label="$t('guests.suffix')" :error="form.errors.suffix">
+                        <input v-model="form.suffix" class="input font-kantumruy" list="guest-suffixes" :placeholder="$t('create.example', { name: 'និងភរិយា' })" />
                     </Field>
 
-                    <Field label="Side (ខាង)" :error="form.errors.side">
+                    <Field :label="$t('guests.side')" :error="form.errors.side">
                         <select v-model="form.side" class="input font-kantumruy">
-                            <option value="">— (មិនបញ្ជាក់)</option>
-                            <option value="groom">Groom · ខាងកូនកំលោះ</option>
-                            <option value="bride">Bride · ខាងកូនក្រមុំ</option>
+                            <option value="">— {{ $t('guests.no_side') }}</option>
+                            <option value="groom">{{ $t('guests.sides.groom') }}</option>
+                            <option value="bride">{{ $t('guests.sides.bride') }}</option>
                         </select>
                     </Field>
 
-                    <Field label="Group (ក្រុម)" :error="form.errors.group">
-                        <input v-model="form.group" class="input" placeholder="e.g. VIP, សាច់ញាតិ, មិត្តភក្តិ" />
+                    <Field :label="$t('guests.group')" :error="form.errors.group">
+                        <input v-model="form.group" class="input" :placeholder="$t('guests.group_placeholder')" />
                     </Field>
 
-                    <Field label="Phone (ទូរស័ព្ទ)" :error="form.errors.phone">
-                        <input v-model="form.phone" class="input font-mono" inputmode="tel" placeholder="e.g. 012 345 678" />
+                    <Field :label="$t('guests.phone')" :error="form.errors.phone">
+                        <input v-model="form.phone" class="input font-mono" inputmode="tel" :placeholder="$t('create.example', { name: '012 345 678' })" />
                     </Field>
 
                     <div class="sm:col-span-2 lg:col-span-3 flex justify-end pt-2">
@@ -178,7 +179,7 @@ const copy = (text, code) => {
                             <svg class="size-4" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
                             </svg>
-                            <span>Add guest · បន្ថែមភ្ញៀវ</span>
+                            <span>{{ $t('guests.add_button') }}</span>
                         </button>
                     </div>
                 </form>
@@ -199,8 +200,8 @@ const copy = (text, code) => {
                             </svg>
                         </div>
                         <div>
-                            <h2 class="text-base font-bold text-stone-900">Add many · បន្ថែមច្រើន (Paste / Excel / CSV)</h2>
-                            <p class="text-xs text-stone-500 font-kantumruy" lang="km">បញ្ចូលឈ្មោះមួយជួរក្នុងមួយបន្ទាត់។ គោរមងារ និងពាក្យបន្ថែម (ឧ. លោក ចាន់ ថា និងភរិយា) នឹងត្រូវបំបែកដោយស្វ័យប្រវត្តិ។</p>
+                            <h2 class="text-base font-bold text-stone-900">{{ $t('guests.add_many') }}</h2>
+                            <p class="text-xs text-stone-500 font-kantumruy">{{ $t('guests.add_many_hint') }}</p>
                         </div>
                     </div>
                 </div>
@@ -220,15 +221,15 @@ const copy = (text, code) => {
                             :disabled="!pasted.trim()"
                             @click="previewText"
                         >
-                            <span>Preview pasted names</span>
+                            <span>{{ $t('guests.preview_pasted') }}</span>
                         </button>
-                        <span class="text-xs text-stone-400">or</span>
+                        <span class="text-xs text-stone-400">{{ $t('common.or') }}</span>
                         <label class="inline-flex min-h-[44px] items-center gap-2 rounded-lg border border-stone-200 bg-stone-50 px-3.5 py-2 text-xs font-semibold text-stone-700 hover:bg-amber-50 hover:border-amber-300 hover:text-amber-900 transition-colors cursor-pointer">
                             <svg class="size-4 text-emerald-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                                 <polyline points="14 2 14 8 20 8" />
                             </svg>
-                            <span>Choose Excel / CSV file</span>
+                            <span>{{ $t('guests.choose_file') }}</span>
                             <input
                                 type="file"
                                 accept=".xlsx,.csv,text/csv"
@@ -237,7 +238,7 @@ const copy = (text, code) => {
                             />
                         </label>
                     </div>
-                    <p class="text-[11px] text-stone-500 font-kantumruy" lang="km">ទម្រង់តារាង: name, title, suffix, side, group, phone</p>
+                    <p class="text-[11px] text-stone-500 font-kantumruy">{{ $t('guests.columns') }}</p>
                 </div>
 
                 <!-- Preview Confirmation Table -->
@@ -245,14 +246,13 @@ const copy = (text, code) => {
                     <div class="flex items-center justify-between">
                         <h3 class="text-sm font-bold text-amber-950 flex items-center gap-2">
                             <span class="flex size-5 items-center justify-center rounded-full bg-amber-200 text-amber-900 text-xs">✓</span>
-                            <span>Check {{ rows.length }} guests before importing</span>
+                            <span>{{ $t('guests.check', { count: rows.length }) }}</span>
                         </h3>
-                        <span class="text-xs text-amber-900 font-kantumruy" lang="km">សូមពិនិត្យព័ត៌មានមុនពេលបញ្ចូល</span>
                     </div>
 
                     <div v-if="rowErrors.length" class="space-y-1">
                         <p v-for="[key, message] in rowErrors" :key="key" class="text-xs text-red-600 font-medium">
-                            Row {{ Number(key.split('.')[1]) + 1 || '' }}: {{ message }}
+                            {{ $t('guests.row', { n: Number(key.split('.')[1]) + 1 || '' }) }}: {{ message }}
                         </p>
                     </div>
 
@@ -260,11 +260,11 @@ const copy = (text, code) => {
                         <table class="w-full text-xs">
                             <thead class="bg-stone-50 border-b border-stone-200 text-stone-600 font-semibold uppercase tracking-wider text-[10px]">
                                 <tr>
-                                    <th class="py-2.5 px-3 text-left">Title</th>
-                                    <th class="py-2.5 px-3 text-left">Name</th>
-                                    <th class="py-2.5 px-3 text-left">Suffix</th>
-                                    <th class="py-2.5 px-3 text-left">Side</th>
-                                    <th class="py-2.5 px-3 text-left">Group</th>
+                                    <th class="py-2.5 px-3 text-left">{{ $t('guests.title') }}</th>
+                                    <th class="py-2.5 px-3 text-left">{{ $t('guests.name') }}</th>
+                                    <th class="py-2.5 px-3 text-left">{{ $t('guests.suffix') }}</th>
+                                    <th class="py-2.5 px-3 text-left">{{ $t('guests.side') }}</th>
+                                    <th class="py-2.5 px-3 text-left">{{ $t('guests.group') }}</th>
                                     <th class="py-2.5 px-3 text-right"></th>
                                 </tr>
                             </thead>
@@ -276,8 +276,8 @@ const copy = (text, code) => {
                                     <td class="p-2">
                                         <select v-model="row.side" class="input !py-1.5 !px-2 text-xs">
                                             <option :value="null">—</option>
-                                            <option value="groom">Groom</option>
-                                            <option value="bride">Bride</option>
+                                            <option value="groom">{{ $t('guests.sides.groom') }}</option>
+                                            <option value="bride">{{ $t('guests.sides.bride') }}</option>
                                         </select>
                                     </td>
                                     <td class="p-2"><input v-model="row.group" class="input !py-1.5 !px-2 text-xs" /></td>
@@ -285,7 +285,7 @@ const copy = (text, code) => {
                                         <button
                                             type="button"
                                             class="inline-flex size-7 items-center justify-center rounded text-red-700 hover:bg-red-50 hover:text-red-900 transition-colors cursor-pointer"
-                                            title="Drop this row"
+                                            :title="$t('guests.drop_row')"
                                             @click="rows.splice(i, 1)"
                                         >
                                             <svg class="size-4" viewBox="0 0 20 20" fill="currentColor">
@@ -306,14 +306,14 @@ const copy = (text, code) => {
                             :disabled="!rows.length"
                             @click="importRows"
                         >
-                            <span>Import {{ rows.length }} guests</span>
+                            <span>{{ $t('guests.import', { count: rows.length }) }}</span>
                         </button>
                         <button
                             type="button"
                             class="btn-secondary min-h-[44px]"
                             @click="rows = null"
                         >
-                            <span>Cancel</span>
+                            <span>{{ $t('common.cancel') }}</span>
                         </button>
                     </div>
                 </div>
@@ -323,9 +323,9 @@ const copy = (text, code) => {
             <div class="card p-6 grid gap-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-stone-100 pb-4">
                     <div class="flex items-center gap-2">
-                        <h2 class="text-base font-bold text-stone-900">Guest Directory · បញ្ជីភ្ញៀវ</h2>
+                        <h2 class="text-base font-bold text-stone-900">{{ $t('guests.directory') }}</h2>
                         <span class="rounded-full bg-stone-100 px-2.5 py-0.5 text-xs font-bold text-stone-700">
-                            {{ shown.length }} shown
+                            {{ $t('guests.shown', { count: shown.length }) }}
                         </span>
                     </div>
 
@@ -337,7 +337,7 @@ const copy = (text, code) => {
                         <input
                             v-model="search"
                             class="input !pl-9 min-h-[44px]"
-                            placeholder="Search name, phone, group…"
+                            :placeholder="$t('guests.search')"
                         />
                     </div>
                 </div>
@@ -352,14 +352,14 @@ const copy = (text, code) => {
                             <path d="M16 3.13a4 4 0 0 1 0 7.75" />
                         </svg>
                     </div>
-                    <p class="text-sm font-semibold text-stone-800">No guests yet · មិនទាន់មានភ្ញៀវនៅឡើយទេ</p>
-                    <p class="text-xs text-stone-500 mt-1 font-kantumruy" lang="km">សូមបន្ថែមភ្ញៀវតាមទម្រង់ខាងលើ ឬប្រើ Paste / Excel ដើម្បីបញ្ចូលច្រើនក្នុងពេលតែមួយ។</p>
+                    <p class="text-sm font-semibold text-stone-800">{{ $t('guests.empty') }}</p>
+                    <p class="text-xs text-stone-500 mt-1 font-kantumruy">{{ $t('guests.empty_hint') }}</p>
                 </div>
 
                 <!-- Filtered Zero State -->
                 <div v-else-if="!shown.length" class="text-center py-8 text-stone-500 text-sm">
-                    <p>No guests match "<span class="font-semibold text-stone-800">{{ search }}</span>"</p>
-                    <button type="button" class="mt-2 text-xs text-amber-800 font-semibold underline" @click="search = ''">Clear search</button>
+                    <p>{{ $t('guests.no_match') }} “<span class="font-semibold text-stone-800">{{ search }}</span>”</p>
+                    <button type="button" class="mt-2 text-xs text-amber-800 font-semibold underline" @click="search = ''">{{ $t('guests.clear_search') }}</button>
                 </div>
 
                 <!-- 1. MOBILE RESPONSIVE CARDS VIEW (Phone first: stacked cards for 300+ guests) -->
@@ -368,27 +368,27 @@ const copy = (text, code) => {
                         <!-- Inline Edit Form (Mobile) -->
                         <div v-if="editing === guest.id" class="rounded-xl border-2 border-amber-400 bg-amber-50/40 p-4 shadow-sm">
                             <div class="mb-3 flex items-center justify-between border-b border-amber-200/60 pb-2">
-                                <span class="text-xs font-bold text-amber-950">Editing guest: {{ guest.name }}</span>
+                                <span class="text-xs font-bold text-amber-950">{{ $t('guests.editing', { name: guest.name }) }}</span>
                                 <button type="button" class="text-xs text-stone-500 hover:text-stone-800" @click="editing = null">✕</button>
                             </div>
                             <form class="grid gap-3" @submit.prevent="saveEdit(guest)">
                                 <select v-model="editForm.title" class="input font-kantumruy">
-                                    <option value="">— (គ្មាន)</option>
+                                    <option value="">— {{ $t('guests.no_title') }}</option>
                                     <option v-for="t in titles" :key="t" :value="t">{{ t }}</option>
                                 </select>
-                                <input v-model="editForm.name" class="input font-kantumruy font-semibold" required placeholder="Name" />
-                                <input v-model="editForm.suffix" class="input font-kantumruy" list="guest-suffixes" placeholder="Suffix" />
+                                <input v-model="editForm.name" class="input font-kantumruy font-semibold" required :placeholder="$t('guests.name')" />
+                                <input v-model="editForm.suffix" class="input font-kantumruy" list="guest-suffixes" :placeholder="$t('guests.suffix')" />
                                 <select v-model="editForm.side" class="input font-kantumruy">
-                                    <option value="">— (មិនបញ្ជាក់)</option>
-                                    <option value="groom">Groom · ខាងប្រុស</option>
-                                    <option value="bride">Bride · ខាងស្រី</option>
+                                    <option value="">— {{ $t('guests.no_side') }}</option>
+                                    <option value="groom">{{ $t('guests.sides.groom') }}</option>
+                                    <option value="bride">{{ $t('guests.sides.bride') }}</option>
                                 </select>
-                                <input v-model="editForm.group" class="input" placeholder="Group" />
-                                <input v-model="editForm.phone" class="input font-mono" placeholder="Phone" />
+                                <input v-model="editForm.group" class="input" :placeholder="$t('guests.group')" />
+                                <input v-model="editForm.phone" class="input font-mono" :placeholder="$t('guests.phone')" />
                                 <p v-for="(message, key) in editForm.errors" :key="key" class="text-xs text-red-600">{{ message }}</p>
                                 <div class="flex gap-2 pt-2">
-                                    <button type="submit" class="btn-primary flex-1 min-h-[44px]">Save</button>
-                                    <button type="button" class="btn-secondary min-h-[44px]" @click="editing = null">Cancel</button>
+                                    <button type="submit" class="btn-primary flex-1 min-h-[44px]">{{ $t('common.save') }}</button>
+                                    <button type="button" class="btn-secondary min-h-[44px]" @click="editing = null">{{ $t('common.cancel') }}</button>
                                 </div>
                             </form>
                         </div>
@@ -402,7 +402,7 @@ const copy = (text, code) => {
                                     </p>
                                     <div class="mt-1 flex flex-wrap items-center gap-1.5 text-xs text-stone-500">
                                         <span v-if="guest.side" class="inline-flex items-center rounded-md px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider" :class="guest.side === 'groom' ? 'bg-sky-50 text-sky-800 border border-sky-200' : 'bg-rose-50 text-rose-800 border border-rose-200'">
-                                            {{ guest.side }}
+                                            {{ $t(`guests.sides.${guest.side}`) }}
                                         </span>
                                         <span v-if="guest.group" class="rounded-md bg-stone-100 px-1.5 py-0.5 text-[11px] text-stone-700">
                                             {{ guest.group }}
@@ -420,10 +420,10 @@ const copy = (text, code) => {
                                         :checked="guest.sent"
                                         class="size-4.5 rounded text-[#7B1122] accent-[#7B1122] focus:ring-amber-500 cursor-pointer"
                                         @change="toggleSent(guest, $event.target.checked)"
-                                        aria-label="Sent"
+                                        :aria-label="$t('guests.sent')"
                                     />
                                     <span class="text-xs font-semibold" :class="guest.sent ? 'text-emerald-700' : 'text-stone-400'">
-                                        {{ guest.sent ? 'Sent' : 'Unsent' }}
+                                        {{ guest.sent ? $t('guests.sent') : $t('guests.unsent') }}
                                     </span>
                                 </label>
                             </div>
@@ -435,11 +435,11 @@ const copy = (text, code) => {
                                         type="button"
                                         class="inline-flex min-h-[44px] items-center gap-1 rounded-lg border border-stone-200 bg-stone-50 px-2.5 py-1 text-xs font-mono font-medium text-stone-700 hover:bg-amber-50 hover:border-amber-300 transition-colors cursor-pointer"
                                         @click="copy(guest.url, guest.code)"
-                                        title="Copy personalized link"
+                                        :title="$t('guests.copy_link')"
                                     >
-                                        <span>{{ copiedCode === guest.code ? 'Copied ✓' : guest.code }}</span>
+                                        <span>{{ copiedCode === guest.code ? $t('common.copied') : guest.code }}</span>
                                     </button>
-                                    <span class="inline-flex items-center gap-1 text-xs text-stone-500" title="Open count">
+                                    <span class="inline-flex items-center gap-1 text-xs text-stone-500" :title="$t('guests.opens')">
                                         <svg class="size-3.5 text-stone-400" viewBox="0 0 20 20" fill="currentColor">
                                             <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
                                             <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
@@ -455,14 +455,14 @@ const copy = (text, code) => {
                                         class="min-h-[44px] px-2 text-xs font-semibold text-stone-700 hover:text-stone-900 underline cursor-pointer"
                                         @click="edit(guest)"
                                     >
-                                        Edit
+                                        {{ $t('common.edit') }}
                                     </button>
                                     <button
                                         type="button"
                                         class="min-h-[44px] px-2 text-xs font-semibold text-red-700 hover:text-red-900 underline cursor-pointer"
                                         @click="remove(guest)"
                                     >
-                                        Delete
+                                        {{ $t('common.delete') }}
                                     </button>
                                 </div>
                             </div>
@@ -475,12 +475,12 @@ const copy = (text, code) => {
                     <table class="w-full text-sm">
                         <thead class="bg-stone-50/80 border-b border-stone-200 text-stone-600 font-semibold text-xs">
                             <tr>
-                                <th class="py-3 px-4 text-left">Guest Name (ឈ្មោះភ្ញៀវ)</th>
-                                <th class="py-3 px-4 text-left">Side / Group</th>
-                                <th class="py-3 px-4 text-left">Link Code</th>
-                                <th class="py-3 px-4 text-center">Opens</th>
-                                <th class="py-3 px-4 text-center">Sent</th>
-                                <th class="py-3 px-4 text-right">Actions</th>
+                                <th class="py-3 px-4 text-left">{{ $t('guests.guest') }}</th>
+                                <th class="py-3 px-4 text-left">{{ $t('guests.side_group') }}</th>
+                                <th class="py-3 px-4 text-left">{{ $t('guests.link') }}</th>
+                                <th class="py-3 px-4 text-center">{{ $t('guests.opens') }}</th>
+                                <th class="py-3 px-4 text-center">{{ $t('guests.sent') }}</th>
+                                <th class="py-3 px-4 text-right">{{ $t('common.actions') }}</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-stone-100">
@@ -489,27 +489,27 @@ const copy = (text, code) => {
                                 <tr v-if="editing === guest.id" class="bg-amber-50/40">
                                     <td colspan="6" class="p-4">
                                         <div class="mb-2 flex items-center justify-between border-b border-amber-200/60 pb-1.5">
-                                            <span class="text-xs font-bold text-amber-950">Editing guest: {{ guest.name }}</span>
-                                            <button type="button" class="text-xs text-stone-500 hover:text-stone-800" @click="editing = null">✕ Close</button>
+                                            <span class="text-xs font-bold text-amber-950">{{ $t('guests.editing', { name: guest.name }) }}</span>
+                                            <button type="button" class="text-xs text-stone-500 hover:text-stone-800" @click="editing = null">✕ {{ $t('common.close') }}</button>
                                         </div>
                                         <form class="grid gap-3 sm:grid-cols-3" @submit.prevent="saveEdit(guest)">
                                             <select v-model="editForm.title" class="input font-kantumruy">
-                                                <option value="">— (គ្មាន)</option>
+                                                <option value="">— {{ $t('guests.no_title') }}</option>
                                                 <option v-for="t in titles" :key="t" :value="t">{{ t }}</option>
                                             </select>
-                                            <input v-model="editForm.name" class="input font-kantumruy font-semibold" required placeholder="Name" />
-                                            <input v-model="editForm.suffix" class="input font-kantumruy" list="guest-suffixes" placeholder="Suffix" />
+                                            <input v-model="editForm.name" class="input font-kantumruy font-semibold" required :placeholder="$t('guests.name')" />
+                                            <input v-model="editForm.suffix" class="input font-kantumruy" list="guest-suffixes" :placeholder="$t('guests.suffix')" />
                                             <select v-model="editForm.side" class="input font-kantumruy">
-                                                <option value="">— (មិនបញ្ជាក់)</option>
-                                                <option value="groom">Groom · ខាងប្រុស</option>
-                                                <option value="bride">Bride · ខាងស្រី</option>
+                                                <option value="">— {{ $t('guests.no_side') }}</option>
+                                                <option value="groom">{{ $t('guests.sides.groom') }}</option>
+                                                <option value="bride">{{ $t('guests.sides.bride') }}</option>
                                             </select>
-                                            <input v-model="editForm.group" class="input" placeholder="Group" />
-                                            <input v-model="editForm.phone" class="input font-mono" placeholder="Phone" />
+                                            <input v-model="editForm.group" class="input" :placeholder="$t('guests.group')" />
+                                            <input v-model="editForm.phone" class="input font-mono" :placeholder="$t('guests.phone')" />
                                             <p v-for="(message, key) in editForm.errors" :key="key" class="text-xs text-red-600 sm:col-span-3">{{ message }}</p>
                                             <div class="sm:col-span-3 flex justify-end gap-2 pt-1">
-                                                <button type="button" class="btn-secondary !py-2 !px-4" @click="editing = null">Cancel</button>
-                                                <button type="submit" class="btn-primary !py-2 !px-4">Save changes</button>
+                                                <button type="button" class="btn-secondary !py-2 !px-4" @click="editing = null">{{ $t('common.cancel') }}</button>
+                                                <button type="submit" class="btn-primary !py-2 !px-4">{{ $t('common.save') }}</button>
                                             </div>
                                         </form>
                                     </td>
@@ -523,7 +523,7 @@ const copy = (text, code) => {
                                     <td class="py-3 px-4 text-xs text-stone-600">
                                         <div class="flex items-center gap-1.5 flex-wrap">
                                             <span v-if="guest.side" class="inline-flex items-center rounded-md px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider" :class="guest.side === 'groom' ? 'bg-sky-50 text-sky-800 border border-sky-200' : 'bg-rose-50 text-rose-800 border border-rose-200'">
-                                                {{ guest.side }}
+                                                {{ $t(`guests.sides.${guest.side}`) }}
                                             </span>
                                             <span v-if="guest.group" class="rounded-md bg-stone-100 px-1.5 py-0.5 text-[11px] text-stone-700">
                                                 {{ guest.group }}
@@ -535,9 +535,9 @@ const copy = (text, code) => {
                                             type="button"
                                             class="inline-flex items-center gap-1 rounded-md border border-stone-200 bg-stone-50 px-2 py-1 font-mono text-xs text-stone-700 hover:bg-amber-50 hover:border-amber-300 transition-colors cursor-pointer"
                                             @click="copy(guest.url, guest.code)"
-                                            title="Copy personalized invitation link"
+                                            :title="$t('guests.copy_link')"
                                         >
-                                            <span>{{ copiedCode === guest.code ? 'Copied ✓' : guest.code }}</span>
+                                            <span>{{ copiedCode === guest.code ? $t('common.copied') : guest.code }}</span>
                                         </button>
                                     </td>
                                     <td class="py-3 px-4 text-center">
@@ -555,7 +555,7 @@ const copy = (text, code) => {
                                             :checked="guest.sent"
                                             class="size-4.5 rounded text-[#7B1122] accent-[#7B1122] focus:ring-amber-500 cursor-pointer"
                                             @change="toggleSent(guest, $event.target.checked)"
-                                            aria-label="Sent"
+                                            :aria-label="$t('guests.sent')"
                                         />
                                     </td>
                                     <td class="py-3 px-4 text-right whitespace-nowrap text-xs font-semibold">
@@ -564,7 +564,7 @@ const copy = (text, code) => {
                                             class="text-stone-700 hover:text-stone-900 hover:underline px-1 py-1 cursor-pointer"
                                             @click="edit(guest)"
                                         >
-                                            Edit
+                                            {{ $t('common.edit') }}
                                         </button>
                                         <span class="text-stone-300 mx-1">·</span>
                                         <button
@@ -572,7 +572,7 @@ const copy = (text, code) => {
                                             class="text-red-700 hover:text-red-900 hover:underline px-1 py-1 cursor-pointer"
                                             @click="remove(guest)"
                                         >
-                                            Delete
+                                            {{ $t('common.delete') }}
                                         </button>
                                     </td>
                                 </tr>

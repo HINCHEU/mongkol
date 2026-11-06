@@ -1,0 +1,36 @@
+<?php
+
+// Only friendlier field names; the messages themselves come from Laravel's own English file.
+return [
+    'attributes' => [
+        'theme_id' => 'theme',
+        'wedding_date' => 'wedding date',
+        'groom.name_km' => 'groom’s name in Khmer',
+        'groom.name_en' => 'groom’s name in Latin letters',
+        'bride.name_km' => 'bride’s name in Khmer',
+        'bride.name_en' => 'bride’s name in Latin letters',
+        'people.*.title' => 'title',
+        'people.*.name_km' => 'name in Khmer',
+        'people.*.name_en' => 'name in Latin letters',
+        'venues.*.name' => 'venue name',
+        'venues.*.address' => 'address',
+        'venues.*.maps_url' => 'Google Maps link',
+        'events.*.title_km' => 'name in Khmer',
+        'events.*.title_en' => 'name in English',
+        'events.*.date' => 'date',
+        'events.*.time' => 'time',
+        'events.*.venue_id' => 'venue',
+        'events.*.note' => 'note',
+        'accounts.*.owner' => 'account owner',
+        'accounts.*.bank' => 'bank',
+        'accounts.*.account_name' => 'account holder',
+        'accounts.*.account_number' => 'account number',
+        'video_url' => 'YouTube link',
+        'text' => 'names',
+        'rows' => 'guest list',
+        'rows.*.name' => 'name',
+        'plan_id' => 'plan',
+        'guests' => 'guests',
+        'gallery' => 'gallery photos',
+    ],
+];

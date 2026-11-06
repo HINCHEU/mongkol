@@ -1,6 +1,7 @@
 <script setup>
 import { computed, provide, ref } from 'vue';
 import { Link } from '@inertiajs/vue3';
+import { t } from '../../i18n.js';
 import AppLayout from '../../Layouts/AppLayout.vue';
 import Couple from '../../Components/Steps/Couple.vue';
 import Venues from '../../Components/Steps/Venues.vue';
@@ -22,27 +23,13 @@ const props = defineProps({
 });
 
 const components = { couple: Couple, venues: Venues, program: Program, photos: Photos, gift: Gift, wording: Wording, theme: Theme };
-const labels = {
-    couple: { en: 'Couple & parents', km: 'គូស្នេហ៍ និងមាតាបិតា' },
-    venues: { en: 'Venues', km: 'ទីតាំង' },
-    program: { en: 'Date & program', km: 'កាលបរិច្ឆេទ & កម្មវិធី' },
-    photos: { en: 'Photos & music', km: 'រូបភាព & តន្ត្រី' },
-    gift: { en: 'Gift (ចងដៃ)', km: 'ចំណងដៃ' },
-    wording: { en: 'Wording', km: 'ខ្លឹមសារ' },
-    theme: { en: 'Theme', km: 'ស្បែករចនា' },
-};
 
 // Steps report their autosave state here; each save reloads the preview.
 const status = ref('idle');
 const previewVersion = ref(0);
 provide('editor', { status, saved: () => previewVersion.value++ });
 
-const statusText = computed(() => ({
-    idle: 'All changes saved',
-    saving: 'Saving changes…',
-    saved: 'Saved · បានរក្សាទុក',
-    error: 'Not saved — check the fields marked in red',
-})[status.value]);
+const statusText = computed(() => t(`editor.status.${status.value}`));
 
 const showPreview = ref(false);
 </script>
@@ -52,7 +39,7 @@ const showPreview = ref(false);
         <!-- Editor Top Bar -->
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-stone-200/80 pb-4">
             <div class="flex items-center gap-3">
-                <Link href="/app" class="flex size-8 items-center justify-center rounded-lg border border-stone-200 bg-white text-stone-600 hover:text-stone-900 hover:border-stone-300 transition-colors shadow-xs" title="Back to invitations">
+                <Link href="/app" class="flex size-8 items-center justify-center rounded-lg border border-stone-200 bg-white text-stone-600 hover:text-stone-900 hover:border-stone-300 transition-colors shadow-xs" :title="$t('common.back_to_invitations')">
                     <svg class="size-4" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
                     </svg>
@@ -61,8 +48,8 @@ const showPreview = ref(false);
                 <div>
                     <div class="flex items-center gap-2">
                         <h1 class="text-xl font-bold text-stone-900 tracking-tight">/{{ invitation.slug }}</h1>
-                        <a :href="previewUrl" target="_blank" class="inline-flex items-center gap-1 rounded-md bg-stone-100 px-2 py-0.5 text-xs font-medium text-stone-700 hover:bg-stone-200 transition-colors" title="Open preview in new tab">
-                            <span>Open</span>
+                        <a :href="previewUrl" target="_blank" class="inline-flex items-center gap-1 rounded-md bg-stone-100 px-2 py-0.5 text-xs font-medium text-stone-700 hover:bg-stone-200 transition-colors" :title="$t('editor.open_preview')">
+                            <span>{{ $t('common.open') }}</span>
                             <svg class="size-3" viewBox="0 0 20 20" fill="currentColor">
                                 <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z" />
                                 <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z" />
@@ -102,13 +89,13 @@ const showPreview = ref(false);
                         <rect x="5" y="2" width="14" height="20" rx="3" />
                         <line x1="12" y1="18" x2="12.01" y2="18" stroke-width="3" />
                     </svg>
-                    <span>{{ showPreview ? 'Hide phone' : 'Show phone' }}</span>
+                    <span>{{ showPreview ? $t('editor.hide_phone') : $t('editor.show_phone') }}</span>
                 </button>
             </div>
         </div>
 
         <!-- Step Navigation Tabs -->
-        <nav class="mt-4 flex flex-wrap items-center gap-2" aria-label="Editor steps">
+        <nav class="mt-4 flex flex-wrap items-center gap-2" :aria-label="$t('editor.steps_label')">
             <Link
                 v-for="name in steps"
                 :key="name"
@@ -119,8 +106,7 @@ const showPreview = ref(false);
                     : 'border-stone-200 bg-white text-stone-700 hover:border-stone-300 hover:bg-stone-50 hover:text-stone-900'"
                 :aria-current="name === step ? 'step' : undefined"
             >
-                <span>{{ labels[name].en }}</span>
-                <span class="text-[11px] opacity-75 font-kantumruy" lang="km">({{ labels[name].km }})</span>
+                <span>{{ $t(`editor.steps.${name}`) }}</span>
             </Link>
 
             <!-- Divider separating autosaved steps from standalone pages -->
@@ -134,8 +120,7 @@ const showPreview = ref(false);
                 <svg class="size-4 text-amber-800 shrink-0" viewBox="0 0 20 20" fill="currentColor">
                     <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
                 </svg>
-                <span>Guests</span>
-                <span class="text-[11px] text-amber-800 font-kantumruy" lang="km">(ភ្ញៀវ)</span>
+                <span>{{ $t('editor.guests') }}</span>
             </Link>
             <Link
                 :href="`/app/invitations/${invitation.id}/share`"
@@ -144,8 +129,7 @@ const showPreview = ref(false);
                 <svg class="size-4 text-amber-800 shrink-0" viewBox="0 0 20 20" fill="currentColor">
                     <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z" />
                 </svg>
-                <span>Share</span>
-                <span class="text-[11px] text-amber-800 font-kantumruy" lang="km">(ចែករំលែក)</span>
+                <span>{{ $t('editor.share') }}</span>
             </Link>
             <!-- Upgrade / Plan Button -->
             <Link
@@ -161,8 +145,7 @@ const showPreview = ref(false);
                 <svg v-else class="size-4 text-amber-300 shrink-0" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                 </svg>
-                <span>{{ invitation.state === 'live' ? 'Plan' : 'Upgrade' }}</span>
-                <span class="text-[11px] font-kantumruy" :class="invitation.state === 'live' ? 'opacity-75' : 'text-amber-200'" lang="km">(ដំឡើងកញ្ចប់)</span>
+                <span>{{ invitation.state === 'live' ? $t('editor.plan') : $t('editor.upgrade') }}</span>
             </Link>
         </nav>
 
@@ -196,7 +179,7 @@ const showPreview = ref(false);
                         <div class="relative overflow-hidden rounded-[38px] bg-white">
                             <iframe
                                 :src="`${previewUrl}?v=${previewVersion}`"
-                                title="Invitation preview"
+                                :title="$t('editor.preview_title')"
                                 class="h-[700px] w-full border-none bg-white"
                             ></iframe>
                         </div>
@@ -208,7 +191,7 @@ const showPreview = ref(false);
                     </div>
 
                     <p class="mt-3 text-center text-xs text-stone-600">
-                        Live preview · Updates automatically on save
+                        {{ $t('editor.live_preview') }}
                     </p>
                 </div>
             </aside>

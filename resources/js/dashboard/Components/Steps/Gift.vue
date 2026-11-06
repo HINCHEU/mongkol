@@ -3,6 +3,7 @@ import { inject, ref } from 'vue';
 import { router, useForm } from '@inertiajs/vue3';
 import Field from '../Field.vue';
 import { MAX_IMAGE_MB, clone, copyIds, upload, useAutosave } from '../../autosave.js';
+import { t } from '../../i18n.js';
 
 const props = defineProps({ invitation: Object, presets: Array, themes: Array, lunarDate: String });
 
@@ -14,7 +15,7 @@ async function sendQr(account, input) {
     const file = input.files[0];
     qrError.value[account.id] = null;
     if (file && file.size > MAX_IMAGE_MB * 1024 * 1024) {
-        qrError.value[account.id] = `Larger than ${MAX_IMAGE_MB} MB`;
+        qrError.value[account.id] = t('common.too_large', { mb: MAX_IMAGE_MB });
     } else if (file) {
         const failed = await upload(`${base}/media`, { kind: 'khqr', gift_account_id: account.id, file });
         if (failed) qrError.value[account.id] = failed.file ?? Object.values(failed)[0];
@@ -47,8 +48,8 @@ const add = () => form.accounts.push({ id: null, owner: 'couple', bank: '', acco
                     </svg>
                 </div>
                 <div>
-                    <h2 class="text-base font-bold text-stone-900">Chong Dai Gift Accounts · គណនីទទួលចំណងដៃ</h2>
-                    <p class="text-xs text-stone-600 font-kantumruy" lang="km">ព័ត៌មានគណនីធនាគារសម្រាប់ភ្ញៀវចូលរួមចំណងដៃពីចម្ងាយ។ ភ្ញៀវអាចចម្លងលេខគណនីដោយចុចតែម្តង។</p>
+                    <h2 class="text-base font-bold text-stone-900">{{ $t('gift.title') }}</h2>
+                    <p class="text-xs text-stone-600 font-kantumruy">{{ $t('gift.intro') }}</p>
                 </div>
             </div>
         </div>
@@ -59,8 +60,8 @@ const add = () => form.accounts.push({ id: null, owner: 'couple', bank: '', acco
                 <div class="flex items-center gap-2">
                     <span class="flex size-6 items-center justify-center rounded-full bg-stone-900 text-white text-xs font-bold">{{ i + 1 }}</span>
                     <h3 class="text-sm font-bold text-stone-900">
-                        Account #{{ i + 1 }} ·
-                        <span class="text-amber-800 capitalize">{{ account.owner }}</span>
+                        {{ $t('gift.number', { n: i + 1 }) }} ·
+                        <span class="text-amber-800">{{ $t(`gift.owners.${account.owner}`) }}</span>
                     </h3>
                 </div>
                 <button
@@ -71,22 +72,22 @@ const add = () => form.accounts.push({ id: null, owner: 'couple', bank: '', acco
                     <svg class="size-3.5" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
                     </svg>
-                    <span>Remove account</span>
+                    <span>{{ $t('gift.remove') }}</span>
                 </button>
             </div>
 
             <div class="grid gap-4 sm:grid-cols-2">
-                <Field label="Whose account (ម្ចាស់គណនី)" :error="form.errors[`accounts.${i}.owner`]">
+                <Field :label="$t('gift.owner')" :error="form.errors[`accounts.${i}.owner`]">
                     <select v-model="account.owner" class="input">
-                        <option value="groom">Groom · ខាងកូនកំលោះ</option>
-                        <option value="bride">Bride · ខាងកូនក្រមុំ</option>
-                        <option value="couple">Both / Couple · ទាំងសងខាង</option>
+                        <option value="groom">{{ $t('gift.owners.groom') }}</option>
+                        <option value="bride">{{ $t('gift.owners.bride') }}</option>
+                        <option value="couple">{{ $t('gift.owners.couple') }}</option>
                     </select>
                 </Field>
 
                 <div>
-                    <Field label="Bank Name (ឈ្មោះធនាគារ)" :error="form.errors[`accounts.${i}.bank`]">
-                        <input v-model="account.bank" class="input" placeholder="e.g. ABA Bank" />
+                    <Field :label="$t('gift.bank')" :error="form.errors[`accounts.${i}.bank`]">
+                        <input v-model="account.bank" class="input" :placeholder="$t('create.example', { name: 'ABA Bank' })" />
                     </Field>
                     <div class="flex gap-1.5 mt-1.5 flex-wrap">
                         <button
@@ -101,12 +102,12 @@ const add = () => form.accounts.push({ id: null, owner: 'couple', bank: '', acco
                     </div>
                 </div>
 
-                <Field label="Account Holder Name (ឈ្មោះម្ចាស់គណនី)" :error="form.errors[`accounts.${i}.account_name`]">
-                    <input v-model="account.account_name" class="input" placeholder="e.g. CHAN SOKHA" />
+                <Field :label="$t('gift.account_name')" :error="form.errors[`accounts.${i}.account_name`]">
+                    <input v-model="account.account_name" class="input" :placeholder="$t('create.example', { name: 'CHAN SOKHA' })" />
                 </Field>
 
-                <Field label="Account Number (លេខគណនី)" :error="form.errors[`accounts.${i}.account_number`]">
-                    <input v-model="account.account_number" inputmode="numeric" class="input font-mono font-medium tracking-wide" placeholder="e.g. 000 123 456" />
+                <Field :label="$t('gift.account_number')" :error="form.errors[`accounts.${i}.account_number`]">
+                    <input v-model="account.account_number" inputmode="numeric" class="input font-mono font-medium tracking-wide" :placeholder="$t('create.example', { name: '000 123 456' })" />
                 </Field>
             </div>
 
@@ -123,8 +124,8 @@ const add = () => form.accounts.push({ id: null, owner: 'couple', bank: '', acco
                             </svg>
                         </div>
                         <div>
-                            <span class="text-xs font-bold text-stone-800">KHQR image (រូប KHQR)</span>
-                            <span class="hidden sm:inline text-[11px] text-stone-500 ml-1.5 font-kantumruy" lang="km">(Bakong / Bank KHQR up to {{ MAX_IMAGE_MB }} MB)</span>
+                            <span class="text-xs font-bold text-stone-800">{{ $t('gift.khqr') }}</span>
+                            <span class="hidden sm:inline text-[11px] text-stone-500 ml-1.5 font-kantumruy">({{ $t('gift.khqr_hint', { mb: MAX_IMAGE_MB }) }})</span>
                         </div>
                     </div>
                     <span v-if="account.id && invitation.khqr[account.id]?.url" class="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-800">
@@ -148,8 +149,8 @@ const add = () => form.accounts.push({ id: null, owner: 'couple', bank: '', acco
                             </div>
                         </div>
                         <div class="text-xs text-stone-600 space-y-1">
-                            <p class="font-semibold text-stone-800">KHQR Ready for Instant Chong Dai</p>
-                            <p class="font-kantumruy text-[11px] text-stone-500" lang="km">រូបភាព QR នេះនឹងបង្ហាញលើផ្ទាំងចំណងដៃ។ ភ្ញៀវអាចស្កេនពីគ្រប់ធនាគារក្នុងប្រទេសកម្ពុជា។</p>
+                            <p class="font-semibold text-stone-800">{{ $t('gift.khqr_ready') }}</p>
+                            <p class="font-kantumruy text-[11px] text-stone-500">{{ $t('gift.khqr_ready_hint') }}</p>
                         </div>
                     </div>
 
@@ -169,7 +170,7 @@ const add = () => form.accounts.push({ id: null, owner: 'couple', bank: '', acco
                             <svg class="size-3.5" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
                             </svg>
-                            <span>Remove</span>
+                            <span>{{ $t('common.remove') }}</span>
                         </button>
                     </div>
 
@@ -186,7 +187,7 @@ const add = () => form.accounts.push({ id: null, owner: 'couple', bank: '', acco
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    <span>Saving the account… the KHQR upload appears once it is saved.</span>
+                    <span>{{ $t('gift.khqr_wait') }}</span>
                 </p>
             </div>
         </div>
@@ -201,7 +202,7 @@ const add = () => form.accounts.push({ id: null, owner: 'couple', bank: '', acco
             <svg class="size-4 text-amber-700" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
             </svg>
-            <span>Add another bank account · បន្ថែមគណនីធនាគារ</span>
+            <span>{{ $t('gift.add') }}</span>
         </button>
     </div>
 </template>

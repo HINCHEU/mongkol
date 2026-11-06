@@ -1,5 +1,7 @@
 <script setup>
+import { computed } from 'vue';
 import { useForm } from '@inertiajs/vue3';
+import { t } from '../../i18n.js';
 import Field from '../Field.vue';
 import { clone, useAutosave } from '../../autosave.js';
 
@@ -8,11 +10,11 @@ const props = defineProps({ invitation: Object, presets: Array, themes: Array, l
 const form = useForm({ people: clone(props.invitation.people) });
 useAutosave(form, `/app/invitations/${props.invitation.id}/couple`);
 
-const groups = [
-    { title: 'The couple', subtitle: 'កូនកំលោះ និងកូនក្រមុំ', roles: { groom: 'Groom (កូនកំលោះ)', bride: 'Bride (កូនក្រមុំ)' } },
-    { title: "Groom's parents", subtitle: 'មាតាបិតាខាងកូនប្រុស', roles: { groom_father: 'Father (ឪពុក)', groom_mother: 'Mother (ម្តាយ)' } },
-    { title: "Bride's parents", subtitle: 'មាតាបិតាខាងកូនស្រី', roles: { bride_father: 'Father (ឪពុក)', bride_mother: 'Mother (ម្តាយ)' } },
-];
+const groups = computed(() => [
+    { title: t('couple.the_couple'), roles: { groom: t('common.groom'), bride: t('common.bride') } },
+    { title: t('couple.groom_parents'), roles: { groom_father: t('couple.father'), groom_mother: t('couple.mother') } },
+    { title: t('couple.bride_parents'), roles: { bride_father: t('couple.father'), bride_mother: t('couple.mother') } },
+]);
 const titles = ['លោក', 'លោកស្រី', 'កញ្ញា', 'ឯកឧត្តម', 'លោកជំទាវ', 'អ្នកឧកញ៉ា'];
 const isParent = (role) => role.includes('_');
 </script>
@@ -21,10 +23,9 @@ const isParent = (role) => role.includes('_');
     <div class="grid gap-6">
         <datalist id="titles"><option v-for="t in titles" :key="t" :value="t" /></datalist>
 
-        <div v-for="group in groups" :key="group.title" class="card p-6">
+        <div v-for="(group, g) in groups" :key="g" class="card p-6">
             <div class="mb-4 border-b border-stone-100 pb-3">
                 <h2 class="text-base font-bold text-stone-900">{{ group.title }}</h2>
-                <p class="text-xs text-amber-800/80 font-kantumruy" lang="km">{{ group.subtitle }}</p>
             </div>
 
             <div class="grid gap-4 sm:grid-cols-2">
@@ -35,13 +36,13 @@ const isParent = (role) => role.includes('_');
                 >
                     <div class="flex items-center justify-between mb-3">
                         <span class="text-xs font-bold text-stone-800 uppercase tracking-wide">{{ label }}</span>
-                        <span v-if="!isParent(role)" class="text-[10px] font-bold text-amber-800 bg-amber-100/70 px-2 py-0.5 rounded-full">Required</span>
+                        <span v-if="!isParent(role)" class="text-[10px] font-bold text-amber-800 bg-amber-100/70 px-2 py-0.5 rounded-full">{{ $t('common.required') }}</span>
                     </div>
 
                     <div class="space-y-3">
                         <!-- Title for parents -->
                         <div v-if="isParent(role)">
-                            <Field label="Honorific Title (គោរមងារ/ងារ)" :error="form.errors[`people.${role}.title`]">
+                            <Field :label="$t('couple.honorific')" :error="form.errors[`people.${role}.title`]">
                                 <div class="flex gap-1.5 mb-1.5 flex-wrap">
                                     <button
                                         v-for="t in titles"
@@ -54,18 +55,18 @@ const isParent = (role) => role.includes('_');
                                         {{ t }}
                                     </button>
                                 </div>
-                                <input v-model="form.people[role].title" list="titles" lang="km" placeholder="e.g. លោក, ឯកឧត្តម" class="input font-kantumruy" />
+                                <input v-model="form.people[role].title" list="titles" lang="km" :placeholder="$t('create.example', { name: 'លោក, ឯកឧត្តម' })" class="input font-kantumruy" />
                             </Field>
                         </div>
 
                         <!-- Khmer Name -->
-                        <Field label="Name in Khmer (ឈ្មោះជាភាសាខ្មែរ)" :error="form.errors[`people.${role}.name_km`]">
-                            <input v-model="form.people[role].name_km" lang="km" placeholder="ឧទាហរណ៍៖ ចាន់ សុខា" class="input font-kantumruy" />
+                        <Field :label="$t('create.name_km')" :error="form.errors[`people.${role}.name_km`]">
+                            <input v-model="form.people[role].name_km" lang="km" :placeholder="$t('create.example', { name: 'ចាន់ សុខា' })" class="input font-kantumruy" />
                         </Field>
 
                         <!-- English/Latin Name -->
-                        <Field label="Name in Latin letters (ឈ្មោះអក្សរឡាតាំង)" :error="form.errors[`people.${role}.name_en`]">
-                            <input v-model="form.people[role].name_en" placeholder="e.g. Chan Sokha" class="input" />
+                        <Field :label="$t('create.name_latin')" :error="form.errors[`people.${role}.name_en`]">
+                            <input v-model="form.people[role].name_en" :placeholder="$t('create.example', { name: 'Chan Sokha' })" class="input" />
                         </Field>
 
                         <!-- Passed away checkbox for parents -->
@@ -76,7 +77,7 @@ const isParent = (role) => role.includes('_');
                                     type="checkbox"
                                     class="size-4 rounded border-stone-300 text-[#7B1122] accent-[#7B1122] focus:ring-amber-500"
                                 />
-                                <span>Passed away · មរណភាព (shows respectfully as '(មរណភាព)')</span>
+                                <span>{{ $t('couple.late') }}</span>
                             </label>
                         </div>
                     </div>
@@ -89,7 +90,7 @@ const isParent = (role) => role.includes('_');
             <svg class="size-4 shrink-0 text-amber-700 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
             </svg>
-            <span class="leading-relaxed font-kantumruy" lang="km">ចំណាំ៖ ប្រសិនបើទុកឈ្មោះឪពុក ឬម្តាយនៅទំនេរ ឈ្មោះរបស់គាត់នឹងមិនបង្ហាញលើសំបុត្រអញ្ជើញឡើយ។</span>
+            <span class="leading-relaxed font-kantumruy">{{ $t('couple.tip') }}</span>
         </div>
     </div>
 </template>

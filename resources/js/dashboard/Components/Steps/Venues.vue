@@ -25,8 +25,8 @@ const add = () => form.venues.push({ id: null, name: '', address: '', maps_url: 
                     </svg>
                 </div>
                 <div>
-                    <h2 class="text-base font-bold text-stone-900">Ceremony Venues · ទីតាំងប្រារព្ធពិធី</h2>
-                    <p class="text-xs text-stone-600 font-kantumruy" lang="km">បញ្ចូលទីតាំងគេហដ្ឋាន ឬសាលមង្គលការ។ អ្នកអាចចម្លងតំណភ្ជាប់ពី Google Maps Share មកបិទភ្ជាប់នៅទីនេះ។</p>
+                    <h2 class="text-base font-bold text-stone-900">{{ $t('venues.title') }}</h2>
+                    <p class="text-xs text-stone-600 font-kantumruy">{{ $t('venues.intro') }}</p>
                 </div>
             </div>
         </div>
@@ -36,7 +36,7 @@ const add = () => form.venues.push({ id: null, name: '', address: '', maps_url: 
             <div class="flex items-center justify-between mb-4 border-b border-stone-100 pb-3">
                 <div class="flex items-center gap-2">
                     <span class="flex size-6 items-center justify-center rounded-full bg-stone-900 text-white text-xs font-bold">{{ i + 1 }}</span>
-                    <h3 class="text-sm font-bold text-stone-900">Venue #{{ i + 1 }}</h3>
+                    <h3 class="text-sm font-bold text-stone-900">{{ $t('venues.number', { n: i + 1 }) }}</h3>
                 </div>
                 <button
                     type="button"
@@ -46,30 +46,30 @@ const add = () => form.venues.push({ id: null, name: '', address: '', maps_url: 
                     <svg class="size-3.5" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
                     </svg>
-                    <span>Remove venue</span>
+                    <span>{{ $t('venues.remove') }}</span>
                 </button>
             </div>
 
             <div class="space-y-4">
-                <Field label="Venue Name (ឈ្មោះទីតាំង)" :error="form.errors[`venues.${i}.name`]">
+                <Field :label="$t('venues.name')" :error="form.errors[`venues.${i}.name`]">
                     <input
                         v-model="venue.name"
                         lang="km"
-                        placeholder="ឧទាហរណ៍៖ គេហដ្ឋានខាងស្រី ឬ Mongkol Garden Hall"
+                        :placeholder="$t('venues.name_placeholder')"
                         class="input font-kantumruy"
                     />
                 </Field>
 
-                <Field label="Address (អាសយដ្ឋាន)" :error="form.errors[`venues.${i}.address`]">
+                <Field :label="$t('venues.address')" :error="form.errors[`venues.${i}.address`]">
                     <input
                         v-model="venue.address"
                         lang="km"
-                        placeholder="ឧទាហរណ៍៖ ភូមិ ១, សង្កាត់ ទឹកល្អក់ ១, ខណ្ឌ ទួលគោក, ភ្នំពេញ"
+                        :placeholder="$t('venues.address_placeholder')"
                         class="input font-kantumruy"
                     />
                 </Field>
 
-                <Field label="Google Maps Link (តំណភ្ជាប់ផែនទី Google Maps)" :error="form.errors[`venues.${i}.maps_url`]">
+                <Field :label="$t('venues.maps')" :error="form.errors[`venues.${i}.maps_url`]">
                     <div class="relative">
                         <input
                             v-model="venue.maps_url"
@@ -96,7 +96,7 @@ const add = () => form.venues.push({ id: null, name: '', address: '', maps_url: 
             <svg class="size-4 text-amber-700" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
             </svg>
-            <span>Add another venue · បន្ថែមទីតាំងថ្មី</span>
+            <span>{{ $t('venues.add') }}</span>
         </button>
     </div>
 </template>

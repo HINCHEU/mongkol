@@ -3,6 +3,7 @@ import { computed, ref } from 'vue';
 import { Link, router, useForm } from '@inertiajs/vue3';
 import AppLayout from '../../Layouts/AppLayout.vue';
 import Field from '../../Components/Field.vue';
+import { t } from '../../i18n.js';
 
 // Plain, functional markup; styling is left to the design pass.
 const props = defineProps({
@@ -27,7 +28,7 @@ function sendProof(input) {
     const file = input.files[0];
     input.value = '';
     if (!file) return;
-    proofError.value = file.size > 10 * 1024 * 1024 ? 'Larger than 10 MB' : null;
+    proofError.value = file.size > 10 * 1024 * 1024 ? t('common.too_large', { mb: 10 }) : null;
     if (proofError.value) return;
     uploading.value = true;
     router.post(`${base}/upgrade/${props.pending.id}/proof`, { file }, {
@@ -37,15 +38,23 @@ function sendProof(input) {
         onFinish: () => (uploading.value = false),
     });
 }
-const cancel = () => confirm('Cancel this payment request?') && router.delete(`${base}/upgrade/${props.pending.id}`, keep);
+const cancel = () => confirm(t('upgrade.confirm_cancel')) && router.delete(`${base}/upgrade/${props.pending.id}`, keep);
+
+// Templates can't reach `navigator`, so copying goes through the script.
+const copied = ref(false);
+async function copyReference() {
+    await navigator.clipboard?.writeText(props.pending.reference);
+    copied.value = true;
+    setTimeout(() => (copied.value = false), 1500);
+}
 
 const features = (plan) => [
-    plan.max_guests ? `Up to ${plan.max_guests} personal links` : 'Unlimited personal links',
-    `Up to ${plan.features.gallery_photos} gallery photos`,
-    plan.features.own_music ? 'Your own music' : null,
-    plan.features.video ? 'YouTube video' : null,
-    plan.features.premium_themes ? 'Premium themes' : 'Standard themes',
-    plan.features.hide_credit ? 'No footer credit' : null,
+    plan.max_guests ? t('upgrade.features.links', { count: plan.max_guests }) : t('upgrade.features.unlimited_links'),
+    t('upgrade.features.photos', { count: plan.features.gallery_photos }),
+    plan.features.own_music ? t('upgrade.features.own_music') : null,
+    plan.features.video ? t('upgrade.features.video') : null,
+    plan.features.premium_themes ? t('upgrade.features.premium_themes') : t('upgrade.features.standard_themes'),
+    plan.features.hide_credit ? t('upgrade.features.no_credit') : null,
 ].filter(Boolean);
 </script>
 
@@ -58,7 +67,7 @@ const features = (plan) => [
                     <Link
                         :href="`${base}/edit`"
                         class="flex size-9 items-center justify-center rounded-lg border border-stone-200 bg-white text-stone-600 hover:text-stone-900 hover:border-stone-300 transition-colors shadow-xs"
-                        title="Back to Editor"
+                        :title="$t('common.back_to_editor')"
                     >
                         <svg class="size-4" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
@@ -66,9 +75,9 @@ const features = (plan) => [
                     </Link>
                     <div>
                         <div class="flex items-center gap-2">
-                            <h1 class="text-xl font-bold tracking-tight text-stone-900">Upgrade Plan · ដំឡើងកញ្ចប់</h1>
+                            <h1 class="text-xl font-bold tracking-tight text-stone-900">{{ $t('editor.upgrade') }}</h1>
                         </div>
-                        <p class="text-xs text-stone-500 font-kantumruy" lang="km">ដំឡើងកញ្ចប់ដើម្បីផ្សាយសំបុត្រជាផ្លូវការ និងដោះសោមុខងារពិសេសៗទាំងអស់។</p>
+                        <p class="text-xs text-stone-500 font-kantumruy">{{ $t('upgrade.subtitle') }}</p>
                     </div>
                 </div>
             </div>
@@ -95,16 +104,14 @@ const features = (plan) => [
                                     ? 'bg-emerald-100 text-emerald-800'
                                     : (invitation.state === 'paused' ? 'bg-red-100 text-red-800' : 'bg-amber-100 text-amber-900')"
                             >
-                                {{ invitation.state }}
+                                {{ $t(`states.${invitation.state}`) }}
                             </span>
                             <span v-if="invitation.plan" class="text-xs font-medium text-stone-600">
-                                on {{ invitation.plan }}
+                                {{ $t('upgrade.on_plan', { plan: invitation.plan }) }}
                             </span>
                         </div>
                         <p class="text-xs text-stone-500 mt-0.5">
-                            <template v-if="invitation.state === 'trial'">Guests see a Preview ribbon until you upgrade to a live plan.</template>
-                            <template v-else-if="invitation.state === 'paused'">The free preview is over: guests see an unavailable notice until you upgrade.</template>
-                            <template v-else-if="invitation.state === 'live'">Your invitation is fully live and accessible to all invited guests.</template>
+                            <template v-if="['trial', 'paused', 'live'].includes(invitation.state)">{{ $t(`upgrade.state_hint.${invitation.state}`) }}</template>
                         </p>
                     </div>
                 </div>
@@ -118,11 +125,11 @@ const features = (plan) => [
                     </svg>
                 </div>
                 <div class="space-y-1">
-                    <h2 class="text-sm font-bold text-red-950">Payment Verification Notice · ការទូទាត់មិនត្រូវបានអនុម័ត</h2>
+                    <h2 class="text-sm font-bold text-red-950">{{ $t('upgrade.rejected_title') }}</h2>
                     <p class="text-sm font-medium text-red-800">
-                        Payment <strong class="font-mono text-red-950">{{ rejected.reference }}</strong> was not approved: {{ rejected.note }}
+                        <strong class="font-mono text-red-950">{{ rejected.reference }}</strong> — {{ rejected.note }}
                     </p>
-                    <p class="text-xs text-red-700 font-kantumruy" lang="km">សូមពិនិត្យមើលរូបថតផ្ទេរប្រាក់ និងលេខយោងឡើងវិញ ឬទំនាក់ទំនងមកយើងខ្ញុំដើម្បីជួយសម្រួល។</p>
+                    <p class="text-xs text-red-700 font-kantumruy">{{ $t('upgrade.rejected_hint') }}</p>
                 </div>
             </div>
 
@@ -130,18 +137,18 @@ const features = (plan) => [
             <div v-if="pending" class="card p-6 grid gap-5">
                 <div class="border-b border-stone-100 pb-3 flex items-center justify-between">
                     <div>
-                        <h2 class="text-lg font-bold text-stone-900">Pay {{ pending.amount }} for {{ pending.plan }}</h2>
-                        <p class="text-xs text-stone-500 font-kantumruy" lang="km">ស្កេនទូទាត់តាម KHQR និងផ្ញើរូបភាពវិក្កយបត្រផ្ទេរប្រាក់</p>
+                        <h2 class="text-lg font-bold text-stone-900">{{ $t('upgrade.pay', { amount: pending.amount, plan: pending.plan }) }}</h2>
+                        <p class="text-xs text-stone-500 font-kantumruy">{{ $t('upgrade.pay_hint') }}</p>
                     </div>
                     <span class="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-bold text-amber-900">
-                        Pending verification
+                        {{ $t('upgrade.pending') }}
                     </span>
                 </div>
 
                 <!-- Reference Code Card (Large, easy to read, tap-to-copy) -->
                 <div class="rounded-xl border border-amber-300/80 bg-gradient-to-r from-amber-50/70 via-stone-50 to-amber-50/40 p-4">
                     <span class="text-xs font-semibold uppercase tracking-wider text-amber-900 block mb-1">
-                        Transfer Reference / Remark (លេខយោងសម្គាល់)
+                        {{ $t('upgrade.reference') }}
                     </span>
                     <div class="flex items-center justify-between gap-3">
                         <strong class="font-mono text-xl sm:text-2xl font-black text-amber-950 tracking-wider select-all">
@@ -150,17 +157,17 @@ const features = (plan) => [
                         <button
                             type="button"
                             class="inline-flex min-h-[44px] items-center gap-1.5 rounded-lg border border-amber-300 bg-white px-3 py-1.5 text-xs font-semibold text-amber-900 shadow-xs hover:bg-amber-50 transition-colors cursor-pointer"
-                            @click="navigator.clipboard?.writeText(pending.reference)"
+                            @click="copyReference"
                         >
                             <svg class="size-3.5 text-amber-700" viewBox="0 0 20 20" fill="currentColor">
                                 <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
                                 <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 2H9a3 3 0 01-3-2z" />
                             </svg>
-                            <span>Copy</span>
+                            <span>{{ copied ? $t('common.copied') : $t('common.copy') }}</span>
                         </button>
                     </div>
-                    <p class="text-[11px] text-amber-900/80 mt-1.5 font-kantumruy" lang="km">
-                        * សូមបញ្ចូលលេខយោងនេះក្នុងប្រអប់ចំណាំ (Remark / Note) ពេលផ្ទេរប្រាក់តាមកម្មវិធីធនាគារ។
+                    <p class="text-[11px] text-amber-900/80 mt-1.5 font-kantumruy">
+                        * {{ $t('upgrade.reference_hint') }}
                     </p>
                 </div>
 
@@ -168,7 +175,7 @@ const features = (plan) => [
                 <div class="flex flex-col sm:flex-row items-center gap-6 rounded-xl border border-stone-200 bg-stone-50/50 p-5">
                     <div class="w-56 shrink-0 rounded-xl overflow-hidden border border-amber-300/80 bg-white p-3 shadow-xs">
                         <img v-if="khqr?.[pending.currency]" :src="khqr[pending.currency]" :alt="`KHQR ${pending.currency}`" class="w-full aspect-square object-contain" />
-                        <p v-else class="text-xs text-stone-600 text-center py-6">The {{ pending.currency }} KHQR isn't set up yet; contact us to pay.</p>
+                        <p v-else class="text-xs text-stone-600 text-center py-6">{{ $t('upgrade.no_khqr', { currency: pending.currency }) }}</p>
                         <div class="mt-2 text-center">
                             <span class="inline-flex items-center gap-1 text-[10px] font-bold text-red-700 uppercase tracking-widest bg-red-50 border border-red-200 px-2 py-0.5 rounded">
                                 Bakong KHQR
@@ -181,9 +188,9 @@ const features = (plan) => [
                             {{ instructions }}
                         </p>
                         <div class="space-y-1 text-stone-500">
-                            <p>1. បើកកម្មវិធីធនាគារណាមួយ (ABA, ACLEDA, Wing, Canadia, etc.)</p>
-                            <p>2. ស្កេន QR Code ខាងលើ និងផ្ទេរចំនួន <strong class="text-stone-900">{{ pending.amount }}</strong></p>
-                            <p>3. ថតរូបអេក្រង់នៃការផ្ទេរប្រាក់ រួចបង្ហោះក្នុងប្រអប់ខាងក្រោម</p>
+                            <p>1. {{ $t('upgrade.step1') }}</p>
+                            <p>2. {{ $t('upgrade.step2') }} <strong class="text-stone-900">{{ pending.amount }}</strong></p>
+                            <p>3. {{ $t('upgrade.step3') }}</p>
                         </div>
                     </div>
                 </div>
@@ -195,7 +202,7 @@ const features = (plan) => [
                             <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd" />
                         </svg>
                         <span class="text-sm font-semibold text-stone-900">
-                            {{ pending.has_proof ? 'Proof received ✓ — we will review it soon. You can replace it:' : 'Upload the transfer screenshot · ផ្ញើរូបថតអេក្រង់' }}
+                            {{ pending.has_proof ? $t('upgrade.proof_received') : $t('upgrade.upload_proof') }}
                         </span>
                     </div>
 
@@ -214,7 +221,7 @@ const features = (plan) => [
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"></circle>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
-                        <span>Uploading transfer screenshot…</span>
+                        <span>{{ $t('common.uploading') }}</span>
                     </p>
                     <p v-if="proofError" class="text-xs font-medium text-red-600 flex items-center gap-1.5 bg-red-50 border border-red-200 rounded-lg p-2.5">
                         <svg class="size-4 text-red-500 shrink-0" viewBox="0 0 20 20" fill="currentColor">
@@ -231,7 +238,7 @@ const features = (plan) => [
                         class="min-h-[44px] text-xs font-semibold text-red-700 hover:text-red-900 underline cursor-pointer"
                         @click="cancel"
                     >
-                        Cancel and choose another plan
+                        {{ $t('upgrade.cancel') }}
                     </button>
                 </div>
             </div>
@@ -240,13 +247,13 @@ const features = (plan) => [
             <form v-else-if="plans.length" class="card p-6 grid gap-5" @submit.prevent="choose">
                 <div class="border-b border-stone-100 pb-3 flex items-center justify-between">
                     <div>
-                        <h2 class="text-base font-bold text-stone-900">Choose Plan · ជ្រើសរើសកញ្ចប់សំបុត្រ</h2>
-                        <p class="text-xs text-stone-500 font-kantumruy" lang="km">ជ្រើសរើសកញ្ចប់ដែលសមស្របសម្រាប់ពិធីមង្គលការរបស់អ្នក</p>
+                        <h2 class="text-base font-bold text-stone-900">{{ $t('upgrade.choose') }}</h2>
+                        <p class="text-xs text-stone-500 font-kantumruy">{{ $t('upgrade.choose_hint') }}</p>
                     </div>
                 </div>
 
                 <fieldset class="grid gap-3">
-                    <legend class="sr-only">Plan · កញ្ចប់</legend>
+                    <legend class="sr-only">{{ $t('upgrade.choose') }}</legend>
 
                     <label
                         v-for="plan in plans"
@@ -271,14 +278,14 @@ const features = (plan) => [
                             <span class="text-xs text-stone-600 leading-relaxed">{{ features(plan).join(' · ') }}</span>
 
                             <span v-if="plan.beyond.length" class="text-xs text-amber-900 bg-amber-100/70 border border-amber-200/80 rounded-lg p-2.5 mt-1 leading-relaxed">
-                                <strong>Not shown on {{ plan.name }}:</strong> {{ plan.beyond.join(', ') }}. They stay saved and come back if you upgrade later.
+                                <strong>{{ $t('upgrade.beyond', { plan: plan.name }) }}</strong> {{ plan.beyond.join(', ') }}. {{ $t('upgrade.beyond_hint') }}
                             </span>
                         </span>
                     </label>
                 </fieldset>
 
                 <!-- Currency Selector -->
-                <Field label="Currency · រូបិយប័ណ្ណ" :error="form.errors.currency">
+                <Field :label="$t('upgrade.currency')" :error="form.errors.currency">
                     <select v-model="form.currency" class="input font-semibold min-h-[44px]">
                         <option value="USD">USD ($)</option>
                         <option value="KHR">KHR (៛)</option>
@@ -293,7 +300,7 @@ const features = (plan) => [
                         class="btn-primary min-h-[44px] w-full sm:w-auto"
                         :disabled="form.processing || !chosen"
                     >
-                        <span>Continue to pay {{ chosen?.prices[form.currency] }}</span>
+                        <span>{{ $t('upgrade.continue', { price: chosen?.prices[form.currency] }) }}</span>
                     </button>
                 </div>
             </form>
@@ -305,8 +312,7 @@ const features = (plan) => [
                         <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                     </svg>
                 </div>
-                <h2 class="text-base font-bold text-stone-900">You're on the top plan. Thank you!</h2>
-                <p class="text-xs text-stone-600 mt-1 font-kantumruy" lang="km">គណនីរបស់អ្នកស្ថិតនៅលើកញ្ចប់ខ្ពស់បំផុតរួចរាល់ហើយ។ សូមអរគុណ!</p>
+                <h2 class="text-base font-bold text-stone-900">{{ $t('upgrade.top_plan') }}</h2>
             </div>
         </div>
     </AppLayout>

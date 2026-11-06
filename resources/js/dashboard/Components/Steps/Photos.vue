@@ -3,6 +3,7 @@ import { computed, inject, ref } from 'vue';
 import { router, useForm } from '@inertiajs/vue3';
 import Field from '../Field.vue';
 import { MAX_IMAGE_MB, MAX_MUSIC_MB, upload, useAutosave } from '../../autosave.js';
+import { t } from '../../i18n.js';
 
 // Plain, functional markup; styling is left to the design pass.
 const props = defineProps({ invitation: Object, presets: Array, themes: Array, lunarDate: String });
@@ -26,7 +27,7 @@ async function send(kind, fileList, input) {
     // One request per file, in order, so a failure stops the rest with its message.
     for (const file of files) {
         if (file.size > maxMb * 1024 * 1024) {
-            errors.value[kind] = `${file.name}: larger than ${maxMb} MB`;
+            errors.value[kind] = `${file.name}: ${t('common.too_large', { mb: maxMb })}`;
             break;
         }
         const failed = await upload(`${base}/media`, { kind, file });
@@ -66,8 +67,8 @@ function move(index, by) {
                     </svg>
                 </div>
                 <div>
-                    <h2 class="text-base font-bold text-stone-900">Photos & Music · រូបភាព និងតន្ត្រី</h2>
-                    <p class="text-xs text-stone-600 font-kantumruy" lang="km">រូបថតគម្រប វិចិត្រសាលអនុស្សាវរីយ៍ តន្ត្រីភ្លេងការ និងវីដេអូមង្គលការ។</p>
+                    <h2 class="text-base font-bold text-stone-900">{{ $t('editor.steps.photos') }}</h2>
+                    <p class="text-xs text-stone-600 font-kantumruy">{{ $t('photos.intro') }}</p>
                 </div>
             </div>
         </div>
@@ -76,10 +77,10 @@ function move(index, by) {
         <div class="card p-6 grid gap-4">
             <div class="border-b border-stone-100 pb-3 flex items-center justify-between">
                 <div>
-                    <h2 class="text-base font-bold text-stone-900">Cover photo · រូបភាពគម្រប</h2>
-                    <p class="text-xs text-stone-500 font-kantumruy" lang="km">រូបថតចម្បងដែលបង្ហាញលើស្រោមសំបុត្រ និងទំព័រមុខនៃសំបុត្រ (Up to {{ MAX_IMAGE_MB }} MB)</p>
+                    <h2 class="text-base font-bold text-stone-900">{{ $t('photos.cover') }}</h2>
+                    <p class="text-xs text-stone-500 font-kantumruy">{{ $t('photos.cover_hint', { mb: MAX_IMAGE_MB }) }}</p>
                 </div>
-                <span class="text-[10px] font-bold text-amber-800 bg-amber-100/70 px-2 py-0.5 rounded-full">Primary</span>
+                <span class="text-[10px] font-bold text-amber-800 bg-amber-100/70 px-2 py-0.5 rounded-full">{{ $t('photos.primary') }}</span>
             </div>
 
             <!-- Preview States -->
@@ -94,7 +95,7 @@ function move(index, by) {
                         <svg class="size-3.5" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
                         </svg>
-                        <span>Remove</span>
+                        <span>{{ $t('common.remove') }}</span>
                     </button>
                 </div>
             </div>
@@ -104,8 +105,7 @@ function move(index, by) {
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                <span class="text-xs font-semibold text-amber-900 font-kantumruy" lang="km">កំពុងដំណើរការរូបភាព…</span>
-                <span class="text-[11px] text-stone-500">Processing…</span>
+                <span class="text-xs font-semibold text-amber-900 font-kantumruy">{{ $t('common.processing') }}</span>
             </div>
 
             <!-- Upload Controls -->
@@ -126,7 +126,7 @@ function move(index, by) {
                     <svg class="size-3.5" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
                     </svg>
-                    <span>Remove</span>
+                    <span>{{ $t('common.remove') }}</span>
                 </button>
             </div>
 
@@ -135,7 +135,7 @@ function move(index, by) {
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                <span>Uploading…</span>
+                <span>{{ $t('common.uploading') }}</span>
             </p>
             <p v-if="errors.cover" class="text-xs font-medium text-red-600 flex items-center gap-1.5 bg-red-50 border border-red-200/80 rounded-lg p-2.5">
                 <svg class="size-4 shrink-0 text-red-500" viewBox="0 0 20 20" fill="currentColor">
@@ -149,11 +149,11 @@ function move(index, by) {
         <div class="card p-6 grid gap-4">
             <div class="border-b border-stone-100 pb-3 flex items-center justify-between">
                 <div>
-                    <h2 class="text-base font-bold text-stone-900">Gallery · វិចិត្រសាលរូបភាព ({{ media.gallery.length }})</h2>
-                    <p class="text-xs text-stone-500 font-kantumruy" lang="km">រូបថតអនុស្សាវរីយ៍សម្រាប់បង្ហាញក្នុងសំបុត្រ (Up to {{ MAX_IMAGE_MB }} MB/photo)</p>
+                    <h2 class="text-base font-bold text-stone-900">{{ $t('photos.gallery') }}</h2>
+                    <p class="text-xs text-stone-500 font-kantumruy">{{ $t('photos.gallery_hint', { mb: MAX_IMAGE_MB }) }}</p>
                 </div>
                 <span class="inline-flex items-center rounded-full bg-stone-100 px-2.5 py-0.5 text-xs font-bold text-stone-700">
-                    {{ media.gallery.length }} photos
+                    {{ $t('photos.count', { count: media.gallery.length }) }}
                 </span>
             </div>
 
@@ -167,7 +167,7 @@ function move(index, by) {
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"></circle>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
-                            <span class="text-[11px] font-medium text-amber-900">Processing…</span>
+                            <span class="text-[11px] font-medium text-amber-900">{{ $t('common.processing') }}</span>
                         </div>
                         <span class="absolute top-2 left-2 flex size-5 items-center justify-center rounded-full bg-stone-900/75 text-[10px] font-bold text-white shadow-xs backdrop-blur-xs">
                             {{ i + 1 }}
@@ -182,8 +182,8 @@ function move(index, by) {
                                 :disabled="i === 0"
                                 class="flex size-7 items-center justify-center rounded-md border border-stone-200 bg-white text-stone-700 hover:bg-stone-100 hover:text-stone-900 disabled:opacity-25 disabled:cursor-not-allowed transition-colors"
                                 @click="move(i, -1)"
-                                aria-label="Move earlier"
-                                title="Move earlier"
+                                :aria-label="$t('common.move_up')"
+                                :title="$t('common.move_up')"
                             >
                                 <svg class="size-3.5" viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
@@ -194,8 +194,8 @@ function move(index, by) {
                                 :disabled="i === media.gallery.length - 1"
                                 class="flex size-7 items-center justify-center rounded-md border border-stone-200 bg-white text-stone-700 hover:bg-stone-100 hover:text-stone-900 disabled:opacity-25 disabled:cursor-not-allowed transition-colors"
                                 @click="move(i, 1)"
-                                aria-label="Move later"
-                                title="Move later"
+                                :aria-label="$t('common.move_down')"
+                                :title="$t('common.move_down')"
                             >
                                 <svg class="size-3.5" viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
@@ -207,7 +207,7 @@ function move(index, by) {
                             class="text-xs font-semibold text-red-700 hover:text-red-900 hover:bg-red-50 rounded px-1.5 py-1 transition-colors cursor-pointer underline"
                             @click="remove(photo)"
                         >
-                            Remove
+                            {{ $t('common.remove') }}
                         </button>
                     </div>
                 </li>
@@ -230,7 +230,7 @@ function move(index, by) {
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                <span>Uploading…</span>
+                <span>{{ $t('common.uploading') }}</span>
             </p>
             <p v-if="errors.gallery" class="text-xs font-medium text-red-600 flex items-center gap-1.5 bg-red-50 border border-red-200/80 rounded-lg p-2.5">
                 <svg class="size-4 shrink-0 text-red-500" viewBox="0 0 20 20" fill="currentColor">
@@ -244,8 +244,8 @@ function move(index, by) {
         <div class="card p-6 grid gap-4">
             <div class="border-b border-stone-100 pb-3 flex items-center justify-between">
                 <div>
-                    <h2 class="text-base font-bold text-stone-900">Music · តន្ត្រី (MP3, up to {{ MAX_MUSIC_MB }} MB)</h2>
-                    <p class="text-xs text-stone-500 font-kantumruy" lang="km">បទភ្លេងការប្រពៃណី ឬបទចម្រៀងផ្ទៃខាងក្រោយ (MP3, up to {{ MAX_MUSIC_MB }} MB)</p>
+                    <h2 class="text-base font-bold text-stone-900">{{ $t('photos.music') }}</h2>
+                    <p class="text-xs text-stone-500 font-kantumruy">{{ $t('photos.music_hint', { mb: MAX_MUSIC_MB }) }}</p>
                 </div>
                 <div class="flex size-7 items-center justify-center rounded-lg bg-amber-100 text-amber-800">
                     <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -267,8 +267,7 @@ function move(index, by) {
                         </svg>
                     </div>
                     <div>
-                        <p class="text-xs font-bold text-stone-900">Custom Audio Track Active</p>
-                        <p class="text-[11px] text-stone-500 font-kantumruy" lang="km">បទភ្លេងត្រូវបានកំណត់ជោគជ័យ</p>
+                        <p class="text-xs font-bold text-stone-900">{{ $t('photos.music_set') }}</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-3 w-full sm:w-auto">
@@ -281,7 +280,7 @@ function move(index, by) {
                         <svg class="size-3.5" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
                         </svg>
-                        <span>Remove</span>
+                        <span>{{ $t('common.remove') }}</span>
                     </button>
                 </div>
             </div>
@@ -303,7 +302,7 @@ function move(index, by) {
                     <svg class="size-3.5" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
                     </svg>
-                    <span>Remove</span>
+                    <span>{{ $t('common.remove') }}</span>
                 </button>
             </div>
 
@@ -312,7 +311,7 @@ function move(index, by) {
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                <span>Uploading…</span>
+                <span>{{ $t('common.uploading') }}</span>
             </p>
             <p v-if="errors.music" class="text-xs font-medium text-red-600 flex items-center gap-1.5 bg-red-50 border border-red-200/80 rounded-lg p-2.5">
                 <svg class="size-4 shrink-0 text-red-500" viewBox="0 0 20 20" fill="currentColor">
@@ -326,8 +325,8 @@ function move(index, by) {
         <div class="card p-6">
             <div class="mb-4 border-b border-stone-100 pb-3 flex items-center justify-between">
                 <div>
-                    <h2 class="text-base font-bold text-stone-900">Highlights Video · វីដេអូអនុស្សាវរីយ៍</h2>
-                    <p class="text-xs text-stone-500 font-kantumruy" lang="km">តំណភ្ជាប់វីដេអូ YouTube សម្រាប់ចាក់ក្នុងសំបុត្រ (ឧទាហរណ៍៖ Pre-wedding ឬ Wedding Highlights)</p>
+                    <h2 class="text-base font-bold text-stone-900">{{ $t('photos.video') }}</h2>
+                    <p class="text-xs text-stone-500 font-kantumruy">{{ $t('photos.video_hint') }}</p>
                 </div>
                 <div class="flex size-7 items-center justify-center rounded-lg bg-red-100 text-red-700">
                     <svg class="size-4" viewBox="0 0 24 24" fill="currentColor">
@@ -335,7 +334,7 @@ function move(index, by) {
                     </svg>
                 </div>
             </div>
-            <Field label="YouTube video link (វីដេអូ)" :error="form.errors.video_url">
+            <Field :label="$t('photos.video_link')" :error="form.errors.video_url">
                 <input v-model="form.video_url" type="url" class="input font-mono text-sm" placeholder="https://youtu.be/…" />
             </Field>
         </div>

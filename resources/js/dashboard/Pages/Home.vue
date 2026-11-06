@@ -5,11 +5,11 @@ import AppLayout from '../Layouts/AppLayout.vue';
 defineProps({ invitations: Array });
 
 const stateBadges = {
-    trial: { label: 'Free Trial · សាកល្បង', class: 'bg-rose-50 text-rose-800 border-rose-200/70' },
-    live: { label: 'Live · ផ្សាយផ្ទាល់', class: 'bg-emerald-50 text-emerald-800 border-emerald-200/70' },
-    paused: { label: 'Paused · បានផ្អាក', class: 'bg-amber-50 text-amber-800 border-amber-200/70' },
-    ended: { label: 'Ended · បានបញ្ចប់', class: 'bg-stone-100 text-stone-600 border-stone-200' },
-    suspended: { label: 'Suspended · ផ្អាកបណ្តោះអាសន្ន', class: 'bg-red-50 text-red-800 border-red-200' },
+    trial: 'bg-rose-50 text-rose-800 border-rose-200/70',
+    live: 'bg-emerald-50 text-emerald-800 border-emerald-200/70',
+    paused: 'bg-amber-50 text-amber-800 border-amber-200/70',
+    ended: 'bg-stone-100 text-stone-600 border-stone-200',
+    suspended: 'bg-red-50 text-red-800 border-red-200',
 };
 </script>
 
@@ -18,8 +18,8 @@ const stateBadges = {
         <!-- Page Header -->
         <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-stone-200/70 pb-6">
             <div>
-                <h1 class="text-2xl font-bold tracking-tight text-stone-900 sm:text-3xl">My invitations</h1>
-                <p class="mt-1 text-sm text-stone-700 font-kantumruy" lang="km">គ្រប់គ្រង និងកែសម្រួលសំបុត្រអាពាហ៍ពិពាហ៍អេឡិចត្រូនិករបស់អ្នក</p>
+                <h1 class="text-2xl font-bold tracking-tight text-stone-900 sm:text-3xl">{{ $t('home.title') }}</h1>
+                <p class="mt-1 text-sm text-stone-700 font-kantumruy">{{ $t('home.subtitle') }}</p>
             </div>
             <Link
                 href="/app/invitations/create"
@@ -28,7 +28,7 @@ const stateBadges = {
                 <svg class="size-4 text-amber-200" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
                 </svg>
-                <span>New invitation · បង្កើតសំបុត្រថ្មី</span>
+                <span>{{ $t('home.new') }}</span>
             </Link>
         </div>
 
@@ -42,11 +42,11 @@ const stateBadges = {
                     <circle cx="12" cy="18" r="1.5" fill="currentColor" />
                 </svg>
             </div>
-            <h2 class="mt-4 text-lg font-semibold text-stone-900">No invitations yet</h2>
-            <p class="mt-1 text-sm text-stone-600 max-w-sm mx-auto font-kantumruy" lang="km">មិនទាន់មានសំបុត្រអញ្ជើញនៅឡើយទេ។ ចាប់ផ្តើមបង្កើតសំបុត្រដំបូងរបស់អ្នក ដើម្បីមើលជាមុនដោយឥតគិតថ្លៃ។</p>
+            <h2 class="mt-4 text-lg font-semibold text-stone-900">{{ $t('home.empty_title') }}</h2>
+            <p class="mt-1 text-sm text-stone-600 max-w-sm mx-auto font-kantumruy">{{ $t('home.empty_text') }}</p>
             <div class="mt-6">
                 <Link href="/app/invitations/create" class="btn-primary">
-                    Create your first invitation
+                    {{ $t('home.create_first') }}
                 </Link>
             </div>
         </div>
@@ -63,9 +63,9 @@ const stateBadges = {
                     <div class="flex items-center justify-between gap-2">
                         <span
                             class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold border"
-                            :class="stateBadges[invitation.state]?.class ?? 'bg-stone-100 text-stone-600 border-stone-200'"
+                            :class="stateBadges[invitation.state] ?? 'bg-stone-100 text-stone-600 border-stone-200'"
                         >
-                            {{ stateBadges[invitation.state]?.label ?? invitation.state }}
+                            {{ $t(`states.${invitation.state}`) }}
                         </span>
 
                         <span class="text-xs font-mono font-medium text-stone-600">/{{ invitation.slug }}</span>
@@ -91,7 +91,7 @@ const stateBadges = {
                         :href="`/app/invitations/${invitation.id}/edit`"
                         class="btn-primary w-full text-center text-xs py-2"
                     >
-                        Edit · កែសម្រួល
+                        {{ $t('common.edit') }}
                     </Link>
                 </div>
             </div>
