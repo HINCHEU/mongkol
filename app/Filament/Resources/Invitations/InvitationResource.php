@@ -26,9 +26,9 @@ class InvitationResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedEnvelope;
 
-    protected static UnitEnum|string|null $navigationGroup = 'Ceremonies · មង្គលការ';
+    protected static UnitEnum|string|null $navigationGroup = 'Ceremonies';
 
-    protected static ?string $navigationLabel = 'Invitations · សំបុត្រការ';
+    protected static ?string $navigationLabel = 'Invitations';
 
     protected static ?int $navigationSort = 1;
 

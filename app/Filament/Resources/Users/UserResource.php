@@ -20,9 +20,9 @@ class UserResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUsers;
 
-    protected static UnitEnum|string|null $navigationGroup = 'Administration · ការគ្រប់គ្រង';
+    protected static UnitEnum|string|null $navigationGroup = 'Administration';
 
-    protected static ?string $navigationLabel = 'Users · អ្នកប្រើប្រាស់';
+    protected static ?string $navigationLabel = 'Users';
 
     protected static ?int $navigationSort = 20;
 

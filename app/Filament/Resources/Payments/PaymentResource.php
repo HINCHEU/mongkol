@@ -24,9 +24,9 @@ class PaymentResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBanknotes;
 
-    protected static UnitEnum|string|null $navigationGroup = 'Ceremonies · មង្គលការ';
+    protected static UnitEnum|string|null $navigationGroup = 'Ceremonies';
 
-    protected static ?string $navigationLabel = 'Payments · ការទូទាត់';
+    protected static ?string $navigationLabel = 'Payments';
 
     protected static ?int $navigationSort = 2;
 

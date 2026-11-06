@@ -15,17 +15,17 @@
             </div>
             <div>
                 <div style="display: flex; align-items: center; gap: 8px;">
-                    <span style="font-family: 'Plus Jakarta Sans', system-ui, sans-serif; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: #8C6D23;">រាជរោងមង្គល · Royal Atelier</span>
+                    <span style="font-family: 'Plus Jakarta Sans', system-ui, sans-serif; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #8C6D23;">Royal Wedding Atelier</span>
                     <span style="display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 9999px; font-size: 10px; font-weight: 600; background-color: #F0FDF4; color: #166534; border: 1px solid #BBF7D0;">
                         <span style="width: 6px; height: 6px; border-radius: 50%; background-color: #22C55E;"></span>
-                        Live Operations
+                        Live
                     </span>
                 </div>
                 <h2 style="font-family: 'Playfair Display', Georgia, serif; font-size: 22px; font-weight: 700; color: #1A1412; margin: 2px 0 0 0; letter-spacing: -0.01em;">
                     Welcome back, {{ $user?->name ?? 'Admin' }}
                 </h2>
-                <p style="font-family: 'Kantumruy Pro', system-ui, sans-serif; font-size: 12px; color: #78716C; margin: 2px 0 0 0;">
-                    Phnom Penh Time: <span style="font-weight: 600; color: #44403C;">{{ $phnomPenhTime }}</span>
+                <p style="font-family: 'Plus Jakarta Sans', 'Kantumruy Pro', sans-serif; font-size: 12px; color: #78716C; margin: 2px 0 0 0;">
+                    Phnom Penh: <span style="font-weight: 600; color: #44403C;">{{ $phnomPenhTime }}</span>
                 </p>
             </div>
         </div>

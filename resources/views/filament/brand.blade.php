@@ -15,11 +15,11 @@
 
     <!-- Atelier Typography -->
     <div style="display: flex; flex-direction: column; justify-content: center; line-height: 1.15; white-space: nowrap;">
-        <div style="display: flex; align-items: baseline; gap: 5px;">
-            <span style="font-family: 'Playfair Display', Georgia, serif; font-size: 17px; font-weight: 700; color: #1A1412; letter-spacing: -0.01em;">Mongkol</span>
-            <span style="font-family: 'Kantumruy Pro', system-ui, sans-serif; font-size: 14px; font-weight: 700; color: #7B1122;">មង្គល</span>
+        <div style="display: flex; align-items: baseline; gap: 6px;">
+            <span style="font-family: 'Playfair Display', Georgia, serif; font-size: 18px; font-weight: 700; color: #1A1412; letter-spacing: -0.01em;">Mongkol</span>
+            <span style="font-family: 'Kantumruy Pro', sans-serif; font-size: 15px; font-weight: 600; color: #7B1122; letter-spacing: 0;">មង្គល</span>
         </div>
-        <div style="font-family: 'Plus Jakarta Sans', system-ui, sans-serif; font-size: 8.5px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #8C6D23; margin-top: 2px;">
+        <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 8.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #8C6D23; margin-top: 2px;">
             Royal Wedding Atelier
         </div>
     </div>

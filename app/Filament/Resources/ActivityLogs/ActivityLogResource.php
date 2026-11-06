@@ -19,9 +19,9 @@ class ActivityLogResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentList;
 
-    protected static UnitEnum|string|null $navigationGroup = 'Administration · ការគ្រប់គ្រង';
+    protected static UnitEnum|string|null $navigationGroup = 'Administration';
 
-    protected static ?string $navigationLabel = 'Activity Log · កំណត់ហេតុ';
+    protected static ?string $navigationLabel = 'Activity Log';
 
     protected static ?int $navigationSort = 21;
 

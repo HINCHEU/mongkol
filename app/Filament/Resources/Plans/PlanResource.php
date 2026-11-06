@@ -27,16 +27,16 @@ class PlanResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
-    protected static UnitEnum|string|null $navigationGroup = 'Catalog · កាតាឡុក';
+    protected static UnitEnum|string|null $navigationGroup = 'Catalog';
 
-    protected static ?string $navigationLabel = 'Plans · គម្រោងតម្លៃ';
+    protected static ?string $navigationLabel = 'Plans';
 
     protected static ?int $navigationSort = 10;
 
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            Section::make('Plan Pricing & Limits · តម្លៃនិងកម្រិតកំណត់')->columns(2)->schema([
+            Section::make('Pricing & Limits')->columns(2)->schema([
                 TextInput::make('name')->required()->maxLength(50),
                 Toggle::make('is_active')->helperText('Inactive plans are not offered on the upgrade page.'),
                 TextInput::make('price_usd_cents')->label('Price (US cents)')->helperText('2900 = $29.00')->numeric()->integer()->minValue(0)->required(),
@@ -44,7 +44,7 @@ class PlanResource extends Resource
                 TextInput::make('max_guests')->label('Personal links')->numeric()->integer()->minValue(1)->helperText('Empty = unlimited'),
                 TextInput::make('live_days_after_wedding')->numeric()->integer()->minValue(0)->required(),
             ]),
-            Section::make('Features & Entitlements · សិទ្ធិប្រើប្រាស់')->columns(2)->schema([
+            Section::make('Features & Entitlements')->columns(2)->schema([
                 TextInput::make('features.gallery_photos')->label('Gallery photos')->numeric()->integer()->minValue(0)->required(),
                 Toggle::make('features.own_music')->label('Own music upload'),
                 Toggle::make('features.video')->label('YouTube video'),

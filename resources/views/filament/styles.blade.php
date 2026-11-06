@@ -1,24 +1,27 @@
 <!-- Morodok Snaeha Atelier Design System for Filament Admin -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;600;700&family=Moul&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,400..700;1,400..700&family=Moul&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Plus+Jakarta+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
 
 <style>
     /* ==========================================================================
-       1. Base Typography & Khmer Typesetting
+       1. Base Typography & Authentic Khmer Typesetting
        ========================================================================== */
     :root {
         color-scheme: light !important;
     }
 
-    body, .fi-body, .fi-main {
-        font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
+    /* All UI, body, buttons and form controls: Latin in Jakarta, Khmer in Kantumruy Pro */
+    body, .fi-body, .fi-main, .fi-sidebar, .fi-topbar, .fi-section, .fi-ta-ctn,
+    .fi-input, .fi-select-input, .fi-textarea, .fi-btn, .fi-badge {
+        font-family: 'Plus Jakarta Sans', 'Kantumruy Pro', system-ui, -apple-system, sans-serif !important;
         background-color: #FAF6EE !important;
         color: #1A1412 !important;
     }
 
-    h1, h2, h3, .fi-header-heading {
-        font-family: 'Playfair Display', Georgia, serif !important;
+    /* Headings: Latin in Playfair Display, Khmer in Kantumruy Pro */
+    h1, h2, h3, .fi-header-heading, .fi-section-header-heading {
+        font-family: 'Playfair Display', 'Kantumruy Pro', Georgia, serif !important;
         letter-spacing: -0.01em !important;
         color: #1A1412 !important;
     }
@@ -27,11 +30,11 @@
     :lang(km), [lang="km"], .km-text, .font-khmer {
         font-family: 'Kantumruy Pro', system-ui, sans-serif !important;
         letter-spacing: 0 !important;
-        line-height: 1.65 !important;
+        line-height: 1.6 !important;
     }
 
     .font-moul {
-        font-family: 'Moul', serif !important;
+        font-family: 'Moul', cursive, serif !important;
         letter-spacing: 0 !important;
     }
 
@@ -61,7 +64,7 @@
 
     .fi-sidebar-group-label {
         font-size: 0.68rem !important;
-        letter-spacing: 0.12em !important;
+        letter-spacing: 0.06em !important;
         text-transform: uppercase !important;
         color: #8C6D23 !important;
         font-weight: 700 !important;
@@ -139,7 +142,7 @@
         color: #574141 !important;
         font-size: 0.73rem !important;
         font-weight: 600 !important;
-        letter-spacing: 0.06em !important;
+        letter-spacing: 0.04em !important;
         text-transform: uppercase !important;
         border-bottom: 1px solid rgba(197, 160, 89, 0.3) !important;
         padding-top: 0.85rem !important;
@@ -174,7 +177,6 @@
 
     .fi-badge {
         font-weight: 600 !important;
-        letter-spacing: 0.02em !important;
         border-radius: 9999px !important;
         padding-left: 0.65rem !important;
         padding-right: 0.65rem !important;
@@ -187,6 +189,7 @@
         border-radius: 0.5rem !important;
         border-color: rgba(197, 160, 89, 0.45) !important;
         background-color: #FFFFFF !important;
+        line-height: 1.6 !important;
         transition: all 0.15s ease-in-out !important;
     }
 

@@ -24,9 +24,9 @@ class EventPresetResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedListBullet;
 
-    protected static UnitEnum|string|null $navigationGroup = 'Catalog · កាតាឡុក';
+    protected static UnitEnum|string|null $navigationGroup = 'Catalog';
 
-    protected static ?string $navigationLabel = 'Event Presets · កម្មវិធីពិធី';
+    protected static ?string $navigationLabel = 'Event Presets';
 
     protected static ?int $navigationSort = 12;
 

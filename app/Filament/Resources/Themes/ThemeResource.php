@@ -26,9 +26,9 @@ class ThemeResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedSwatch;
 
-    protected static UnitEnum|string|null $navigationGroup = 'Catalog · កាតាឡុក';
+    protected static UnitEnum|string|null $navigationGroup = 'Catalog';
 
-    protected static ?string $navigationLabel = 'Themes · គំរូធៀបការ';
+    protected static ?string $navigationLabel = 'Themes';
 
     protected static ?int $navigationSort = 11;
 
