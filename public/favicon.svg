@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+    <defs>
+        <linearGradient id="bg-crimson" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#831225"/>
+            <stop offset="50%" stop-color="#7B1122"/>
+            <stop offset="100%" stop-color="#4C0A13"/>
+        </linearGradient>
+        <linearGradient id="gold-stroke" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#FFE49E" stop-opacity="0.8"/>
+            <stop offset="50%" stop-color="#D4AF37" stop-opacity="0.5"/>
+            <stop offset="100%" stop-color="#8C6D23" stop-opacity="0.7"/>
+        </linearGradient>
+        <linearGradient id="emblem-gold" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#FFF2C6"/>
+            <stop offset="50%" stop-color="#F5DE93"/>
+            <stop offset="100%" stop-color="#D4AF37"/>
+        </linearGradient>
+        <filter id="subtle-shadow" x="-10%" y="-10%" width="120%" height="120%">
+            <feDropShadow dx="0" dy="1" stdDeviation="1.5" flood-color="#000000" flood-opacity="0.35"/>
+        </filter>
+    </defs>
+
+    <!-- Squircle Royal Background -->
+    <rect x="2" y="2" width="60" height="60" rx="14" ry="14" fill="url(#bg-crimson)" stroke="url(#gold-stroke)" stroke-width="1.5" />
+
+    <!-- Golden Lotus Emblem -->
+    <g transform="translate(32, 32) scale(1.75) translate(-12, -12)" filter="url(#subtle-shadow)">
+        <!-- Center Petal Fill -->
+        <path d="M12 3c-2.5 3.5-3 8 0 13c3-5 2.5-9.5 0-13Z" fill="url(#emblem-gold)" fill-opacity="0.3" stroke="url(#emblem-gold)" stroke-width="1.6" stroke-linejoin="round" />
+        
+        <!-- Left Flourish Petal -->
+        <path d="M12 16c-4.5-.5-8-3.5-9-8c4 .5 7 2.5 9 6" fill="none" stroke="url(#emblem-gold)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+        
+        <!-- Right Flourish Petal -->
+        <path d="M12 16c4.5-.5 8-3.5 9-8c-4 .5-7 2.5-9 6" fill="none" stroke="url(#emblem-gold)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+        
+        <!-- Sacred Bottom Seed/Bead -->
+        <circle cx="12" cy="18" r="1.5" fill="url(#emblem-gold)" />
+    </g>
+</svg>
+

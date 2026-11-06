@@ -9,8 +9,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="color-scheme" content="light">
+    <meta name="theme-color" content="#7B1122">
     <meta name="robots" content="noindex, nofollow">
     <title>{{ $vm->coupleNames('km') }}</title>
+
+    <!-- Favicon & Touch Icons -->
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('favicon-16x16.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}">
     <script>
         {{-- Before paint: mark JavaScript on (enables the envelope) and restore the guest's language. --}}
         document.documentElement.classList.add('js');
