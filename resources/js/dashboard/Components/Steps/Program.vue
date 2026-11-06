@@ -28,54 +28,166 @@ const used = (key) => form.events.some((e) => e.preset_key === key);
 
 <template>
     <div class="grid gap-6">
-        <Field label="Wedding date" :error="form.errors.wedding_date">
-            <input v-model="form.wedding_date" type="date" class="input" />
-        </Field>
-        <p class="text-sm text-gray-600" lang="km">{{ lunarDate }}</p>
+        <!-- Wedding Date & Lunar Calendar Card -->
+        <div class="card p-6 border-stone-200/90">
+            <h2 class="text-base font-bold text-stone-900 mb-1">Wedding Date · កាលបរិច្ឆេទមង្គលការ</h2>
+            <p class="text-xs text-stone-600 mb-4 font-kantumruy" lang="km">កាលបរិច្ឆេទនៃថ្ងៃមង្គលការ ដែលប្រើជាគោលសម្រាប់រាប់ថយក្រោយ និងកាលវិភាគពិធី។</p>
 
-        <div class="grid gap-3">
-            <p class="font-medium">Program</p>
-            <p v-if="!form.events.length" class="text-sm text-gray-600">Add the ceremonies below. Times are Cambodia time.</p>
-
-            <div v-for="(event, i) in form.events" :key="i" class="grid gap-3 rounded-md border border-gray-200 bg-white p-4">
-                <div class="grid gap-3 sm:grid-cols-2">
-                    <Field label="Date" :error="form.errors[`events.${i}.date`]">
-                        <input v-model="event.date" type="date" class="input" />
-                    </Field>
-                    <Field label="Time" :error="form.errors[`events.${i}.time`]">
-                        <input v-model="event.time" type="time" class="input" />
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+                <div class="w-full sm:max-w-xs">
+                    <Field label="Solar Date (ថ្ងៃខែឆ្នាំសកល)" :error="form.errors.wedding_date">
+                        <input v-model="form.wedding_date" type="date" class="input" />
                     </Field>
                 </div>
-                <Field label="Title in Khmer" :error="form.errors[`events.${i}.title_km`]">
-                    <input v-model="event.title_km" lang="km" class="input" />
-                </Field>
-                <Field label="Title in English" :error="form.errors[`events.${i}.title_en`]">
-                    <input v-model="event.title_en" class="input" />
-                </Field>
-                <Field label="Venue" :error="form.errors[`events.${i}.venue_id`]">
-                    <select v-model="event.venue_id" class="input">
-                        <option :value="null">—</option>
-                        <option v-for="venue in invitation.venues" :key="venue.id" :value="venue.id">{{ venue.name }}</option>
-                    </select>
-                </Field>
-                <Field label="Note (optional)" :error="form.errors[`events.${i}.note`]">
-                    <input v-model="event.note" class="input" />
-                </Field>
-                <div class="flex gap-3 text-sm">
-                    <button type="button" class="underline disabled:opacity-40" :disabled="i === 0" @click="moveRow(form.events, i, -1)">Move up</button>
-                    <button type="button" class="underline disabled:opacity-40" :disabled="i === form.events.length - 1" @click="moveRow(form.events, i, 1)">Move down</button>
-                    <button type="button" class="text-red-700 underline" @click="form.events.splice(i, 1)">Remove</button>
+
+                <div v-if="lunarDate" class="rounded-lg bg-amber-50 p-3.5 border border-amber-200/70 sm:self-end">
+                    <p class="text-[11px] font-semibold text-amber-800 uppercase tracking-wider">Khmer Lunar Date · ចន្ទគតិ</p>
+                    <p class="text-xs font-semibold text-amber-950 font-kantumruy mt-0.5" lang="km">{{ lunarDate }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Program Ceremonies Section -->
+        <div class="card p-6">
+            <div class="flex items-center justify-between mb-4 border-b border-stone-100 pb-3">
+                <div>
+                    <h2 class="text-base font-bold text-stone-900">Ceremonies Timeline · កម្មវិធីមង្គលការ</h2>
+                    <p class="text-xs text-stone-600 font-kantumruy" lang="km">រៀបចំលំដាប់ពិធីប្រពៃណី និងពេលវេលា (ម៉ោងនៅកម្ពុជា)។</p>
                 </div>
             </div>
 
-            <div v-if="form.events.length < 20" class="flex flex-wrap gap-2">
-                <button v-for="preset in presets" :key="preset.key" type="button" :disabled="used(preset.key)"
-                        class="rounded-md border border-gray-300 px-3 py-1.5 text-sm disabled:opacity-40" lang="km" @click="add(preset)">
-                    + {{ preset.title_km }}
-                </button>
-                <button type="button" class="rounded-md border border-gray-300 px-3 py-1.5 text-sm" @click="add()">+ Custom item</button>
+            <!-- Quick Traditional Presets Bar -->
+            <div class="mb-6 rounded-lg bg-stone-50 p-4 border border-stone-200/80">
+                <p class="text-xs font-bold text-stone-800 mb-2.5 flex items-center gap-1.5">
+                    <svg class="size-4 text-amber-700" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd" />
+                    </svg>
+                    <span>Quick Traditional Presets · កម្មវិធីប្រពៃណីស្តង់ដារ</span>
+                </p>
+                <div class="flex flex-wrap gap-2">
+                    <button
+                        v-for="preset in presets"
+                        :key="preset.key"
+                        type="button"
+                        :disabled="used(preset.key)"
+                        class="rounded-full border px-3 py-1 text-xs font-medium transition-all duration-150 cursor-pointer font-kantumruy"
+                        :class="used(preset.key)
+                            ? 'border-stone-200 bg-stone-100 text-stone-400 opacity-60 cursor-not-allowed'
+                            : 'border-amber-300 bg-amber-50/80 text-amber-900 hover:bg-amber-100 hover:border-amber-400 active:scale-95'"
+                        lang="km"
+                        @click="add(preset)"
+                    >
+                        <span v-if="used(preset.key)">✓</span>
+                        <span v-else>+</span>
+                        {{ preset.title_km }}
+                    </button>
+                    <button
+                        type="button"
+                        class="rounded-full border border-stone-300 bg-white px-3 py-1 text-xs font-medium text-stone-700 hover:bg-stone-50 hover:border-stone-400 transition-colors cursor-pointer"
+                        @click="add()"
+                    >
+                        + Custom Item
+                    </button>
+                </div>
             </div>
-            <p v-if="!invitation.venues.length" class="text-sm text-gray-600">Add venues first to place each ceremony.</p>
+
+            <!-- Empty State for Program -->
+            <div v-if="!form.events.length" class="p-8 text-center border-dashed border-2 border-stone-200 rounded-lg">
+                <p class="text-sm text-stone-600 font-kantumruy" lang="km">មិនទាន់មានកម្មវិធីនៅឡើយទេ។ សូមចុចជ្រើសរើសកម្មវិធីប្រពៃណីខាងលើដើម្បីបន្ថែម។</p>
+            </div>
+
+            <!-- Ceremony Cards List -->
+            <div v-else class="space-y-4">
+                <div
+                    v-for="(event, i) in form.events"
+                    :key="i"
+                    class="rounded-xl border border-stone-200/90 bg-white p-5 shadow-xs transition-all duration-150 hover:border-amber-500/40"
+                >
+                    <!-- Row Top Header -->
+                    <div class="flex items-center justify-between mb-4 border-b border-stone-100 pb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="flex size-6 items-center justify-center rounded-full bg-amber-100 text-amber-900 text-xs font-bold">{{ i + 1 }}</span>
+                            <span class="text-sm font-bold text-stone-900 font-kantumruy" lang="km">{{ event.title_km || 'កម្មវិធីថ្មី' }}</span>
+                        </div>
+
+                        <!-- Move and Remove Tools -->
+                        <div class="flex items-center gap-2">
+                            <button
+                                type="button"
+                                class="rounded p-1 text-stone-500 hover:bg-stone-100 hover:text-stone-800 disabled:opacity-30 disabled:hover:bg-transparent cursor-pointer"
+                                :disabled="i === 0"
+                                title="Move up"
+                                @click="moveRow(form.events, i, -1)"
+                            >
+                                <svg class="size-4" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                            <button
+                                type="button"
+                                class="rounded p-1 text-stone-500 hover:bg-stone-100 hover:text-stone-800 disabled:opacity-30 disabled:hover:bg-transparent cursor-pointer"
+                                :disabled="i === form.events.length - 1"
+                                title="Move down"
+                                @click="moveRow(form.events, i, 1)"
+                            >
+                                <svg class="size-4" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                            <button
+                                type="button"
+                                class="rounded p-1 text-red-600 hover:bg-red-50 hover:text-red-800 cursor-pointer ml-1"
+                                title="Remove ceremony"
+                                @click="form.events.splice(i, 1)"
+                            >
+                                <svg class="size-4" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Form Fields -->
+                    <div class="grid gap-3">
+                        <div class="grid gap-3 sm:grid-cols-2">
+                            <Field label="Ceremony Date (ថ្ងៃប្រារព្ធ)" :error="form.errors[`events.${i}.date`]">
+                                <input v-model="event.date" type="date" class="input" />
+                            </Field>
+                            <Field label="Ceremony Time (ម៉ោង)" :error="form.errors[`events.${i}.time`]">
+                                <input v-model="event.time" type="time" class="input" />
+                            </Field>
+                        </div>
+
+                        <div class="grid gap-3 sm:grid-cols-2">
+                            <Field label="Title in Khmer (ឈ្មោះកម្មវិធីជាភាសាខ្មែរ)" :error="form.errors[`events.${i}.title_km`]">
+                                <input v-model="event.title_km" lang="km" placeholder="ឧទាហរណ៍៖ ពិធីហែជំនូន" class="input font-kantumruy" />
+                            </Field>
+                            <Field label="Title in English (ឈ្មោះកម្មវិធីជាភាសាអង់គ្លេស)" :error="form.errors[`events.${i}.title_en`]">
+                                <input v-model="event.title_en" placeholder="e.g. Gift procession" class="input" />
+                            </Field>
+                        </div>
+
+                        <div class="grid gap-3 sm:grid-cols-2">
+                            <Field label="Venue Location (ទីតាំង)" :error="form.errors[`events.${i}.venue_id`]">
+                                <select v-model="event.venue_id" class="input">
+                                    <option :value="null">— Select venue —</option>
+                                    <option v-for="venue in invitation.venues" :key="venue.id" :value="venue.id">
+                                        {{ venue.name }}
+                                    </option>
+                                </select>
+                            </Field>
+
+                            <Field label="Special Note (ចំណាំ ឬសម្លៀកបំពាក់)" :error="form.errors[`events.${i}.note`]">
+                                <input v-model="event.note" placeholder="e.g. សម្លៀកបំពាក់ប្រពៃណី · Traditional attire" class="input" />
+                            </Field>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <p v-if="!invitation.venues.length" class="mt-4 text-xs text-amber-800 bg-amber-50 p-3 rounded-lg border border-amber-200">
+                💡 Hint: Add venues in the "Venues" tab first so you can assign each ceremony to its location.
+            </p>
         </div>
     </div>
 </template>

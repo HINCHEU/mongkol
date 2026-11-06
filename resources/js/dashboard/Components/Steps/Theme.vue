@@ -9,14 +9,67 @@ useAutosave(form, `/app/invitations/${props.invitation.id}/theme`);
 </script>
 
 <template>
-    <fieldset class="grid gap-3">
-        <legend class="font-medium">Theme</legend>
-        <p class="text-sm text-gray-600">Switch any time: everything you entered stays.</p>
-        <label v-for="theme in themes" :key="theme.id" class="flex items-center gap-3 rounded-md border border-gray-200 bg-white p-4">
-            <input v-model="form.theme_id" type="radio" :value="theme.id" />
-            <span class="flex-1">{{ theme.name }} <span v-if="theme.tier === 'premium'" class="text-sm text-amber-800">Premium</span></span>
-            <a :href="`/themes/${theme.slug}`" target="_blank" class="text-sm text-blue-700 underline">Demo</a>
-        </label>
-        <p v-if="form.errors.theme_id" class="text-sm text-red-700">{{ form.errors.theme_id }}</p>
-    </fieldset>
+    <div class="card p-6">
+        <div class="mb-5 border-b border-stone-100 pb-3">
+            <h2 class="text-base font-bold text-stone-900">Design Theme · ស្បែករចនាសំបុត្រ</h2>
+            <p class="text-xs text-stone-600 mt-1 font-kantumruy" lang="km">អ្នកអាចប្តូរស្បែករចនាបានគ្រប់ពេល។ រាល់ព័ត៌មាន រូបថត និងកម្មវិធីទាំងអស់នឹងរក្សាទុកដដែល។</p>
+        </div>
+
+        <div class="grid gap-4 sm:grid-cols-2">
+            <label
+                v-for="theme in themes"
+                :key="theme.id"
+                class="flex flex-col justify-between rounded-xl border p-5 transition-all duration-150 cursor-pointer"
+                :class="form.theme_id === theme.id
+                    ? 'border-amber-600 bg-amber-50/40 shadow-xs ring-1 ring-amber-500/30'
+                    : 'border-stone-200 bg-white hover:border-stone-300 hover:shadow-xs'"
+            >
+                <div>
+                    <div class="flex items-center justify-between gap-2 mb-3">
+                        <div class="flex items-center gap-2.5">
+                            <input
+                                v-model="form.theme_id"
+                                type="radio"
+                                :value="theme.id"
+                                class="size-4 text-[#7B1122] accent-[#7B1122] focus:ring-amber-500"
+                            />
+                            <span class="font-bold text-stone-900 text-base">{{ theme.name }}</span>
+                        </div>
+
+                        <span
+                            class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider"
+                            :class="theme.tier === 'premium' ? 'bg-amber-100 text-amber-900' : 'bg-stone-100 text-stone-700'"
+                        >
+                            {{ theme.tier }}
+                        </span>
+                    </div>
+
+                    <p class="text-xs text-stone-600 line-clamp-2">
+                        Royal Khmer ceremony meets editorial stationery; Khmer-first and phone-first.
+                    </p>
+                </div>
+
+                <div class="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between text-xs">
+                    <span v-if="form.theme_id === theme.id" class="font-bold text-amber-800 flex items-center gap-1">
+                        <span>Active theme</span>
+                        <svg class="size-3.5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        </svg>
+                    </span>
+                    <span v-else class="text-stone-400">Click to select</span>
+
+                    <a
+                        :href="`/themes/${theme.slug}`"
+                        target="_blank"
+                        class="font-semibold text-stone-700 hover:text-[#7B1122] hover:underline"
+                        @click.stop
+                    >
+                        View demo ↗
+                    </a>
+                </div>
+            </label>
+        </div>
+
+        <p v-if="form.errors.theme_id" class="mt-3 text-xs font-semibold text-red-700">{{ form.errors.theme_id }}</p>
+    </div>
 </template>
