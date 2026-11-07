@@ -47,6 +47,7 @@ it('keeps Google accounts, which have no password, out of the password form', fu
 });
 
 it('shows the Telegram contact on the login page when it is set', function () {
+    config(['services.telegram.support_username' => null]); // not whatever the test machine's .env has
     $this->get('/login')->assertInertia(fn (AssertableInertia $page) => $page->component('Auth/Login', false)->where('telegram', null));
 
     config(['services.telegram.support_username' => 'mongkol_bot']);

@@ -11,6 +11,11 @@ Claude builds features with plain, working markup. This file lists the screens w
 - Phone first: touch targets at least 44px, nothing wider than the screen at 375px.
 - Run `npm run build` before committing; it must pass.
 
+## Password sign-in
+
+- [ ] **Username and password on the login page**: the plain block under the Google button in `resources/js/dashboard/Pages/Auth/Login.vue`. The "or" line, the two fields, the error line (`role="alert"`), Sign in, and "No Google account? Message us on Telegram" (shown only when `telegram` is set). Google stays the main way in; the password form is for couples you made an account for.
+  - Keep `autocomplete="username"` / `"current-password"` and `autocapitalize="none"`, so phones offer saved passwords and don't capitalise the username.
+
 ## Phase 2: theme options (Premium)
 
 - [x] **Colours, fonts and sections in the Theme step**: the plain block under the theme cards in `resources/js/dashboard/Components/Steps/Theme.vue`. The colour and font choices (radio chips, one per choice the theme offers), the countdown checkbox, and the section list with Show and ↑/↓. Basic plans see one line with an Upgrade link instead.
