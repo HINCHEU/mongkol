@@ -13,7 +13,7 @@ Claude builds features with plain, working markup. This file lists the screens w
 
 ## Phase 2: Bakong automatic payment
 
-- [ ] **Bakong QR on the Upgrade page**: the plain block marked "Bakong" in `resources/js/dashboard/Pages/Invitations/Upgrade.vue` (shown when `pending.method === 'bakong'`). The QR (`pending.khqr`, an image), "scan to pay exactly…", the countdown (`role="timer"`), the expired state with "Make a new QR", and the "pay by transfer instead" link. The page polls by itself; once paid it turns live with no tap.
+- [x] **Bakong QR on the Upgrade page**: the plain block marked "Bakong" in `resources/js/dashboard/Pages/Invitations/Upgrade.vue` (shown when `pending.method === 'bakong'`). The QR (`pending.khqr`, an image), "scan to pay exactly…", the countdown (`role="timer"`), the expired state with "Make a new QR", and the "pay by transfer instead" link. The page polls by itself; once paid it turns live with no tap.
   - Keep the QR large and on a white background with its quiet zone: bank apps must scan it from another phone's screen.
   - The manual reference / screenshot blocks below it are unchanged and still used for manual payments.
 

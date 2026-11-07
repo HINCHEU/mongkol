@@ -157,25 +157,94 @@ const features = (plan) => [
                         <h2 class="text-lg font-bold text-stone-900">{{ $t('upgrade.pay', { amount: pending.amount, plan: pending.plan }) }}</h2>
                         <p class="text-xs text-stone-500 font-kantumruy">{{ isBakong ? $t('upgrade.bakong_hint') : $t('upgrade.pay_hint') }}</p>
                     </div>
-                    <span class="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-bold text-amber-900">
-                        {{ isBakong ? $t('upgrade.bakong_waiting') : $t('upgrade.pending') }}
+                    <span
+                        class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold"
+                        :class="isBakong ? 'bg-amber-100 text-amber-900 border border-amber-200/80 shadow-2xs' : 'bg-amber-100 text-amber-900'"
+                    >
+                        <span v-if="isBakong && secondsLeft > 0" class="relative flex size-2">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full size-2 bg-amber-600"></span>
+                        </span>
+                        <span>{{ isBakong ? $t('upgrade.bakong_waiting') : $t('upgrade.pending') }}</span>
                     </span>
                 </div>
 
-                <!-- Bakong: dynamic KHQR for the exact amount, confirmed automatically (plain; design pass) -->
-                <div v-if="isBakong" class="grid gap-3 justify-items-center text-center">
+                <!-- Bakong: dynamic KHQR for the exact amount, confirmed automatically -->
+                <div v-if="isBakong" class="grid gap-5 justify-items-center text-center py-2">
                     <template v-if="secondsLeft > 0">
-                        <img :src="pending.khqr" :alt="`KHQR ${pending.amount}`" class="w-64 max-w-full aspect-square bg-white" />
-                        <p class="text-sm text-stone-700">{{ $t('upgrade.bakong_scan', { amount: pending.amount }) }}</p>
-                        <p class="text-xs text-stone-500" role="timer">{{ $t('upgrade.bakong_expires', { time: countdown }) }}</p>
+                        <!-- Official Bakong QR Card with Generous Quiet Zone -->
+                        <div class="rounded-2xl border-2 border-amber-300/80 bg-white p-5 sm:p-6 shadow-md ring-1 ring-amber-400/20 text-center max-w-full">
+                            <div class="relative mx-auto flex items-center justify-center rounded-xl bg-white p-2">
+                                <img
+                                    :src="pending.khqr"
+                                    :alt="`KHQR ${pending.amount}`"
+                                    class="w-64 sm:w-72 max-w-full aspect-square bg-white object-contain"
+                                />
+                            </div>
+                            <div class="mt-3 flex items-center justify-center gap-1.5">
+                                <span class="inline-flex items-center gap-1 text-[11px] font-bold text-red-700 uppercase tracking-widest bg-red-50 border border-red-200 px-2.5 py-0.5 rounded-full shadow-2xs">
+                                    Bakong KHQR
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Scan instruction and countdown -->
+                        <div class="space-y-2 max-w-md">
+                            <p class="text-base sm:text-lg font-bold text-stone-900 font-serif">
+                                {{ $t('upgrade.bakong_scan', { amount: pending.amount }) }}
+                            </p>
+                            <div
+                                class="inline-flex items-center gap-2 rounded-full border border-amber-200/80 bg-amber-50/80 px-3.5 py-1.5 text-xs font-semibold text-amber-900 shadow-2xs"
+                                role="timer"
+                            >
+                                <svg class="size-3.5 text-amber-700 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-13a.75.75 0 00-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 000-1.5h-3.25V5z" clip-rule="evenodd" />
+                                </svg>
+                                <span>{{ $t('upgrade.bakong_expires', { time: countdown }) }}</span>
+                            </div>
+                        </div>
                     </template>
+
                     <template v-else>
-                        <p class="text-sm text-stone-700" role="status">{{ $t('upgrade.bakong_expired') }}</p>
-                        <button type="button" class="btn-primary min-h-[44px]" @click="repay()">{{ $t('upgrade.bakong_new') }}</button>
+                        <!-- Expired State Notice Box -->
+                        <div class="rounded-2xl border border-amber-200 bg-amber-50/70 p-6 sm:p-8 text-center max-w-md mx-auto space-y-4">
+                            <div class="mx-auto flex size-12 items-center justify-center rounded-full bg-amber-100 text-amber-800">
+                                <svg class="size-6" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-13a.75.75 0 00-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 000-1.5h-3.25V5z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <p class="text-sm font-medium text-stone-800 leading-relaxed font-kantumruy" role="status">
+                                {{ $t('upgrade.bakong_expired') }}
+                            </p>
+                            <div>
+                                <button
+                                    type="button"
+                                    class="btn-primary min-h-[44px] inline-flex items-center justify-center gap-2 px-5 py-2.5 shadow-sm"
+                                    @click="repay()"
+                                >
+                                    <svg class="size-4 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+                                    </svg>
+                                    <span>{{ $t('upgrade.bakong_new') }}</span>
+                                </button>
+                            </div>
+                        </div>
                     </template>
-                    <button type="button" class="min-h-[44px] text-xs font-semibold text-stone-700 underline" @click="repay('manual_khqr')">
-                        {{ $t('upgrade.bakong_manual') }}
-                    </button>
+
+                    <!-- Manual Fallback Action -->
+                    <div class="pt-2">
+                        <button
+                            type="button"
+                            class="inline-flex min-h-[44px] items-center justify-center gap-1.5 text-xs sm:text-sm font-semibold text-stone-600 hover:text-stone-900 underline underline-offset-4 decoration-stone-300 hover:decoration-stone-600 transition-colors cursor-pointer"
+                            @click="repay('manual_khqr')"
+                        >
+                            <svg class="size-4 text-stone-500" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
+                                <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd" />
+                            </svg>
+                            <span>{{ $t('upgrade.bakong_manual') }}</span>
+                        </button>
+                    </div>
                 </div>
 
                 <template v-else>
