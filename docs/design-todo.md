@@ -13,17 +13,17 @@ Claude builds features with plain, working markup. This file lists the screens w
 
 ## Phase 2: open tracking
 
-- [ ] **Opened filter and last opened on the Share page**: `resources/js/dashboard/Pages/Invitations/Share.vue`. The All / Opened / Not opened / Sent, not opened chips and the order select (guest list / recently opened) by the search box, the "opened" counter next to "sent", and "last 3 hours ago" on each guest (mobile card and the Opens column). Plain for now; "Sent, not opened" is the list the couple follows up on.
+- [x] **Opened filter and last opened on the Share page**: `resources/js/dashboard/Pages/Invitations/Share.vue`. The All / Opened / Not opened / Sent, not opened chips and the order select (guest list / recently opened) by the search box, the "opened" counter next to "sent", and "last 3 hours ago" on each guest (mobile card and the Opens column). Plain for now; "Sent, not opened" is the list the couple follows up on.
 
 ## Phase 2: RSVP and wishes
 
-- [ ] **RSVP section** on the invitation: `resources/themes/base/views/sections/rsvp.blade.php`. The two big choices (coming / can't come), the head count (shown only when coming), a note, Send, then the thank-you state with "Change my reply". The generic link also asks for a name.
-- [ ] **Wishes section** (guest book): `resources/themes/base/views/sections/wishes.blade.php`. The form, then the list of wishes (newest first), and the empty, thank-you and "waiting for approval" states.
+- [x] **RSVP section** on the invitation: `resources/themes/base/views/sections/rsvp.blade.php`. The two big choices (coming / can't come), the head count (shown only when coming), a note, Send, then the thank-you state with "Change my reply". The generic link also asks for a name.
+- [x] **Wishes section** (guest book): `resources/themes/base/views/sections/wishes.blade.php`. The form, then the list of wishes (newest first), and the empty, thank-you and "waiting for approval" states.
   - Keep the hidden `website` input exactly as it is: it's the honeypot that catches spam bots. Don't make it visible or remove it.
   - Wishes are shown with `x-text`, never `x-html` (guests' text must not become markup).
   - New themes can override these two sections like any other.
-- [ ] **Responses page** for the couple: `resources/js/dashboard/Pages/Invitations/Responses.vue` (`/app/invitations/{id}/responses`). The three switches, the four totals (people coming is the one they plan tables with), the replies list and the guest book with Hide / Show / Delete.
-- [ ] **Responses button in the editor nav** (`Edit.vue`), next to Share.
+- [x] **Responses page** for the couple: `resources/js/dashboard/Pages/Invitations/Responses.vue` (`/app/invitations/{id}/responses`). The three switches, the four totals (people coming is the one they plan tables with), the replies list and the guest book with Hide / Show / Delete.
+- [x] **Responses button in the editor nav** (`Edit.vue`), next to Share.
 
 ## M9: legal pages
 

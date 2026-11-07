@@ -237,10 +237,10 @@ const sentCount = computed(() => props.guests.filter((g) => g.sent).length);
                 </div>
 
                 <!-- Personal Links List Section -->
-                <div class="card p-6 grid gap-4">
+                <div class="card p-6 grid gap-5">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-stone-100 pb-4">
                         <div class="flex items-center gap-3">
-                            <div class="flex size-7 items-center justify-center rounded-lg bg-amber-100 text-amber-800">
+                            <div class="flex size-8 items-center justify-center rounded-xl bg-amber-100 text-amber-900 shadow-xs">
                                 <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
                                     <circle cx="8.5" cy="7" r="4" />
@@ -254,13 +254,17 @@ const sentCount = computed(() => props.guests.filter((g) => g.sent).length);
                             </div>
                         </div>
 
-                        <!-- Sent Progress Counter -->
-                        <div class="flex items-center gap-2">
-                            <span class="inline-flex items-center gap-1.5 rounded-full border border-stone-200 bg-stone-50 px-3 py-1 text-xs font-bold text-stone-700">
-                                <span class="size-2 rounded-full" :class="sentCount === guests.length && guests.length > 0 ? 'bg-emerald-500' : 'bg-amber-500'"></span>
+                        <!-- Sent & Opened Progress Counters -->
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="inline-flex items-center gap-1.5 rounded-full border border-stone-200 bg-stone-50/80 px-3 py-1.5 text-xs font-semibold text-stone-700 shadow-xs">
+                                <span class="size-2 rounded-full" :class="sentCount === guests.length && guests.length > 0 ? 'bg-emerald-500 ring-2 ring-emerald-200' : 'bg-amber-500 ring-2 ring-amber-200'"></span>
                                 <span>{{ $t('share.sent_count', { sent: sentCount, total: guests.length }) }}</span>
                             </span>
-                            <span class="inline-flex items-center gap-1.5 rounded-full border border-stone-200 bg-stone-50 px-3 py-1 text-xs font-bold text-stone-700">
+                            <span class="inline-flex items-center gap-1.5 rounded-full border border-stone-200 bg-stone-50/80 px-3 py-1.5 text-xs font-semibold text-stone-700 shadow-xs">
+                                <svg class="size-3.5 text-amber-800" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                                    <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                                </svg>
                                 <span>{{ $t('share.opened_count', { opened: openedCount, total: guests.length }) }}</span>
                             </span>
                         </div>
@@ -276,41 +280,50 @@ const sentCount = computed(() => props.guests.filter((g) => g.sent).length);
                     </div>
 
                     <template v-else>
-                        <!-- Search Box and sort -->
-                        <div class="flex flex-col sm:flex-row gap-2">
-                        <div class="relative w-full sm:w-72">
-                            <svg class="size-4 text-stone-400 absolute left-3 top-3 pointer-events-none" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
-                            </svg>
-                            <input
-                                v-model="search"
-                                class="input !pl-9 min-h-[44px]"
-                                :placeholder="$t('guests.search')"
-                            />
-                        </div>
-                        <select v-model="sort" class="input min-h-[44px] w-full sm:w-auto" :aria-label="$t('share.sort')">
-                            <option value="list">{{ $t('share.sort_list') }}</option>
-                            <option value="recent">{{ $t('share.sort_recent') }}</option>
-                        </select>
+                        <!-- Search Box and Sort Toolbar -->
+                        <div class="flex flex-col sm:flex-row gap-2.5 items-stretch sm:items-center">
+                            <div class="relative flex-1 sm:max-w-xs">
+                                <svg class="size-4 text-stone-400 absolute left-3 top-3.5 pointer-events-none" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                                </svg>
+                                <input
+                                    v-model="search"
+                                    class="input !pl-9 min-h-[44px]"
+                                    :placeholder="$t('guests.search')"
+                                />
+                            </div>
+                            <div class="relative sm:w-56">
+                                <select v-model="sort" class="input min-h-[44px] w-full cursor-pointer pr-8" :aria-label="$t('share.sort')">
+                                    <option value="list">{{ $t('share.sort_list') }}</option>
+                                    <option value="recent">{{ $t('share.sort_recent') }}</option>
+                                </select>
+                            </div>
                         </div>
 
-                        <!-- Opened / not opened filter -->
-                        <div class="flex flex-wrap gap-2" role="group" :aria-label="$t('share.filter')">
+                        <!-- Opened / Not Opened Filter Chips -->
+                        <div class="flex flex-wrap gap-2 pt-1" role="group" :aria-label="$t('share.filter')">
                             <button
                                 v-for="key in Object.keys(filters)"
                                 :key="key"
                                 type="button"
-                                class="inline-flex items-center gap-1.5 rounded-full border px-3 min-h-[36px] text-xs font-bold transition-colors"
-                                :class="filter === key ? 'border-stone-900 bg-stone-900 text-white' : 'border-stone-200 bg-white text-stone-700 hover:bg-stone-50'"
+                                class="inline-flex items-center gap-1.5 rounded-full border px-3.5 min-h-[44px] text-xs font-semibold transition-all cursor-pointer shadow-2xs"
+                                :class="filter === key
+                                    ? 'border-[#7B1122] bg-[#7B1122] text-white shadow-xs'
+                                    : (key === 'sent_unopened' && filterCounts[key] > 0
+                                        ? 'border-amber-300 bg-amber-50/70 text-amber-900 hover:bg-amber-100 hover:border-amber-400'
+                                        : 'border-stone-200 bg-white text-stone-700 hover:bg-stone-50 hover:border-stone-300')"
                                 :aria-pressed="filter === key"
                                 @click="filter = key"
                             >
                                 <span>{{ $t(`share.filter_${key}`) }}</span>
-                                <span class="opacity-70">{{ filterCounts[key] }}</span>
+                                <span class="rounded-full px-1.5 py-0.2 text-[11px] font-bold"
+                                      :class="filter === key ? 'bg-white/20 text-white' : 'bg-stone-100 text-stone-600'">
+                                    {{ filterCounts[key] }}
+                                </span>
                             </button>
                         </div>
 
-                        <p v-if="!shown.length" class="text-sm text-stone-500 text-center py-6">{{ $t('share.no_match') }}</p>
+                        <p v-if="!shown.length" class="text-sm text-stone-500 text-center py-8 font-kantumruy">{{ $t('share.no_match') }}</p>
 
                         <!-- 1. MOBILE RESPONSIVE CARDS (Phone first) -->
                         <div class="grid gap-3 md:hidden">
@@ -320,11 +333,12 @@ const sentCount = computed(() => props.guests.filter((g) => g.sent).length);
                                 class="rounded-xl border border-stone-200/90 bg-white p-4 shadow-xs space-y-3"
                             >
                                 <div class="flex items-start justify-between gap-2">
-                                    <div>
-                                        <p class="font-bold text-stone-900 text-sm font-kantumruy" lang="km">{{ guest.name }}</p>
-                                        <div class="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-stone-500">
-                                            <span class="inline-flex items-center gap-1">
-                                                <svg class="size-3.5 text-stone-400" viewBox="0 0 20 20" fill="currentColor">
+                                    <div class="min-w-0">
+                                        <p class="font-bold text-stone-900 text-sm font-kantumruy truncate" lang="km">{{ guest.name }}</p>
+                                        <div class="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-stone-500">
+                                            <span class="inline-flex items-center gap-1 rounded-full px-2 py-0.5"
+                                                  :class="guest.open_count > 0 ? 'bg-amber-50 text-amber-900 font-semibold border border-amber-200/60' : 'bg-stone-100 text-stone-600'">
+                                                <svg class="size-3 text-stone-400" viewBox="0 0 20 20" fill="currentColor">
                                                     <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
                                                     <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
                                                 </svg>
@@ -332,7 +346,12 @@ const sentCount = computed(() => props.guests.filter((g) => g.sent).length);
                                             </span>
                                             <template v-if="guest.last_opened">
                                                 <span>·</span>
-                                                <span>{{ $t('share.last_opened', { time: guest.last_opened }) }}</span>
+                                                <span class="inline-flex items-center gap-1 text-[11px] text-stone-600 font-medium">
+                                                    <svg class="size-3 text-stone-400" viewBox="0 0 20 20" fill="currentColor">
+                                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-13a.75.75 0 00-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 000-1.5h-3.25V5z" clip-rule="evenodd" />
+                                                    </svg>
+                                                    <span>{{ $t('share.last_opened', { time: guest.last_opened }) }}</span>
+                                                </span>
                                             </template>
                                             <span>·</span>
                                             <a :href="guest.qr" target="_blank" class="text-stone-700 underline font-semibold">{{ $t('share.view_qr') }}</a>
@@ -344,7 +363,7 @@ const sentCount = computed(() => props.guests.filter((g) => g.sent).length);
                                         <input
                                             type="checkbox"
                                             :checked="guest.sent"
-                                            class="size-4.5 rounded text-[#7B1122] accent-[#7B1122] focus:ring-amber-500 cursor-pointer"
+                                            class="size-5 rounded text-[#7B1122] accent-[#7B1122] focus:ring-amber-500 cursor-pointer"
                                             @change="toggleSent(guest, $event.target.checked)"
                                             :aria-label="$t('guests.sent')"
                                         />
@@ -386,7 +405,7 @@ const sentCount = computed(() => props.guests.filter((g) => g.sent).length);
                         </div>
 
                         <!-- 2. DESKTOP TABULAR VIEW -->
-                        <div class="hidden md:block overflow-x-auto rounded-xl border border-stone-200">
+                        <div class="hidden md:block overflow-x-auto rounded-xl border border-stone-200 shadow-2xs">
                             <table class="w-full text-sm">
                                 <thead class="bg-stone-50/80 border-b border-stone-200 text-stone-600 font-semibold text-xs">
                                     <tr>
@@ -397,16 +416,16 @@ const sentCount = computed(() => props.guests.filter((g) => g.sent).length);
                                         <th class="py-3 px-4 text-center">{{ $t('guests.sent') }}</th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-stone-100">
-                                    <tr v-for="guest in shown" :key="guest.id" class="hover:bg-amber-50/20 transition-colors">
-                                        <td class="py-3 px-4 font-kantumruy font-semibold text-stone-900" lang="km">
+                                <tbody class="divide-y divide-stone-100 bg-white">
+                                    <tr v-for="guest in shown" :key="guest.id" class="hover:bg-amber-50/25 transition-colors">
+                                        <td class="py-3.5 px-4 font-kantumruy font-semibold text-stone-900" lang="km">
                                             {{ guest.name }}
                                         </td>
-                                        <td class="py-3 px-4 whitespace-nowrap">
+                                        <td class="py-3.5 px-4 whitespace-nowrap">
                                             <div class="flex items-center gap-2">
                                                 <button
                                                     type="button"
-                                                    class="inline-flex items-center gap-1 rounded-md border border-stone-200 bg-stone-50 px-2.5 py-1 text-xs font-semibold text-stone-700 hover:bg-amber-50 hover:border-amber-300 transition-colors cursor-pointer"
+                                                    class="inline-flex min-h-[38px] items-center gap-1 rounded-lg border border-stone-200 bg-stone-50 px-3 py-1.5 text-xs font-semibold text-stone-700 hover:bg-amber-50 hover:border-amber-300 transition-colors cursor-pointer"
                                                     @click="copy(guest.id, guest.name, guest.url).then(() => markSent(guest))"
                                                 >
                                                     {{ copied === guest.id ? $t('common.copied') : $t('common.copy') }}
@@ -414,7 +433,7 @@ const sentCount = computed(() => props.guests.filter((g) => g.sent).length);
 
                                                 <button
                                                     type="button"
-                                                    class="inline-flex items-center gap-1 rounded-md border border-stone-200 bg-stone-50 px-2.5 py-1 text-xs font-semibold text-stone-700 hover:bg-amber-50 hover:border-amber-300 transition-colors cursor-pointer"
+                                                    class="inline-flex min-h-[38px] items-center gap-1 rounded-lg border border-stone-200 bg-stone-50 px-3 py-1.5 text-xs font-semibold text-stone-700 hover:bg-amber-50 hover:border-amber-300 transition-colors cursor-pointer"
                                                     @click="share(guest.id, guest.name, guest.url).then((ok) => ok && markSent(guest))"
                                                 >
                                                     {{ $t('share.share') }}
@@ -424,7 +443,7 @@ const sentCount = computed(() => props.guests.filter((g) => g.sent).length);
                                                     :href="telegram(guest.name, guest.url)"
                                                     target="_blank"
                                                     rel="noopener"
-                                                    class="inline-flex items-center gap-1 rounded-md border border-sky-200 bg-sky-50 px-2.5 py-1 text-xs font-semibold text-sky-800 hover:bg-sky-100 transition-colors"
+                                                    class="inline-flex min-h-[38px] items-center gap-1 rounded-lg border border-sky-200 bg-sky-50 px-3 py-1.5 text-xs font-semibold text-sky-800 hover:bg-sky-100 transition-colors"
                                                     @click="markSent(guest)"
                                                 >
                                                     <svg class="size-3.5 text-sky-600" viewBox="0 0 24 24" fill="currentColor">
@@ -434,7 +453,7 @@ const sentCount = computed(() => props.guests.filter((g) => g.sent).length);
                                                 </a>
                                             </div>
                                         </td>
-                                        <td class="py-3 px-4 text-center">
+                                        <td class="py-3.5 px-4 text-center">
                                             <a
                                                 :href="guest.qr"
                                                 target="_blank"
@@ -449,24 +468,32 @@ const sentCount = computed(() => props.guests.filter((g) => g.sent).length);
                                                 <span>QR</span>
                                             </a>
                                         </td>
-                                        <td class="py-3 px-4 text-center">
-                                            <span class="inline-flex items-center gap-1 rounded-full bg-stone-100 px-2 py-0.5 text-xs font-medium text-stone-700">
+                                        <td class="py-3.5 px-4 text-center">
+                                            <span class="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold"
+                                                  :class="guest.open_count > 0 ? 'bg-amber-100/80 text-amber-900 border border-amber-300/60' : 'bg-stone-100 text-stone-600'">
                                                 <svg class="size-3 text-stone-400" viewBox="0 0 20 20" fill="currentColor">
                                                     <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
                                                     <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
                                                 </svg>
                                                 <span>{{ guest.open_count }}</span>
                                             </span>
-                                            <p v-if="guest.last_opened" class="mt-1 text-[11px] text-stone-500">{{ guest.last_opened }}</p>
+                                            <p v-if="guest.last_opened" class="mt-1 text-[11px] text-stone-500 flex items-center justify-center gap-1">
+                                                <svg class="size-2.5 text-stone-400" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-13a.75.75 0 00-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 000-1.5h-3.25V5z" clip-rule="evenodd" />
+                                                </svg>
+                                                <span>{{ guest.last_opened }}</span>
+                                            </p>
                                         </td>
-                                        <td class="py-3 px-4 text-center">
-                                            <input
-                                                type="checkbox"
-                                                :checked="guest.sent"
-                                                class="size-4.5 rounded text-[#7B1122] accent-[#7B1122] focus:ring-amber-500 cursor-pointer"
-                                                @change="toggleSent(guest, $event.target.checked)"
-                                                :aria-label="$t('guests.sent')"
-                                            />
+                                        <td class="py-3.5 px-4 text-center">
+                                            <label class="inline-flex items-center justify-center min-h-[44px] min-w-[44px] cursor-pointer">
+                                                <input
+                                                    type="checkbox"
+                                                    :checked="guest.sent"
+                                                    class="size-5 rounded text-[#7B1122] accent-[#7B1122] focus:ring-amber-500 cursor-pointer"
+                                                    @change="toggleSent(guest, $event.target.checked)"
+                                                    :aria-label="$t('guests.sent')"
+                                                />
+                                            </label>
                                         </td>
                                     </tr>
                                 </tbody>

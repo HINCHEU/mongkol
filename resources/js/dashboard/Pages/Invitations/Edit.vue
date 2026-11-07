@@ -135,6 +135,9 @@ const showPreview = ref(false);
                 :href="`/app/invitations/${invitation.id}/responses`"
                 class="inline-flex min-h-[44px] items-center gap-1.5 rounded-lg border border-amber-300/80 bg-amber-50/70 px-3.5 py-2 text-xs sm:text-sm font-semibold text-amber-950 shadow-xs hover:bg-amber-100 hover:border-amber-400 transition-all duration-150 cursor-pointer"
             >
+                <svg class="size-4 text-amber-800 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zm-5 0h-2v2h2V9z" clip-rule="evenodd" />
+                </svg>
                 <span>{{ $t('editor.responses') }}</span>
             </Link>
             <!-- Upgrade / Plan Button -->
