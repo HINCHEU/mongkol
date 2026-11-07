@@ -6,6 +6,8 @@
     ":count gallery photos (:plan shows :max)": "រូបភាពវិចិត្រសាល :count (កញ្ចប់ :plan បង្ហាញ :max)",
     ":count guests (:plan allows :max)": "ភ្ញៀវ :count នាក់ (កញ្ចប់ :plan អនុញ្ញាត :max)",
     "Your own music": "តន្ត្រីផ្ទាល់ខ្លួន",
+    "The username or password is incorrect.": "ឈ្មោះអ្នកប្រើ ឬពាក្យសម្ងាត់មិនត្រឹមត្រូវ។",
+    "Too many attempts. Please try again in :seconds seconds.": "ព្យាយាមច្រើនដងពេក។ សូមព្យាយាមម្ដងទៀតក្នុងរយៈពេល :seconds វិនាទី។",
     "Theme options (colours, fonts, sections)": "ជម្រើសស្បែករចនា (ពណ៌ ពុម្ពអក្សរ ផ្នែក)",
     "Theme options need the Premium plan.": "ជម្រើសស្បែករចនាត្រូវការកញ្ចប់ពិសេស (Premium)។",
     "YouTube video": "វីដេអូ YouTube",

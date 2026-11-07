@@ -36,7 +36,11 @@ class ActivityLog extends Model
     /** After an admin edit: logs `{model}.updated` with what changed, or nothing if nothing did. */
     public static function changed(Model $record): void
     {
-        $changes = Arr::except($record->getChanges(), ['updated_at']);
+        $changes = Arr::except($record->getChanges(), ['updated_at', ...$record->getHidden()]);
+        // A new password is logged as set, never as its hash.
+        if (array_key_exists('password', $record->getChanges())) {
+            $changes['password'] = '(changed)';
+        }
 
         if ($changes) {
             self::record(Str::snake(class_basename($record)).'.updated', $record, $changes);

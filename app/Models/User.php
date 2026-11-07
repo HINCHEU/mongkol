@@ -21,6 +21,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
 
     protected $fillable = [
         'name',
+        'username',
         'email',
         'google_id',
         'avatar_url',
@@ -44,7 +45,8 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
 
     public function isAllowlistedAdmin(): bool
     {
-        return in_array(Str::lower($this->email), config('app.admin_emails'), true);
+        // Password-only accounts have no email, so they can never be admins.
+        return $this->email !== null && in_array(Str::lower($this->email), config('app.admin_emails'), true);
     }
 
     // Both checks, so removing an email from ADMIN_EMAILS or demoting the role each revokes access.

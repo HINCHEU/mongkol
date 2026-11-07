@@ -48,6 +48,8 @@ return [
     'telegram' => [
         'bot_token' => env('TELEGRAM_BOT_TOKEN'),
         'chat_id' => env('TELEGRAM_CHAT_ID'),
+        // Shown on the login page for couples without Google ("message us on Telegram"). A bot or account you read.
+        'support_username' => env('TELEGRAM_SUPPORT_USERNAME'),
     ],
 
     'slack' => [

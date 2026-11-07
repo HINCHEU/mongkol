@@ -83,6 +83,10 @@ return [
     // Comma-separated Google emails allowed into /admin (also needs role = admin).
     'admin_emails' => array_values(array_filter(array_map('trim', explode(',', strtolower((string) env('ADMIN_EMAILS')))))),
 
+    // Password sign-in for that admin account, set by `php artisan db:seed --class=AdminSeeder`.
+    'admin_username' => env('ADMIN_USERNAME', 'admin'),
+    'admin_password' => env('ADMIN_PASSWORD'),
+
     // Who runs the service and how to reach them, as shown on /privacy, /terms and /refunds.
     'operator' => env('LEGAL_OPERATOR') ?: 'Mongkol',
     'contact_email' => env('CONTACT_EMAIL') ?: 'hincheu16@gmail.com',

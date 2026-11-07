@@ -21,6 +21,10 @@ class UsersTable
                 TextColumn::make('name')
                     ->searchable()
                     ->weight('bold'),
+                TextColumn::make('username')
+                    ->searchable()
+                    ->copyable()
+                    ->placeholder('Google'),
                 TextColumn::make('email')
                     ->searchable()
                     ->copyable(),

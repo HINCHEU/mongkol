@@ -1,3 +1,13 @@
+<script setup>
+import { useForm } from '@inertiajs/vue3';
+
+// telegram: the support username, for couples without Google to ask for a password account.
+defineProps({ telegram: String });
+
+const form = useForm({ login: '', password: '' });
+const signIn = () => form.post('/login', { onFinish: () => form.reset('password') });
+</script>
+
 <template>
     <main class="flex min-h-screen items-center justify-center bg-[#FAF7F2] px-4 font-sans selection:bg-amber-100 selection:text-amber-900">
         <!-- Login Card -->
@@ -33,6 +43,26 @@
                 </svg>
                 <span>{{ $t('login.google') }}</span>
             </a>
+
+            <!-- Username and password (accounts you create in admin). Plain; styling is left to the design pass. -->
+            <p class="mt-6 text-xs text-stone-500">{{ $t('login.or') }}</p>
+            <form class="mt-3 grid gap-3 text-left" @submit.prevent="signIn">
+                <label class="grid gap-1 text-xs font-semibold text-stone-700">
+                    <span>{{ $t('login.username') }}</span>
+                    <input v-model="form.login" class="input min-h-[44px]" autocomplete="username" autocapitalize="none" required />
+                </label>
+                <label class="grid gap-1 text-xs font-semibold text-stone-700">
+                    <span>{{ $t('login.password') }}</span>
+                    <input v-model="form.password" type="password" class="input min-h-[44px]" autocomplete="current-password" required />
+                </label>
+                <p v-if="form.errors.login || form.errors.password" role="alert" class="text-xs font-medium text-red-700">{{ form.errors.login || form.errors.password }}</p>
+                <button type="submit" class="btn-primary min-h-[44px] justify-center" :disabled="form.processing">{{ $t('login.sign_in') }}</button>
+            </form>
+
+            <p v-if="telegram" class="mt-5 text-xs text-stone-600">
+                {{ $t('login.no_google') }}
+                <a :href="`https://t.me/${telegram}`" target="_blank" rel="noopener" class="font-semibold text-stone-800 underline">{{ $t('login.telegram') }}</a>
+            </p>
 
             <p class="mt-6 text-xs text-stone-600">
                 {{ $t('login.secure') }}

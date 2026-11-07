@@ -124,7 +124,7 @@ class UpgradeController extends Controller
             "💳 Payment {$payment->reference}".($old ? ' (new proof)' : ''),
             "{$payment->plan->name} · {$payment->amount()}",
             "Invitation: /{$invitation->slug}",
-            "Couple: {$payment->user->email}",
+            'Couple: '.($payment->user->email ?? $payment->user->username),
             'Review: '.url('/admin/payments'),
         ]));
 

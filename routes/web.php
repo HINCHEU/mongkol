@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Auth\LoginLinkController;
 use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\Auth\PasswordLoginController;
 use App\Http\Controllers\Dashboard\EditorController;
 use App\Http\Controllers\Dashboard\GuestController;
 use App\Http\Controllers\Dashboard\InvitationController;
@@ -19,6 +20,7 @@ use App\Models\Theme;
 use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
+use Inertia\Inertia;
 
 Route::get('/', function () {
     return view('welcome', [
@@ -33,7 +35,9 @@ Route::get('/themes/{slug}/calendar.ics', [ThemeController::class, 'calendar'])-
 Route::get('/{page}', LegalController::class)->whereIn('page', LegalController::PAGES)->name('legal');
 
 Route::middleware(['guest', 'throttle:20,1'])->group(function () {
-    Route::inertia('/login', 'Auth/Login')->name('login');
+    // The Telegram link is for couples without Google: they message you and you make them a password account.
+    Route::get('/login', fn () => Inertia::render('Auth/Login', ['telegram' => config('services.telegram.support_username')]))->name('login');
+    Route::post('/login', PasswordLoginController::class)->name('login.password');
     Route::get('/auth/google', [GoogleController::class, 'redirect'])->name('auth.google');
     Route::get('/auth/google/callback', [GoogleController::class, 'callback']);
 });
