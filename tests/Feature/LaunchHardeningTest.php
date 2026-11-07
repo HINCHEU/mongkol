@@ -46,6 +46,7 @@ it('sends security headers and a content policy on guest, dashboard and admin pa
             ->toContain("frame-ancestors 'self'")
             ->toContain("frame-src 'self'") // the editor frames its own preview
             ->toContain("object-src 'none'")
+            ->toContain("worker-src 'self' blob:") // admin upload previews
             ->toContain('https://fonts.gstatic.com');
     }
 });

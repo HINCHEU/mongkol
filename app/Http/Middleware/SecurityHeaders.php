@@ -47,6 +47,8 @@ class SecurityHeaders
             "media-src 'self' https:",
             "frame-src 'self' https://www.youtube-nocookie.com", // 'self': the editor's phone preview
             "connect-src 'self'",
+            // Filament's file upload (FilePond) draws image previews in a worker made from a blob: URL.
+            "worker-src 'self' blob:",
             "frame-ancestors 'self'", // the editor's phone preview frames our own pages; nobody else may
             "object-src 'none'",
             "base-uri 'self'",
