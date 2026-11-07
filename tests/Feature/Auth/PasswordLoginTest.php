@@ -25,6 +25,16 @@ it('signs in with a username or email and password, and refuses a wrong one', fu
     $this->post('/login', ['login' => 'sokha@example.com', 'password' => 'correct horse'])->assertRedirect('/app');
 });
 
+it('sends an admin back to /admin with a full page load, not inside Inertia', function () {
+    config(['app.admin_emails' => ['boss@example.com']]);
+    User::factory()->admin()->create(['email' => 'boss@example.com', 'username' => 'boss', 'password' => 'correct horse']);
+
+    $this->get('/admin')->assertRedirect('/login'); // Filament sends you to our login and remembers /admin
+    $this->post('/login', ['login' => 'boss', 'password' => 'correct horse'], ['X-Inertia' => 'true'])
+        ->assertStatus(409)
+        ->assertHeader('X-Inertia-Location', url('/admin'));
+});
+
 it('locks an account out for a minute after 5 wrong passwords', function () {
     $this->freezeTime();
     User::factory()->create(['username' => 'dara', 'google_id' => null, 'password' => 'correct horse']);

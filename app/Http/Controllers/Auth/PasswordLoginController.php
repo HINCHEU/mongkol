@@ -3,12 +3,13 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Inertia\Inertia;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Username (or email) and password, for couples without a Google account: they message you on
@@ -16,7 +17,7 @@ use Illuminate\Validation\ValidationException;
  */
 class PasswordLoginController extends Controller
 {
-    public function __invoke(Request $request): RedirectResponse
+    public function __invoke(Request $request): Response
     {
         $data = $request->validate([
             'login' => ['required', 'string', 'max:255'],
@@ -45,6 +46,8 @@ class PasswordLoginController extends Controller
         $request->session()->regenerate();
         $request->user()->forceFill(['last_login_at' => now()])->save();
 
-        return redirect()->intended(route('dashboard'));
+        // A full page visit, not an Inertia redirect: the intended page may be /admin (Filament), which
+        // Inertia would otherwise fetch by XHR and show in its error modal, where Livewire can't work.
+        return Inertia::location(redirect()->intended(route('dashboard'))->getTargetUrl());
     }
 }
