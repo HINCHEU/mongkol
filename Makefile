@@ -10,9 +10,10 @@
 SHELL := /bin/bash
 DC    := docker compose -f compose.yaml$(shell grep -qE '^PROXY_NETWORK=.+' .env 2>/dev/null && echo ' -f compose.proxy.yaml')
 ART   := $(DC) exec -T app php artisan
+KEEP_DAYS ?= 14
 
 .DEFAULT_GOAL := help
-.PHONY: help install deploy restart migrate doctor login-link backup restore logs shell tinker down up
+.PHONY: help install deploy restart migrate doctor login-link backup cron restore logs shell tinker down up
 
 help:
 	@echo "Mongkol"
@@ -23,7 +24,8 @@ help:
 	@echo "  doctor         Check the deployment — run after every deploy"
 	@echo "  migrate        Run pending migrations"
 	@echo "  login-link     Sign-in link without Google (make login-link email=you@example.com)"
-	@echo "  backup         Dump the database and storage to backups/"
+	@echo "  backup         Dump the database and storage to backups/ (keeps $(KEEP_DAYS) days)"
+	@echo "  cron           Run the backup every night at 03:15 (installs a crontab line)"
 	@echo "  restore        Restore a database dump (make restore f=backups/db-....sql.gz)"
 	@echo "  logs           Follow logs   (make logs s=app)"
 	@echo "  shell          Shell in the app container"
@@ -163,7 +165,16 @@ backup:
 		| gzip > backups/db-$$ts.sql.gz \
 		&& $(DC) exec -T app tar czf - -C storage/app . > backups/storage-$$ts.tgz \
 		&& echo "==> Backed up to backups/db-$$ts.sql.gz and backups/storage-$$ts.tgz" \
-		|| { echo "!!! Backup failed."; rm -f backups/db-$$ts.sql.gz backups/storage-$$ts.tgz; exit 1; }
+		&& { find backups -maxdepth 1 \( -name 'db-*.sql.gz' -o -name 'storage-*.tgz' \) -mtime +$(KEEP_DAYS) -delete || true; } \
+		|| { echo "!!! Backup failed."; rm -f backups/db-$$ts.sql.gz backups/storage-$$ts.tgz; \
+		     $(ART) telegram:alert "Backup failed on $$(hostname) at $$ts" || true; exit 1; }
+
+# Nightly at 03:15 server time. Replaces any earlier backup line, so running it twice is safe.
+cron:
+	@mkdir -p backups
+	@line="15 3 * * * cd $(CURDIR) && make backup >> backups/cron.log 2>&1"; \
+	( crontab -l 2>/dev/null | grep -vF 'make backup'; echo "$$line" ) | crontab - \
+		&& echo "==> Installed: $$line"
 
 restore:
 	@[ -n "$(f)" ] && [ -f "$(f)" ] || { echo "Usage: make restore f=backups/db-YYYYMMDD-HHMMSS.sql.gz"; ls -1t backups/db-*.sql.gz 2>/dev/null | head -5; exit 1; }

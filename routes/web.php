@@ -28,7 +28,7 @@ Route::get('/themes', [ThemeController::class, 'index'])->name('themes.index');
 Route::get('/themes/{slug}', [ThemeController::class, 'show'])->where('slug', '[a-z0-9-]+')->name('themes.show');
 Route::get('/themes/{slug}/calendar.ics', [ThemeController::class, 'calendar'])->where('slug', '[a-z0-9-]+')->name('themes.calendar');
 
-Route::middleware('guest')->group(function () {
+Route::middleware(['guest', 'throttle:20,1'])->group(function () {
     Route::inertia('/login', 'Auth/Login')->name('login');
     Route::get('/auth/google', [GoogleController::class, 'redirect'])->name('auth.google');
     Route::get('/auth/google/callback', [GoogleController::class, 'callback']);
@@ -58,8 +58,8 @@ Route::middleware('auth')->prefix('app')->group(function () {
 
         Route::get('/guests', [GuestController::class, 'index'])->name('guests.index');
         Route::post('/guests', [GuestController::class, 'store'])->name('guests.store');
-        Route::post('/guests/preview', [GuestController::class, 'preview'])->name('guests.preview');
-        Route::post('/guests/import', [GuestController::class, 'import'])->name('guests.import');
+        Route::post('/guests/preview', [GuestController::class, 'preview'])->middleware('throttle:30,1')->name('guests.preview');
+        Route::post('/guests/import', [GuestController::class, 'import'])->middleware('throttle:30,1')->name('guests.import');
         Route::get('/guests/export', [GuestController::class, 'export'])->name('guests.export');
         Route::scopeBindings()->group(function () {
             Route::put('/guests/{guest}', [GuestController::class, 'update'])->name('guests.update');
@@ -91,10 +91,13 @@ Route::middleware('auth')->prefix('app')->group(function () {
 // Reserved words (CreateInvitation::RESERVED_SLUGS) can't become slugs, so they never reach these.
 Route::pattern('slug', '[a-z0-9-]+');
 Route::pattern('code', '[A-Za-z0-9]{6}');
-Route::get('/{slug}/calendar.ics', [PublicInvitationController::class, 'calendar'])->name('invitation.calendar');
-Route::get('/{slug}/{code}/qr.svg', [PublicInvitationController::class, 'qr'])->name('invitation.qr');
+// shortcut: limits by the IP nginx forwards; behind Cloudflare, trust its CF-Connecting-IP first or every guest shares one IP.
+Route::middleware('throttle:guest-pages')->group(function () {
+    Route::get('/{slug}/calendar.ics', [PublicInvitationController::class, 'calendar'])->name('invitation.calendar');
+    Route::get('/{slug}/{code}/qr.svg', [PublicInvitationController::class, 'qr'])->name('invitation.qr');
+    Route::get('/{slug}/{code}', [PublicInvitationController::class, 'show'])->name('invitation.guest');
+    Route::get('/{slug}', [PublicInvitationController::class, 'show'])->name('invitation.show');
+});
 // sendBeacon can't carry the CSRF token; the endpoint only bumps a counter, so it's exempt and throttled.
 Route::post('/{slug}/{code}/opened', [PublicInvitationController::class, 'opened'])
-    ->withoutMiddleware(ValidateCsrfToken::class)->middleware('throttle:30,1')->name('invitation.opened');
-Route::get('/{slug}/{code}', [PublicInvitationController::class, 'show'])->name('invitation.guest');
-Route::get('/{slug}', [PublicInvitationController::class, 'show'])->name('invitation.show');
+    ->withoutMiddleware(ValidateCsrfToken::class)->middleware('throttle:guest-beacon')->name('invitation.opened');

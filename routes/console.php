@@ -1,5 +1,6 @@
 <?php
 
+use App\Jobs\SendTelegramAlert;
 use App\Models\Invitation;
 use App\Models\User;
 use App\Notifications\TrialEndingSoon;
@@ -46,3 +47,8 @@ Artisan::command('invitations:remind-trial', function () {
 })->purpose('Email couples whose free preview ends within 12 hours');
 
 Schedule::command('invitations:remind-trial')->hourly()->withoutOverlapping();
+
+// For shell scripts (e.g. a failed nightly backup in the Makefile) to reach your Telegram.
+Artisan::command('telegram:alert {message}', function () {
+    SendTelegramAlert::dispatchSync($this->argument('message'));
+})->purpose('Send a message to the admin Telegram chat');

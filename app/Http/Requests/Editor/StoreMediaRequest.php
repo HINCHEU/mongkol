@@ -13,9 +13,12 @@ class StoreMediaRequest extends EditorRequest
 
     public const IMAGE_MAX_KB = 15 * 1024;
 
+    // 50 MP (a 50 MP phone photo) decodes to ~200 MB; docker/php/app.ini allows PHP 512 MB.
+    public const IMAGE_MAX_PIXELS = 50_000_000;
+
     public function rules(): array
     {
-        $image = ['image', 'mimes:jpg,jpeg,png,webp', 'max:'.self::IMAGE_MAX_KB, 'dimensions:max_width=10000,max_height=10000'];
+        $image = ['image', 'mimes:jpg,jpeg,png,webp', 'max:'.self::IMAGE_MAX_KB, 'dimensions:max_width=12000,max_height=12000'];
 
         return [
             'kind' => ['required', Rule::in(['cover', 'gallery', 'khqr', 'music'])],
@@ -35,6 +38,12 @@ class StoreMediaRequest extends EditorRequest
             if ($this->input('kind') === MediaKind::Gallery->value
                 && $this->invitation()->media()->where('kind', 'gallery')->count() >= $limits->galleryPhotos()) {
                 $validator->errors()->add('file', __('validation.max.array', ['attribute' => __('validation.attributes.gallery'), 'max' => $limits->galleryPhotos()]));
+            }
+
+            // A small file can still decode to a huge bitmap (4 bytes a pixel): stop it before GD runs out of memory.
+            $size = $this->input('kind') !== 'music' && $this->file('file')?->isValid() ? @getimagesize($this->file('file')->getRealPath()) : false;
+            if ($size && $size[0] * $size[1] > self::IMAGE_MAX_PIXELS) {
+                $validator->errors()->add('file', __('This photo is too large (over 50 megapixels). Please send a smaller copy.'));
             }
         }];
     }

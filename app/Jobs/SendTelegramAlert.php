@@ -32,8 +32,9 @@ class SendTelegramAlert implements ShouldQueue
                 ->post("https://api.telegram.org/bot{$token}/sendMessage", ['chat_id' => $chat, 'text' => $this->text])
                 ->throw();
         } catch (Throwable $e) {
-            // The queue is sync in production: a Telegram outage must not fail the couple's upload.
-            report($e);
+            // Logged, not reported: the queue is sync, so a Telegram outage must not fail the couple's upload,
+            // and reporting would send this failure back through the error alert.
+            Log::warning('Telegram alert failed: '.$e->getMessage());
         }
     }
 }
