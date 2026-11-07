@@ -28,5 +28,7 @@ class AppServiceProvider extends ServiceProvider
         // Guest pages: generous for a family on one connection, hopeless for guessing guest codes (57^6).
         RateLimiter::for('guest-pages', fn (Request $request) => Limit::perMinute(120)->by($request->ip()));
         RateLimiter::for('guest-beacon', fn (Request $request) => Limit::perMinute(30)->by($request->ip()));
+        // Replies and wishes: plenty for a family on one phone, a wall for a spam script.
+        RateLimiter::for('guest-forms', fn (Request $request) => Limit::perMinute(10)->by($request->ip()));
     }
 }

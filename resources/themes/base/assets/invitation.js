@@ -127,6 +127,57 @@ Alpine.data('copy', (text, done) => ({
     },
 }));
 
+// RSVP and wishes post JSON to `${url}/rsvp` or `${url}/wishes`; no url (demo, editor preview) only shows the form.
+// `website` is a honeypot: hidden from people, filled in by bots, and the server drops what it carries.
+const postForm = async (url, body) => {
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(body),
+    });
+    if (!response.ok) throw new Error(String(response.status));
+    return response.json();
+};
+
+Alpine.data('rsvp', (url, earlier) => ({
+    attending: earlier?.attending ?? null,
+    party_size: earlier?.party_size || 1,
+    message: earlier?.message ?? '',
+    name: '',
+    website: '',
+    state: earlier ? 'sent' : null, // null | sending | sent | error | demo
+    async send() {
+        if (!url) return (this.state = 'demo');
+        this.state = 'sending';
+        try {
+            await postForm(`${url}/rsvp`, { attending: this.attending, party_size: this.party_size, message: this.message, name: this.name, website: this.website });
+            this.state = 'sent';
+        } catch {
+            this.state = 'error';
+        }
+    },
+}));
+
+Alpine.data('wishes', (url, list, guestName) => ({
+    list,
+    name: '',
+    message: '',
+    website: '',
+    state: null, // null | sending | sent | pending | error | demo
+    async send() {
+        if (!url) return (this.state = 'demo');
+        this.state = 'sending';
+        try {
+            const { shown } = await postForm(`${url}/wishes`, { name: this.name, message: this.message, website: this.website });
+            if (shown) this.list.unshift({ name: guestName || this.name, message: this.message.trim() });
+            this.state = shown ? 'sent' : 'pending';
+            this.message = '';
+        } catch {
+            this.state = 'error';
+        }
+    },
+}));
+
 window.Alpine = Alpine;
 Alpine.start();
 

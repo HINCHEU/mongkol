@@ -10,7 +10,7 @@ class ThemeRenderer
     public function __construct(private readonly ThemeRegistry $registry) {}
 
     /**
-     * @param  array{calendarUrl?: ?string, beaconUrl?: ?string, skipIntro?: bool, og?: ?array}  $extra
+     * @param  array{calendarUrl?: ?string, beaconUrl?: ?string, skipIntro?: bool, og?: ?array, formsUrl?: ?string}  $extra
      */
     public function render(string $slug, InvitationViewModel $vm, array $extra = []): View
     {
@@ -38,6 +38,8 @@ class ThemeRenderer
             'entry' => $this->registry->entry($theme['slug']),
             'calendarUrl' => $extra['calendarUrl'] ?? null,
             'beaconUrl' => $extra['beaconUrl'] ?? null,
+            // Where RSVP and wishes post to; null in the demo and the editor preview, which only show the forms.
+            'formsUrl' => $extra['formsUrl'] ?? null,
             'skipIntro' => $extra['skipIntro'] ?? false,
             'og' => $extra['og'] ?? null,
         ]);

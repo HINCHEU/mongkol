@@ -143,4 +143,20 @@ class Invitation extends Model
     {
         return $this->hasMany(Payment::class);
     }
+
+    public function rsvps(): HasMany
+    {
+        return $this->hasMany(Rsvp::class);
+    }
+
+    public function wishes(): HasMany
+    {
+        return $this->hasMany(Wish::class);
+    }
+
+    /** Guest replies and the guest book, both on unless the couple turns them off. */
+    public function accepts(string $what): bool
+    {
+        return (bool) ($this->content["{$what}_enabled"] ?? true);
+    }
 }

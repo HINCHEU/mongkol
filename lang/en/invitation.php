@@ -47,6 +47,8 @@ return [
         'venues' => 'Location',
         'gallery' => 'Gallery',
         'gift' => 'Wedding gift',
+        'rsvp' => 'Will you join us?',
+        'wishes' => 'Wishes',
     ],
     'dock' => [
         'date' => 'Date',
@@ -54,4 +56,20 @@ return [
         'venues' => 'Map',
         'gift' => 'Gift',
     ],
+
+    // RSVP and guest book.
+    'rsvp_yes' => 'Yes, I’ll be there',
+    'rsvp_no' => 'Sorry, I can’t come',
+    'rsvp_count' => 'How many people, including you?',
+    'rsvp_note' => 'A note for the couple (optional)',
+    'rsvp_thanks' => 'Thank you! Your reply has been sent.',
+    'rsvp_change' => 'Change my reply',
+    'your_name' => 'Your name',
+    'send' => 'Send',
+    'wish_placeholder' => 'Write your wishes for the couple…',
+    'wish_thanks' => 'Thank you for your wishes!',
+    'wish_pending' => 'Thank you! Your wish will appear once the couple approves it.',
+    'wishes_empty' => 'Be the first to leave a wish.',
+    'form_demo' => 'This is a sample invitation: nothing is sent.',
+    'form_error' => 'Couldn’t send. Please check and try again.',
 ];

@@ -25,8 +25,8 @@ class SecurityHeaders
             $response->headers->set('Strict-Transport-Security', 'max-age=31536000');
         }
 
-        // The Vite dev server serves scripts from another origin with hot reload; the policy is for real builds.
-        if (! Vite::isRunningHot()) {
+        // The local Vite dev server serves scripts from another origin with hot reload; the policy is for real builds.
+        if (! (app()->isLocal() && Vite::isRunningHot())) {
             $response->headers->set('Content-Security-Policy', self::policy());
         }
 

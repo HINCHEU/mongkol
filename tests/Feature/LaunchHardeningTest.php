@@ -9,12 +9,10 @@ use Database\Seeders\ReferenceDataSeeder;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Vite;
 
 beforeEach(function () {
     $this->seed(ReferenceDataSeeder::class);
     $this->withoutVite();
-    Vite::useHotFile(storage_path('framework/testing-no-hot')); // as in production: no dev server
 });
 
 function launched(): Invitation

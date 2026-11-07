@@ -7,6 +7,7 @@ use Database\Factories\GuestFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Guest extends Model
 {
@@ -57,6 +58,11 @@ class Guest extends Model
     public function invitation(): BelongsTo
     {
         return $this->belongsTo(Invitation::class);
+    }
+
+    public function rsvp(): HasOne
+    {
+        return $this->hasOne(Rsvp::class);
     }
 
     /** "លោក ចាន់ ថា និងភរិយា": what the envelope, the link preview and the share message show. */

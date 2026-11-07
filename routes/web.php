@@ -8,6 +8,7 @@ use App\Http\Controllers\Dashboard\GuestController;
 use App\Http\Controllers\Dashboard\InvitationController;
 use App\Http\Controllers\Dashboard\LocaleController;
 use App\Http\Controllers\Dashboard\MediaController;
+use App\Http\Controllers\Dashboard\ResponsesController;
 use App\Http\Controllers\Dashboard\ShareController;
 use App\Http\Controllers\Dashboard\UpgradeController;
 use App\Http\Controllers\Public\InvitationController as PublicInvitationController;
@@ -73,6 +74,15 @@ Route::middleware('auth')->prefix('app')->group(function () {
         Route::get('/share', [ShareController::class, 'show'])->name('share');
         Route::put('/share', [ShareController::class, 'update'])->name('share.update');
 
+        Route::get('/responses', [ResponsesController::class, 'show'])->name('responses');
+        Route::put('/responses/settings', [ResponsesController::class, 'settings'])->name('responses.settings');
+        Route::get('/responses/export', [ResponsesController::class, 'export'])->name('responses.export');
+        Route::scopeBindings()->group(function () {
+            Route::put('/wishes/{wish}', [ResponsesController::class, 'moderate'])->name('wishes.moderate');
+            Route::delete('/wishes/{wish}', [ResponsesController::class, 'destroyWish'])->name('wishes.destroy');
+            Route::delete('/rsvps/{rsvp}', [ResponsesController::class, 'destroyRsvp'])->name('rsvps.destroy');
+        });
+
         Route::get('/upgrade', [UpgradeController::class, 'show'])->name('upgrade');
         Route::post('/upgrade', [UpgradeController::class, 'store'])->name('upgrade.store');
         Route::scopeBindings()->group(function () {
@@ -104,3 +114,10 @@ Route::middleware('throttle:guest-pages')->group(function () {
 // sendBeacon can't carry the CSRF token; the endpoint only bumps a counter, so it's exempt and throttled.
 Route::post('/{slug}/{code}/opened', [PublicInvitationController::class, 'opened'])
     ->withoutMiddleware(ValidateCsrfToken::class)->middleware('throttle:guest-beacon')->name('invitation.opened');
+// RSVP and guest book. Guests have no session to protect, so no CSRF token: the limit and a honeypot stop spam.
+Route::withoutMiddleware(ValidateCsrfToken::class)->middleware('throttle:guest-forms')->group(function () {
+    Route::post('/{slug}/rsvp', [PublicInvitationController::class, 'rsvp'])->name('invitation.rsvp');
+    Route::post('/{slug}/wishes', [PublicInvitationController::class, 'wish'])->name('invitation.wish');
+    Route::post('/{slug}/{code}/rsvp', [PublicInvitationController::class, 'rsvp'])->name('invitation.guest.rsvp');
+    Route::post('/{slug}/{code}/wishes', [PublicInvitationController::class, 'wish'])->name('invitation.guest.wish');
+});

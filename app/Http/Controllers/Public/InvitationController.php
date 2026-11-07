@@ -12,6 +12,8 @@ use App\Services\Themes\KhmerFormat;
 use App\Services\Themes\ThemeRenderer;
 use chillerlan\QRCode\QRCode;
 use chillerlan\QRCode\QROptions;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 /**
@@ -40,7 +42,66 @@ class InvitationController extends Controller
             // Only personal links count opens; the generic one is shared in groups.
             'beaconUrl' => $guest ? url("{$slug}/{$guest->code}/opened") : null,
             'og' => $this->og($vm, $guest ? url("{$slug}/{$guest->code}") : url($slug)),
+            // A personal link answers as that guest; the generic one asks for a name.
+            'formsUrl' => $guest ? url("{$slug}/{$guest->code}") : url($slug),
         ])));
+    }
+
+    /** Attending or not, and how many. Answering again from a personal link changes the earlier reply. */
+    public function rsvp(Request $request, string $slug, ?string $code = null): JsonResponse
+    {
+        [$invitation, $guest] = $this->openFor($slug, $code, 'rsvp');
+        if ($request->filled('website')) {
+            return response()->json(['ok' => true]); // the honeypot: only bots fill a field people can't see
+        }
+
+        $data = $request->validate([
+            'name' => [$guest ? 'nullable' : 'required', 'string', 'max:100'],
+            'attending' => ['required', 'boolean'],
+            'party_size' => ['required_if:attending,true', 'nullable', 'integer', 'min:1', 'max:20'],
+            'message' => ['nullable', 'string', 'max:500'],
+        ]);
+        $reply = [
+            'name' => $guest?->displayName() ?? trim($data['name']),
+            'attending' => $request->boolean('attending'),
+            'party_size' => $request->boolean('attending') ? (int) $data['party_size'] : 0,
+            'message' => $data['message'] ?? null,
+        ];
+
+        // guest_id isn't fillable (no form may set it), so it's set here, on the guest's existing reply if any.
+        $rsvp = ($guest?->rsvp ?? $invitation->rsvps()->make())->fill($reply);
+        $rsvp->guest()->associate($guest)->save();
+
+        return response()->json(['ok' => true]);
+    }
+
+    /** A message for the guest book; plain text, and hidden until approved if the couple asks for that. */
+    public function wish(Request $request, string $slug, ?string $code = null): JsonResponse
+    {
+        [$invitation, $guest] = $this->openFor($slug, $code, 'wishes');
+        if ($request->filled('website')) {
+            return response()->json(['ok' => true, 'shown' => false]);
+        }
+
+        $data = $request->validate([
+            'name' => [$guest ? 'nullable' : 'required', 'string', 'max:100'],
+            'message' => ['required', 'string', 'max:500'],
+        ]);
+
+        $wish = $invitation->wishes()->make(['name' => $guest?->displayName() ?? trim($data['name']), 'message' => trim($data['message'])]);
+        $wish->guest()->associate($guest);
+        $wish->forceFill(['is_hidden' => (bool) ($invitation->content['wishes_need_approval'] ?? false)])->save();
+
+        return response()->json(['ok' => true, 'shown' => ! $wish->is_hidden]);
+    }
+
+    /** @return array{Invitation, ?Guest} only while guests can see the invitation, and the couple accepts this */
+    private function openFor(string $slug, ?string $code, string $what): array
+    {
+        $invitation = $this->invitation($slug);
+        abort_unless(in_array($invitation->state(), [InvitationState::Trial, InvitationState::Live], true) && $invitation->accepts($what), 404);
+
+        return [$invitation, $code !== null ? $this->guest($invitation, $code) : null];
     }
 
     public function calendar(string $slug): Response

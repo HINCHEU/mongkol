@@ -92,6 +92,7 @@ return [
         ],
         'guests' => 'Guests',
         'share' => 'Share',
+        'responses' => 'Responses',
         'upgrade' => 'Upgrade',
         'plan' => 'Plan',
         'status' => [
@@ -278,6 +279,28 @@ return [
         'opens' => ':count opens',
         'view_qr' => 'QR code',
         'send' => 'Send',
+    ],
+
+    'responses' => [
+        'rsvp_enabled' => 'Ask guests whether they’re coming (RSVP)',
+        'wishes_enabled' => 'Show the guest book (wishes)',
+        'wishes_need_approval' => 'New wishes appear only after I approve them',
+        'people' => 'people coming',
+        'attending' => 'replies: coming',
+        'declined' => 'replies: can’t come',
+        'waiting' => 'personal links not answered yet',
+        'replies' => 'Replies (:count)',
+        'no_replies' => 'No replies yet.',
+        'coming' => 'coming · :count people',
+        'not_coming' => 'can’t come',
+        'generic_link' => 'from the link for everyone',
+        'wishes' => 'Wishes (:count)',
+        'no_wishes' => 'No wishes yet.',
+        'hidden' => 'Hidden',
+        'hide' => 'Hide',
+        'show' => 'Show',
+        'confirm_delete_wish' => 'Delete this wish? This can’t be undone.',
+        'confirm_delete_rsvp' => 'Delete the reply from :name?',
     ],
 
     'upgrade' => [

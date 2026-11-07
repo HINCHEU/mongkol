@@ -56,7 +56,11 @@ final class InvitationViewModel
     {
         return new self(
             $this->data,
-            $guest ? ['title' => $guest->title, 'name' => $guest->name, 'suffix' => $guest->suffix] : null,
+            $guest ? [
+                'title' => $guest->title, 'name' => $guest->name, 'suffix' => $guest->suffix,
+                // Their earlier reply, so the form shows it; per request, never cached.
+                'rsvp' => $guest->rsvp?->only('attending', 'party_size', 'message'),
+            ] : null,
             $this->isPreview,
         );
     }
@@ -69,6 +73,9 @@ final class InvitationViewModel
             'venues' => $this->data['venues'] !== [],
             'gallery' => $this->data['gallery'] !== [] || ! empty($this->data['video_url']),
             'gift' => $this->data['gift_accounts'] !== [],
+            // On unless the couple turned them off (demo.json leaves them on).
+            'rsvp' => $this->data['rsvp_enabled'] ?? true,
+            'wishes' => $this->data['wishes_enabled'] ?? true,
             default => false,
         };
     }
@@ -215,6 +222,11 @@ final class InvitationViewModel
             ])->all(),
             // The trial runs on Premium limits but still carries the credit.
             'show_credit' => ! ($limits->isPaid() && $limits->allows('hide_credit')),
+            'rsvp_enabled' => $invitation->accepts('rsvp'),
+            'wishes_enabled' => $invitation->accepts('wishes'),
+            // The newest visible wishes; a new or hidden one touches the invitation, so this cache refreshes.
+            'wishes' => $invitation->wishes()->where('is_hidden', false)->latest('id')->limit(30)->get()
+                ->map(fn ($w) => ['name' => $w->name, 'message' => $w->message, 'at' => $w->created_at->toIso8601String()])->all(),
         ];
     }
 }

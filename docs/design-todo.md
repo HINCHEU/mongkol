@@ -11,6 +11,16 @@ Claude builds features with plain, working markup. This file lists the screens w
 - Phone first: touch targets at least 44px, nothing wider than the screen at 375px.
 - Run `npm run build` before committing; it must pass.
 
+## Phase 2: RSVP and wishes
+
+- [ ] **RSVP section** on the invitation: `resources/themes/base/views/sections/rsvp.blade.php`. The two big choices (coming / can't come), the head count (shown only when coming), a note, Send, then the thank-you state with "Change my reply". The generic link also asks for a name.
+- [ ] **Wishes section** (guest book): `resources/themes/base/views/sections/wishes.blade.php`. The form, then the list of wishes (newest first), and the empty, thank-you and "waiting for approval" states.
+  - Keep the hidden `website` input exactly as it is: it's the honeypot that catches spam bots. Don't make it visible or remove it.
+  - Wishes are shown with `x-text`, never `x-html` (guests' text must not become markup).
+  - New themes can override these two sections like any other.
+- [ ] **Responses page** for the couple: `resources/js/dashboard/Pages/Invitations/Responses.vue` (`/app/invitations/{id}/responses`). The three switches, the four totals (people coming is the one they plan tables with), the replies list and the guest book with Hide / Show / Delete.
+- [ ] **Responses button in the editor nav** (`Edit.vue`), next to Share.
+
 ## M9: legal pages
 
 - [x] **Privacy, terms and refunds**: `resources/views/public/legal.blade.php` (`/privacy`, `/terms`, `/refunds`, `?lang=en` for English). One plain template for all three; text comes from `lang/{km,en}/legal.php`. Make it calm and easy to read on a phone (long Khmer paragraphs: generous line height). Keep the ខ្មែរ/English links and the footer links between the pages.

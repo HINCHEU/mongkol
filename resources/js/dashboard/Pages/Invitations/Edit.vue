@@ -131,6 +131,12 @@ const showPreview = ref(false);
                 </svg>
                 <span>{{ $t('editor.share') }}</span>
             </Link>
+            <Link
+                :href="`/app/invitations/${invitation.id}/responses`"
+                class="inline-flex min-h-[44px] items-center gap-1.5 rounded-lg border border-amber-300/80 bg-amber-50/70 px-3.5 py-2 text-xs sm:text-sm font-semibold text-amber-950 shadow-xs hover:bg-amber-100 hover:border-amber-400 transition-all duration-150 cursor-pointer"
+            >
+                <span>{{ $t('editor.responses') }}</span>
+            </Link>
             <!-- Upgrade / Plan Button -->
             <Link
                 :href="`/app/invitations/${invitation.id}/upgrade`"
