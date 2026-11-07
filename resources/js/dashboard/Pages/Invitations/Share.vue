@@ -39,14 +39,22 @@ const markSent = (guest) => guest && !guest.sent && router.put(`${base}/guests/$
 const toggleSent = (guest, sent) => router.put(`${base}/guests/${guest.id}/sent`, { sent }, keep);
 
 const search = ref('');
-// all | opened | unopened: "unopened" is who to nudge again.
+// "Sent, not opened" is who to nudge again.
+const filters = {
+    all: () => true,
+    opened: (g) => g.open_count > 0,
+    unopened: (g) => g.open_count === 0,
+    sent_unopened: (g) => g.sent && g.open_count === 0,
+};
 const filter = ref('all');
-const openedCount = computed(() => props.guests.filter((g) => g.open_count > 0).length);
-const filterCounts = computed(() => ({ all: props.guests.length, opened: openedCount.value, unopened: props.guests.length - openedCount.value }));
+const filterCounts = computed(() => Object.fromEntries(Object.entries(filters).map(([key, test]) => [key, props.guests.filter(test).length])));
+const openedCount = computed(() => filterCounts.value.opened);
+// list (the guest list's order) | recent (last opened first, never opened at the end)
+const sort = ref('list');
 const shown = computed(() => {
     const q = search.value.trim().toLowerCase();
-    return props.guests.filter((g) =>
-        (filter.value === 'all' || (filter.value === 'opened') === g.open_count > 0) && (!q || g.name.toLowerCase().includes(q)));
+    const list = props.guests.filter((g) => filters[filter.value](g) && (!q || g.name.toLowerCase().includes(q)));
+    return sort.value === 'recent' ? list.sort((a, b) => (b.opened_at ?? 0) - (a.opened_at ?? 0)) : list;
 });
 const sentCount = computed(() => props.guests.filter((g) => g.sent).length);
 </script>
@@ -268,7 +276,8 @@ const sentCount = computed(() => props.guests.filter((g) => g.sent).length);
                     </div>
 
                     <template v-else>
-                        <!-- Search Box -->
+                        <!-- Search Box and sort -->
+                        <div class="flex flex-col sm:flex-row gap-2">
                         <div class="relative w-full sm:w-72">
                             <svg class="size-4 text-stone-400 absolute left-3 top-3 pointer-events-none" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
@@ -279,11 +288,16 @@ const sentCount = computed(() => props.guests.filter((g) => g.sent).length);
                                 :placeholder="$t('guests.search')"
                             />
                         </div>
+                        <select v-model="sort" class="input min-h-[44px] w-full sm:w-auto" :aria-label="$t('share.sort')">
+                            <option value="list">{{ $t('share.sort_list') }}</option>
+                            <option value="recent">{{ $t('share.sort_recent') }}</option>
+                        </select>
+                        </div>
 
                         <!-- Opened / not opened filter -->
                         <div class="flex flex-wrap gap-2" role="group" :aria-label="$t('share.filter')">
                             <button
-                                v-for="key in ['all', 'opened', 'unopened']"
+                                v-for="key in Object.keys(filters)"
                                 :key="key"
                                 type="button"
                                 class="inline-flex items-center gap-1.5 rounded-full border px-3 min-h-[36px] text-xs font-bold transition-colors"

@@ -129,5 +129,6 @@ it('tells the couple who opened their link and when', function () {
 
     $this->travelTo(now()->subHours(3), fn () => $this->post('/sokha-dara/k7Px2Q/opened')->assertNoContent());
 
-    $page()->assertInertia(fn (AssertableInertia $p) => $p->where('guests.0.open_count', 1)->where('guests.0.last_opened', '3 hours ago'));
+    $page()->assertInertia(fn (AssertableInertia $p) => $p->where('guests.0.open_count', 1)->where('guests.0.last_opened', '3 hours ago')
+        ->where('guests.0.opened_at', $invitation->guests()->first()->last_opened_at->getTimestamp()));
 });

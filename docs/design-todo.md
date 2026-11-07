@@ -13,7 +13,7 @@ Claude builds features with plain, working markup. This file lists the screens w
 
 ## Phase 2: open tracking
 
-- [ ] **Opened filter and last opened on the Share page**: `resources/js/dashboard/Pages/Invitations/Share.vue`. The All / Opened / Not opened chips under the search box, the "opened" counter next to "sent", and "last 3 hours ago" on each guest (mobile card and the Opens column). Plain for now; "Not opened" is the list the couple follows up on.
+- [ ] **Opened filter and last opened on the Share page**: `resources/js/dashboard/Pages/Invitations/Share.vue`. The All / Opened / Not opened / Sent, not opened chips and the order select (guest list / recently opened) by the search box, the "opened" counter next to "sent", and "last 3 hours ago" on each guest (mobile card and the Opens column). Plain for now; "Sent, not opened" is the list the couple follows up on.
 
 ## Phase 2: RSVP and wishes
 

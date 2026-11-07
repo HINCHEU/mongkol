@@ -37,6 +37,7 @@ class ShareController extends Controller
                 'open_count' => $g->open_count,
                 // "3 hours ago" / "3 ម៉ោងមុន": Carbon follows the dashboard language.
                 'last_opened' => $g->last_opened_at?->diffForHumans(),
+                'opened_at' => $g->last_opened_at?->getTimestamp(), // for the "recently opened" sort
             ]),
         ]);
     }
