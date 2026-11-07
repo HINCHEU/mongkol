@@ -13,15 +13,20 @@ class Payment extends Model
 
     public const REJECTED = 'rejected';
 
+    public const MANUAL = 'manual_khqr';
+
+    public const BAKONG = 'bakong';
+
     // Matches the column default, so a just-created payment reads as pending too.
     protected $attributes = ['status' => self::PENDING];
 
-    // status, reviewed_by, reviewed_at and reference are set by the approve/reject actions only.
+    // status, reviewed_by, reviewed_at and reference are set by the approve/reject actions only;
+    // khqr, md5 and expires_at by Bakong::issue().
     protected $fillable = ['plan_id', 'amount_minor', 'currency', 'method', 'proof_media_id'];
 
     protected function casts(): array
     {
-        return ['reviewed_at' => 'datetime'];
+        return ['reviewed_at' => 'datetime', 'expires_at' => 'datetime'];
     }
 
     /** A plan's list price in minor units: US cents, or riel (no decimals). */
@@ -33,6 +38,12 @@ class Payment extends Model
     public static function format(int $minor, string $currency): string
     {
         return $currency === 'KHR' ? number_format($minor).'៛' : '$'.number_format($minor / 100, 2);
+    }
+
+    /** A Bakong QR that can no longer be paid. */
+    public function expired(): bool
+    {
+        return $this->expires_at?->isPast() ?? false;
     }
 
     public function amount(): string

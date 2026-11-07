@@ -78,12 +78,18 @@ class PaymentResource extends Resource
                         Payment::REJECTED => 'heroicon-m-x-circle',
                         default => 'heroicon-m-clock',
                     }),
+                // Bakong payments have no screenshot: they're approved when Bakong confirms them.
+                TextColumn::make('method')
+                    ->badge()
+                    ->formatStateUsing(fn (string $state) => $state === Payment::BAKONG ? 'Bakong' : 'Manual')
+                    ->color(fn (string $state) => $state === Payment::BAKONG ? 'info' : 'gray'),
                 TextColumn::make('proof_media_id')
                     ->label('Proof')
                     ->formatStateUsing(fn ($state) => $state ? 'Uploaded' : '')
                     ->icon(fn ($state) => $state ? 'heroicon-m-camera' : null)
                     ->placeholder('Waiting'),
-                TextColumn::make('note')->toggleable(isToggledHiddenByDefault: true),
+                // Rejection reasons, and why a Bakong transaction wasn't approved automatically.
+                TextColumn::make('note')->limit(60)->toggleable(),
                 TextColumn::make('created_at')->dateTime()->sortable(),
             ])
             ->defaultSort('created_at', 'desc')

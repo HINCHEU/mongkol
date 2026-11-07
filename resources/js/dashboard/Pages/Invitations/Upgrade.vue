@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { Link, router, useForm } from '@inertiajs/vue3';
 import AppLayout from '../../Layouts/AppLayout.vue';
 import Field from '../../Components/Field.vue';
@@ -39,6 +39,23 @@ function sendProof(input) {
     });
 }
 const cancel = () => confirm(t('upgrade.confirm_cancel')) && router.delete(`${base}/upgrade/${props.pending.id}`, keep);
+
+// Bakong: the page polls while the QR is open (and 2 minutes after, while the last check runs),
+// so it turns live by itself once paid. An expired QR gets a new one; manual payment stays one tap away.
+const isBakong = computed(() => props.pending?.method === 'bakong');
+const now = ref(Date.now());
+const secondsLeft = computed(() => (isBakong.value ? Math.round((Date.parse(props.pending.expires_at) - now.value) / 1000) : 0));
+const countdown = computed(() => `${Math.floor(Math.max(secondsLeft.value, 0) / 60)}:${String(Math.max(secondsLeft.value, 0) % 60).padStart(2, '0')}`);
+const repay = (method = null) => router.post(`${base}/upgrade`, { plan_id: props.pending.plan_id, currency: props.pending.currency, method }, keep);
+let tick;
+let seconds = 0;
+onMounted(() => {
+    tick = setInterval(() => {
+        now.value = Date.now();
+        if (isBakong.value && secondsLeft.value > -120 && ++seconds % 5 === 0) router.reload();
+    }, 1000);
+});
+onBeforeUnmount(() => clearInterval(tick));
 
 // Templates can't reach `navigator`, so copying goes through the script.
 const copied = ref(false);
@@ -138,13 +155,30 @@ const features = (plan) => [
                 <div class="border-b border-stone-100 pb-3 flex items-center justify-between">
                     <div>
                         <h2 class="text-lg font-bold text-stone-900">{{ $t('upgrade.pay', { amount: pending.amount, plan: pending.plan }) }}</h2>
-                        <p class="text-xs text-stone-500 font-kantumruy">{{ $t('upgrade.pay_hint') }}</p>
+                        <p class="text-xs text-stone-500 font-kantumruy">{{ isBakong ? $t('upgrade.bakong_hint') : $t('upgrade.pay_hint') }}</p>
                     </div>
                     <span class="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-bold text-amber-900">
-                        {{ $t('upgrade.pending') }}
+                        {{ isBakong ? $t('upgrade.bakong_waiting') : $t('upgrade.pending') }}
                     </span>
                 </div>
 
+                <!-- Bakong: dynamic KHQR for the exact amount, confirmed automatically (plain; design pass) -->
+                <div v-if="isBakong" class="grid gap-3 justify-items-center text-center">
+                    <template v-if="secondsLeft > 0">
+                        <img :src="pending.khqr" :alt="`KHQR ${pending.amount}`" class="w-64 max-w-full aspect-square bg-white" />
+                        <p class="text-sm text-stone-700">{{ $t('upgrade.bakong_scan', { amount: pending.amount }) }}</p>
+                        <p class="text-xs text-stone-500" role="timer">{{ $t('upgrade.bakong_expires', { time: countdown }) }}</p>
+                    </template>
+                    <template v-else>
+                        <p class="text-sm text-stone-700" role="status">{{ $t('upgrade.bakong_expired') }}</p>
+                        <button type="button" class="btn-primary min-h-[44px]" @click="repay()">{{ $t('upgrade.bakong_new') }}</button>
+                    </template>
+                    <button type="button" class="min-h-[44px] text-xs font-semibold text-stone-700 underline" @click="repay('manual_khqr')">
+                        {{ $t('upgrade.bakong_manual') }}
+                    </button>
+                </div>
+
+                <template v-else>
                 <!-- Reference Code Card (Large, easy to read, tap-to-copy) -->
                 <div class="rounded-xl border border-amber-300/80 bg-gradient-to-r from-amber-50/70 via-stone-50 to-amber-50/40 p-4">
                     <span class="text-xs font-semibold uppercase tracking-wider text-amber-900 block mb-1">
@@ -230,6 +264,7 @@ const features = (plan) => [
                         <span>{{ proofError }}</span>
                     </p>
                 </div>
+                </template>
 
                 <!-- Cancel Button -->
                 <div class="pt-1">

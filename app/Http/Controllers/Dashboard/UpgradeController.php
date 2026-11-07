@@ -9,17 +9,23 @@ use App\Models\Invitation;
 use App\Models\Payment;
 use App\Models\Plan;
 use App\Models\Setting;
+use App\Services\Bakong;
 use App\Services\PlanLimits;
+use chillerlan\QRCode\QRCode;
+use chillerlan\QRCode\QROptions;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
+use Throwable;
 
 /**
- * Manual payment, phase 1: pick a plan and currency → pay your KHQR with the KW-{id} reference in
- * the note → upload the screenshot → you get a Telegram alert and approve or reject in admin.
+ * Pick a plan and currency, then pay one of two ways:
+ * - Bakong (when configured): a dynamic KHQR for the exact amount; `payments:check-bakong` approves it once paid.
+ * - Manual: pay your KHQR with the KW-{id} reference in the note → upload the screenshot → you get a
+ *   Telegram alert and approve or reject in admin. Always available, so a Bakong outage never blocks a couple.
  */
 class UpgradeController extends Controller
 {
@@ -51,7 +57,13 @@ class UpgradeController extends Controller
                 'amount' => $pending->amount(),
                 'currency' => $pending->currency,
                 'has_proof' => $pending->proof_media_id !== null,
+                'method' => $pending->method,
+                // The page polls while a Bakong QR is open, so it turns live without a refresh.
+                'khqr' => $pending->khqr ? (new QRCode(new QROptions(['addQuietzone' => true])))->render($pending->khqr) : null,
+                'expires_at' => $pending->expires_at?->toIso8601String(),
+                'plan_id' => $pending->plan_id,
             ] : null,
+            'bakong' => Bakong::enabled(),
             'rejected' => $rejected && (! $pending || $rejected->id > $pending->id) ? $rejected->only('reference', 'note') : null,
             'instructions' => Setting::read('payment_instructions'),
             // Your KHQR per currency, uploaded in admin Settings.
@@ -65,15 +77,18 @@ class UpgradeController extends Controller
         $data = $request->validate([
             'plan_id' => ['required', Rule::in($plans->pluck('id'))],
             'currency' => ['required', Rule::in(self::CURRENCIES)],
+            'method' => ['nullable', Rule::in([Payment::MANUAL])], // "pay manually instead"
         ]);
         $plan = $plans->firstWhere('id', $data['plan_id']);
 
+        // One open request at a time: choosing again replaces the one not yet reviewed.
+        foreach ($invitation->payments()->where('status', Payment::PENDING)->get() as $old) {
+            if ($this->discard($old)) {
+                return back(); // that QR was just paid: nothing new to make
+            }
+        }
+
         DB::transaction(function () use ($request, $invitation, $plan, $data) {
-            // One open request at a time: choosing again replaces the one not yet reviewed.
-            $invitation->payments()->where('status', Payment::PENDING)->get()->each(function (Payment $old) {
-                $old->proof?->delete();
-                $old->delete();
-            });
 
             $payment = $invitation->payments()->make([
                 'plan_id' => $plan->id,
@@ -82,6 +97,10 @@ class UpgradeController extends Controller
             ]);
             $payment->user()->associate($request->user())->save();
             $payment->forceFill(['reference' => 'KW-'.$payment->id])->save();
+
+            if (Bakong::enabled() && ($data['method'] ?? null) !== Payment::MANUAL) {
+                Bakong::issue($payment);
+            }
         });
 
         return back();
@@ -115,10 +134,32 @@ class UpgradeController extends Controller
     public function destroy(Invitation $invitation, Payment $payment): RedirectResponse
     {
         abort_unless($payment->status === Payment::PENDING, 404);
+        $this->discard($payment);
+
+        return back();
+    }
+
+    /**
+     * Deletes a pending payment, unless its Bakong QR turns out to be paid already (then it's approved).
+     * shortcut: if Bakong can't be reached, the QR is deleted unchecked; a couple who paid it in that
+     * moment shows up in your Bakong history without an invitation going live. Fine at this volume.
+     */
+    private function discard(Payment $payment): bool
+    {
+        if ($payment->method === Payment::BAKONG && $payment->md5 && Bakong::enabled()) {
+            try {
+                if (Bakong::settle($payment)) {
+                    return true;
+                }
+            } catch (Throwable $e) {
+                report($e);
+            }
+        }
+
         $payment->proof?->delete();
         $payment->delete();
 
-        return back();
+        return false;
     }
 
     /** Active plans above the current one; all of them before the first payment. */

@@ -2,8 +2,10 @@
 
 use App\Jobs\SendTelegramAlert;
 use App\Models\Invitation;
+use App\Models\Payment;
 use App\Models\User;
 use App\Notifications\TrialEndingSoon;
+use App\Services\Bakong;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
 use Illuminate\Support\Facades\URL;
@@ -47,6 +49,26 @@ Artisan::command('invitations:remind-trial', function () {
 })->purpose('Email couples whose free preview ends within 12 hours');
 
 Schedule::command('invitations:remind-trial')->hourly()->withoutOverlapping();
+
+// Unpaid Bakong QRs, until 2 minutes after they expire. A failed call is reported (Telegram, once per
+// 30 minutes) and retried on the next run; the couple can still switch to manual payment.
+Artisan::command('payments:check-bakong', function () {
+    if (! Bakong::enabled()) {
+        return;
+    }
+
+    Payment::with('plan', 'invitation')->where('method', Payment::BAKONG)->where('status', Payment::PENDING)
+        ->whereNull('note')->where('expires_at', '>', now()->subMinutes(2))
+        ->each(function (Payment $payment) {
+            try {
+                Bakong::settle($payment);
+            } catch (Throwable $e) {
+                report($e);
+            }
+        });
+})->purpose('Approve Bakong KHQR payments that have been paid');
+
+Schedule::command('payments:check-bakong')->everyFiveSeconds()->withoutOverlapping();
 
 // For shell scripts (e.g. a failed nightly backup in the Makefile) to reach your Telegram.
 Artisan::command('telegram:alert {message}', function () {

@@ -13,12 +13,13 @@ use InvalidArgumentException;
 /** Your decision on a pending payment. Approving is the only way an invitation goes live. */
 class ReviewPayment
 {
-    public static function approve(Payment $payment, User $admin): void
+    /** No admin: Bakong confirmed the payment (Bakong::settle). */
+    public static function approve(Payment $payment, ?User $admin = null): void
     {
         self::assertPending($payment);
 
         DB::transaction(function () use ($payment, $admin) {
-            $payment->forceFill(['status' => Payment::APPROVED, 'reviewed_by' => $admin->id, 'reviewed_at' => now()])->save();
+            $payment->forceFill(['status' => Payment::APPROVED, 'reviewed_by' => $admin?->id, 'reviewed_at' => now()])->save();
 
             $invitation = $payment->invitation;
             $days = $payment->plan->live_days_after_wedding;

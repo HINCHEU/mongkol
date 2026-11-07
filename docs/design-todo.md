@@ -11,6 +11,12 @@ Claude builds features with plain, working markup. This file lists the screens w
 - Phone first: touch targets at least 44px, nothing wider than the screen at 375px.
 - Run `npm run build` before committing; it must pass.
 
+## Phase 2: Bakong automatic payment
+
+- [ ] **Bakong QR on the Upgrade page**: the plain block marked "Bakong" in `resources/js/dashboard/Pages/Invitations/Upgrade.vue` (shown when `pending.method === 'bakong'`). The QR (`pending.khqr`, an image), "scan to pay exactly…", the countdown (`role="timer"`), the expired state with "Make a new QR", and the "pay by transfer instead" link. The page polls by itself; once paid it turns live with no tap.
+  - Keep the QR large and on a white background with its quiet zone: bank apps must scan it from another phone's screen.
+  - The manual reference / screenshot blocks below it are unchanged and still used for manual payments.
+
 ## Phase 2: open tracking
 
 - [x] **Opened filter and last opened on the Share page**: `resources/js/dashboard/Pages/Invitations/Share.vue`. The All / Opened / Not opened / Sent, not opened chips and the order select (guest list / recently opened) by the search box, the "opened" counter next to "sent", and "last 3 hours ago" on each guest (mobile card and the Opens column). Plain for now; "Sent, not opened" is the list the couple follows up on.
