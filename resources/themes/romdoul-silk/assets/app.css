@@ -1,0 +1,80 @@
+@import "../../base/assets/app.css";
+@source "../views";
+
+/* ==========================================================================
+   Romdoul Silk Theme (Standard Tier)
+   Lighter, modern botanical layout inspired by Cambodia's national flower.
+   ========================================================================== */
+
+:root {
+  --inv-bg: #fcfaf6;
+  --inv-surface: #ffffff;
+  --inv-sunken: #f4f0e6;
+  --inv-field: #ffffff;
+  --inv-ink: #1c1917;
+  --inv-ink-muted: #57534e;
+  --inv-primary: #8f3547;
+  --inv-primary-hover: #722635;
+  --inv-primary-soft: #faebed;
+  --inv-on-primary: #ffffff;
+  --inv-hairline: rgb(200 168 107 / 0.35);
+  --inv-accent: #c8a86b;
+  --inv-accent-ui: #a7864b;
+  --inv-accent-strong: #84652b;
+  --inv-accent-text: #6b5120;
+  --inv-highlight: #faebed;
+
+  --romdoul-petal: #fff4eb;
+  --romdoul-sage: #526e58;
+}
+
+/* Modern soft silhouette */
+.romdoul-frame {
+  position: relative;
+  width: 260px;
+  height: 260px;
+  margin: 0 auto;
+  border-radius: 9999px;
+  padding: 6px;
+  background: linear-gradient(135deg, #f7e6c4 0%, #c8a86b 50%, #8f3547 100%);
+  box-shadow: 0 12px 32px -4px rgba(143, 53, 71, 0.15), 0 4px 16px -2px rgba(200, 168 107, 0.12);
+}
+
+.romdoul-frame__inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 9999px;
+  overflow: hidden;
+  background-color: #faf6ee;
+}
+
+.romdoul-frame__inner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.romdoul-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 16px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(200, 168, 107, 0.4);
+  box-shadow: 0 2px 8px rgba(143, 53, 71, 0.06);
+}
+
+/* Minimalist countdown blocks */
+.romdoul-countdown-card {
+  background: #ffffff;
+  border: 1px solid rgba(200, 168, 107, 0.3);
+  border-radius: 1rem;
+  padding: 12px 6px;
+  box-shadow: 0 4px 12px -2px rgba(143, 53, 71, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

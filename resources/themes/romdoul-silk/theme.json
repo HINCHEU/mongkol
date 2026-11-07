@@ -1,0 +1,7 @@
+{
+    "slug": "romdoul-silk",
+    "name": "Romdoul Silk",
+    "version": "1.0.0",
+    "extends": "base",
+    "tier": "standard"
+}

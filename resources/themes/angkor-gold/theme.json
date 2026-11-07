@@ -1,0 +1,7 @@
+{
+    "slug": "angkor-gold",
+    "name": "Angkor Gold",
+    "version": "1.0.0",
+    "extends": "base",
+    "tier": "premium"
+}

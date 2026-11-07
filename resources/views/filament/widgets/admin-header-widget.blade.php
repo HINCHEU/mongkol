@@ -5,17 +5,10 @@
     <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px;">
         <!-- Left: Atelier Greeting & Title -->
         <div style="display: flex; align-items: center; gap: 14px;">
-            <div style="width: 44px; height: 44px; min-width: 44px; min-height: 44px; border-radius: 12px; background: linear-gradient(135deg, #8B1426 0%, #7B1122 50%, #4C0A13 100%); border: 1.5px solid rgba(212, 175, 55, 0.6); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(123, 17, 34, 0.3); flex-shrink: 0;">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="width: 24px; height: 24px; display: block;">
-                    <path d="M12 3c-2.5 3.5-3 8 0 13c3-5 2.5-9.5 0-13Z" fill="#F5DE93" fill-opacity="0.35" stroke="#F5DE93" stroke-width="1.5" stroke-linejoin="round" />
-                    <path d="M12 16c-4.5-.5-8-3.5-9-8c4 .5 7 2.5 9 6" fill="none" stroke="#F5DE93" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                    <path d="M12 16c4.5-.5 8-3.5 9-8c-4 .5-7 2.5-9 6" fill="none" stroke="#F5DE93" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                    <circle cx="12" cy="18" r="1.4" fill="#F5DE93" />
-                </svg>
-            </div>
+            <img src="/icon-192.png" width="44" height="44" alt="Mongkol" style="width: 44px; height: 44px; border-radius: 11px; object-fit: contain; flex-shrink: 0; box-shadow: 0 4px 12px rgba(123, 17, 34, 0.25);" />
             <div>
                 <div style="display: flex; align-items: center; gap: 8px;">
-                    <span style="font-family: 'Plus Jakarta Sans', system-ui, sans-serif; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #8C6D23;">Royal Wedding Atelier</span>
+                    <span style="font-family: 'Plus Jakarta Sans', system-ui, sans-serif; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #78716C;">Wedding E-Invitation Studio</span>
                     <span style="display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 9999px; font-size: 10px; font-weight: 600; background-color: #F0FDF4; color: #166534; border: 1px solid #BBF7D0;">
                         <span style="width: 6px; height: 6px; border-radius: 50%; background-color: #22C55E;"></span>
                         Live

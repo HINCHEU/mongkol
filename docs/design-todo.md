@@ -15,8 +15,8 @@ Claude builds features with plain, working markup. This file lists the screens w
 
 Build two new invitation themes. Each is a folder that **extends base and overrides only the sections it restyles**; everything else (data, envelope, language toggle, music, beacon) comes from base.
 
-- [ ] **Theme 1 (Standard tier)**: a distinct look, e.g. a lighter, modern layout.
-- [ ] **Theme 2 (Premium tier)**: the showpiece; set `"tier": "premium"` in its `theme.json`.
+- [x] **Theme 1 (Standard tier)**: a distinct look, e.g. a lighter, modern layout.
+- [x] **Theme 2 (Premium tier)**: the showpiece; set `"tier": "premium"` in its `theme.json`.
 
 How:
 1. `php artisan make:theme <slug>` (lower-case, e.g. `angkor-gold`) creates `resources/themes/<slug>/` with `theme.json`, `assets/app.css`, `assets/app.js`.

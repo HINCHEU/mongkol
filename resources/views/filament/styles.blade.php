@@ -1,7 +1,30 @@
 <!-- Morodok Snaeha Atelier Design System for Filament Admin -->
+<style>
+    /* ==========================================================================
+       0. Local High-Fidelity Kantumruy Pro Web Fonts (Fast & Offline-Ready)
+       ========================================================================== */
+    @font-face {
+        font-family: 'Kantumruy Pro';
+        font-style: normal;
+        font-weight: 100 900;
+        font-display: swap;
+        src: url('/fonts/kantumruy-pro/KantumruyPro-khmer.woff2') format('woff2');
+        unicode-range: U+1780-17FF, U+200C, U+25CC, U+19E0-19FF;
+    }
+
+    @font-face {
+        font-family: 'Kantumruy Pro';
+        font-style: italic;
+        font-weight: 100 900;
+        font-display: swap;
+        src: url('/fonts/kantumruy-pro/KantumruyPro-Italic-khmer.woff2') format('woff2');
+        unicode-range: U+1780-17FF, U+200C, U+25CC, U+19E0-19FF;
+    }
+</style>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,400..700;1,400..700&family=Moul&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Plus+Jakarta+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Moul&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Plus+Jakarta+Sans:ital,wght@0,400..800;1,400..800&display=swap" rel="stylesheet">
 
 <style>
     /* ==========================================================================
@@ -9,48 +32,54 @@
        ========================================================================== */
     :root {
         color-scheme: light !important;
+        --font-family: 'Plus Jakarta Sans', 'Kantumruy Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
     }
 
     /* All UI, body, buttons and form controls: Latin in Jakarta, Khmer in Kantumruy Pro */
-    body, .fi-body, .fi-main, .fi-sidebar, .fi-topbar, .fi-section, .fi-ta-ctn,
-    .fi-input, .fi-select-input, .fi-textarea, .fi-btn, .fi-badge {
-        font-family: 'Plus Jakarta Sans', 'Kantumruy Pro', system-ui, -apple-system, sans-serif !important;
+    html, body, button, input, optgroup, select, textarea,
+    .fi-body, .fi-main, .fi-sidebar, .fi-topbar, .fi-section, .fi-ta-ctn,
+    .fi-input, .fi-select-input, .fi-textarea, .fi-btn, .fi-badge,
+    .fi-fo-field-wrp-label, .fi-fo-field-wrp-helper-text, .fi-sidebar-item-label {
+        font-family: 'Plus Jakarta Sans', 'Kantumruy Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
         background-color: #FAF6EE !important;
         color: #1A1412 !important;
     }
 
-    /* Headings: Latin in Playfair Display, Khmer in Kantumruy Pro */
-    h1, h2, h3, .fi-header-heading, .fi-section-header-heading {
+    /* Headings: Latin in Playfair Display, Khmer in Kantumruy Pro (strictly no negative tracking) */
+    h1, h2, h3, h4, h5, h6, .fi-header-heading, .fi-section-header-heading {
         font-family: 'Playfair Display', 'Kantumruy Pro', Georgia, serif !important;
-        letter-spacing: -0.01em !important;
+        letter-spacing: 0 !important;
+        line-height: 1.4 !important;
         color: #1A1412 !important;
     }
 
     /* Strict Khmer Typesetting Rules (DESIGN.md) */
     :lang(km), [lang="km"], .km-text, .font-khmer {
-        font-family: 'Kantumruy Pro', system-ui, sans-serif !important;
+        font-family: 'Kantumruy Pro', sans-serif !important;
         letter-spacing: 0 !important;
-        line-height: 1.6 !important;
+        line-height: 1.7 !important;
+        text-transform: none !important;
     }
 
     .font-moul {
         font-family: 'Moul', cursive, serif !important;
         letter-spacing: 0 !important;
+        line-height: 1.5 !important;
     }
 
     /* ==========================================================================
-       2. Brand Logo Size Containment
+       2. Brand Logo Size Containment & Navigation
        ========================================================================== */
     .fi-logo {
-        height: 2.4rem !important;
-        max-height: 2.4rem !important;
+        height: 2.6rem !important;
+        max-height: 2.6rem !important;
         display: flex !important;
         align-items: center !important;
         overflow: visible !important;
     }
 
-    .fi-logo svg {
-        max-height: 100% !important;
+    .fi-logo img {
+        display: block !important;
     }
 
     /* ==========================================================================
@@ -64,15 +93,17 @@
 
     .fi-sidebar-group-label {
         font-size: 0.68rem !important;
-        letter-spacing: 0.06em !important;
-        text-transform: uppercase !important;
+        letter-spacing: normal !important;
         color: #8C6D23 !important;
         font-weight: 700 !important;
+        line-height: 1.5 !important;
     }
 
     .fi-sidebar-item-label {
         color: #574141 !important;
         font-weight: 500 !important;
+        letter-spacing: 0 !important;
+        line-height: 1.5 !important;
     }
 
     .fi-sidebar-item-btn {
