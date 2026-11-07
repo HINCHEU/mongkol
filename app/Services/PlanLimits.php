@@ -47,7 +47,7 @@ final class PlanLimits
         return (int) ($this->plan?->features['gallery_photos'] ?? 0);
     }
 
-    /** own_music, video, custom_slug, premium_themes, hide_credit */
+    /** own_music, video, custom_slug, premium_themes, theme_options, hide_credit */
     public function allows(string $feature): bool
     {
         return (bool) ($this->plan?->features[$feature] ?? false);
@@ -73,6 +73,7 @@ final class PlanLimits
             empty($features['video']) && ! empty($this->invitation->content['video_url']) ? __('YouTube video') : null,
             empty($features['premium_themes']) && $this->invitation->theme?->tier === 'premium'
                 ? __('Premium theme (:name)', ['name' => $this->invitation->theme->name]) : null,
+            empty($features['theme_options']) && ! empty($this->invitation->theme_settings) ? __('Theme options (colours, fonts, sections)') : null,
         ]));
     }
 

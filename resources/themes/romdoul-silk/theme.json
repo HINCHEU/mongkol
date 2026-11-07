@@ -3,5 +3,8 @@
     "name": "Romdoul Silk",
     "version": "1.0.0",
     "extends": "base",
+    "options": {
+        "palette": { "type": "select", "choices": ["default", "lotus"], "default": "default" }
+    },
     "tier": "standard"
 }

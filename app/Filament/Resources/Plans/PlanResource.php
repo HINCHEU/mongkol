@@ -49,6 +49,7 @@ class PlanResource extends Resource
                 Toggle::make('features.own_music')->label('Own music upload'),
                 Toggle::make('features.video')->label('YouTube video'),
                 Toggle::make('features.premium_themes')->label('Premium themes'),
+                Toggle::make('features.theme_options')->label('Theme options (colours, fonts, section order)'),
                 Toggle::make('features.custom_slug')->label('Custom link slug'),
                 Toggle::make('features.hide_credit')->label('Hide footer credit'),
             ]),

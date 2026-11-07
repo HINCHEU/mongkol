@@ -11,6 +11,7 @@
   },
   "options": {
     "palette": { "type": "select", "choices": ["crimson", "jade", "sapphire"], "default": "crimson" },
+    "font": { "type": "select", "choices": ["classic", "modern", "traditional"], "default": "classic" },
     "show_countdown": { "type": "bool", "default": true },
     "petals": { "type": "bool", "default": false }
   }

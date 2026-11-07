@@ -196,7 +196,8 @@ final class InvitationViewModel
             'locale' => $invitation->content['locale'] ?? 'km',
             'wedding_date' => $invitation->wedding_date->toDateString(),
             'lunar_date' => $invitation->content['lunar_date'] ?? LunarDate::for($invitation->wedding_date),
-            'theme_settings' => $invitation->theme_settings ?? [],
+            // Premium theme options; on a plan without them the page shows the theme's defaults.
+            'theme_settings' => $limits->allows('theme_options') ? $invitation->theme_settings ?? [] : [],
             'people' => $invitation->people->keyBy('role')
                 ->map(fn ($p) => $p->only('title', 'name_km', 'name_en', 'is_late'))->all(),
             'content' => $invitation->content ?? [],

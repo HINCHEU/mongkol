@@ -71,6 +71,7 @@ const features = (plan) => [
     plan.features.own_music ? t('upgrade.features.own_music') : null,
     plan.features.video ? t('upgrade.features.video') : null,
     plan.features.premium_themes ? t('upgrade.features.premium_themes') : t('upgrade.features.standard_themes'),
+    plan.features.theme_options ? t('upgrade.features.theme_options') : null,
     plan.features.hide_credit ? t('upgrade.features.no_credit') : null,
 ].filter(Boolean);
 </script>

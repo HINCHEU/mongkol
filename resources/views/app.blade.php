@@ -14,7 +14,7 @@
         <link rel="manifest" href="{{ asset('site.webmanifest') }}">
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,400..700;1,400..700&family=Moul&family=Plus+Jakarta+Sans:ital,wght@0,400..700;1,400..700&display=swap">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,400..700;1,400..700&family=Moul&family=Koulen&family=Moulpali&family=Plus+Jakarta+Sans:ital,wght@0,400..700;1,400..700&display=swap">
         @vite(['resources/css/app.css', 'resources/js/dashboard.js'])
         @inertiaHead
     </head>

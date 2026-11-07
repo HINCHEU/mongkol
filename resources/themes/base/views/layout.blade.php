@@ -1,9 +1,14 @@
 @php
     $guestLine = $vm->guest ? trim(implode(' ', array_filter([$vm->guest['title'], $vm->guest['name'], $vm->guest['suffix']]))) : null;
+    // The classic pairing always loads (the seal draws in Kantumruy Pro and Playfair); a font option adds its own.
+    $extraFonts = [
+        'modern' => '&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400&family=Koulen',
+        'traditional' => '&family=Cinzel:wght@500;600&family=Moulpali&family=Lora:ital,wght@0,400;0,600;1,400&family=Battambang:wght@400;700',
+    ];
     $dock = array_intersect_key(['date' => 'calendar', 'program' => 'list', 'venues' => 'map', 'gift' => 'gift'], $sections);
 @endphp
 <!DOCTYPE html>
-<html lang="{{ $vm->data['locale'] === 'en' ? 'en' : 'km' }}" data-palette="{{ $palette }}"
+<html lang="{{ $vm->data['locale'] === 'en' ? 'en' : 'km' }}" data-palette="{{ $palette }}" data-font="{{ $font }}"
       data-lang-key="inv-lang:{{ $vm->data['slug'] }}" @class(['has-ribbon' => $vm->isPreview, 'is-open' => $skipIntro])>
 <head>
     <meta charset="utf-8">
@@ -29,10 +34,14 @@
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;600&family=Moul&family=Playfair+Display:ital,wght@0,500;0,600;1,400&family=Plus+Jakarta+Sans:wght@400;600&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;600&family=Moul&family=Playfair+Display:ital,wght@0,500;0,600;1,400&family=Plus+Jakarta+Sans:wght@400;600{{ $extraFonts[$font] ?? '' }}&display=swap">
     @vite($entry)
 </head>
 <body class="bg-canvas text-ink antialiased" x-data>
+    {{-- Theme option: falling lotus, jasmine and romduol petals over the page (invitation.js draws them). --}}
+    @if ($vm->data['theme_settings']['petals'] ?? $theme['options']['petals']['default'] ?? false)
+        <canvas class="petals" aria-hidden="true"></canvas>
+    @endif
     @if ($vm->isPreview)
         <div class="ribbon t-label-sm" role="note"><span lang="en">PREVIEW</span>&nbsp;·&nbsp;<span lang="km">{{ __('invitation.preview', [], 'km') }}</span></div>
     @endif

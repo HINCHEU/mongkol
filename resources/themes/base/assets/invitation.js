@@ -1,5 +1,6 @@
 // Behaviour shared by every theme: child themes import this file with their own CSS.
 import Alpine from 'alpinejs';
+import { fallingPetals } from '../../../js/petals.js';
 
 const root = document.documentElement;
 const KM_DIGITS = '០១២៣៤៥៦៧៨៩';
@@ -191,3 +192,7 @@ const observer = new IntersectionObserver((entries) => {
     }
 }, { threshold: 0.15 });
 document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+
+// Theme option "petals": the layout adds the canvas only when the couple turned them on.
+const petalsCanvas = document.querySelector('canvas.petals');
+if (petalsCanvas && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) fallingPetals(petalsCanvas);

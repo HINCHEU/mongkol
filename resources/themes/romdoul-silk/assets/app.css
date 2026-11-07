@@ -28,6 +28,17 @@
   --romdoul-sage: #526e58;
 }
 
+/* Lotus Blossom Palette (Premium Option) */
+:root[data-palette="lotus"] {
+  --inv-primary: #a33850;
+  --inv-primary-hover: #852a3f;
+  --inv-primary-soft: #fcf0f2;
+  --inv-accent: #78927a;
+  --inv-accent-ui: #5d755f;
+  --inv-accent-strong: #445946;
+  --inv-accent-text: #364838;
+}
+
 /* Modern soft silhouette */
 .romdoul-frame {
   position: relative;

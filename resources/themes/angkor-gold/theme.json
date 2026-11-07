@@ -3,5 +3,8 @@
     "name": "Angkor Gold",
     "version": "1.0.0",
     "extends": "base",
+    "options": {
+        "palette": { "type": "select", "choices": ["default"], "default": "default" }
+    },
     "tier": "premium"
 }

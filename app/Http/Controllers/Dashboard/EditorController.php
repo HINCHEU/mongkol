@@ -21,6 +21,7 @@ use App\Services\LunarDate;
 use App\Services\PlanLimits;
 use App\Services\Themes\InvitationViewModel;
 use App\Services\Themes\KhmerFormat;
+use App\Services\Themes\ThemeRegistry;
 use App\Services\Themes\ThemeRenderer;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\View\View;
@@ -50,6 +51,8 @@ class EditorController extends Controller
                 'slug' => $invitation->slug,
                 'state' => $invitation->state()->value,
                 'theme_id' => $invitation->theme_id,
+                'theme_settings' => (object) ($invitation->theme_settings ?? []),
+                'can_customize' => PlanLimits::for($invitation)->allows('theme_options'),
                 'wedding_date' => $invitation->wedding_date->toDateString(),
                 'people' => collect(InvitationPerson::ROLES)->mapWithKeys(fn ($role) => [$role => [
                     'title' => $people[$role]->title ?? null,
@@ -83,7 +86,12 @@ class EditorController extends Controller
             ],
             'lunarDate' => LunarDate::for($invitation->wedding_date),
             'presets' => EventPreset::where('is_active', true)->orderBy('default_sort')->get(['key', 'title_km', 'title_en']),
-            'themes' => Theme::where('is_active', true)->orderBy('sort')->get(['id', 'slug', 'name', 'tier']),
+            // Each theme's options and sections come from its theme.json, so a new option needs no editor change.
+            'themes' => Theme::where('is_active', true)->orderBy('sort')->get(['id', 'slug', 'name', 'tier'])->map(fn (Theme $theme) => [
+                ...$theme->toArray(),
+                'options' => (object) (app(ThemeRegistry::class)->get($theme->slug)['options'] ?? []),
+                'sections' => app(ThemeRegistry::class)->get($theme->slug)['sections'] ?? [],
+            ]),
             'previewUrl' => route('invitations.preview', $invitation),
             'publicUrl' => url($invitation->slug),
         ]);

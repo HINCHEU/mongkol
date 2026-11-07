@@ -11,6 +11,14 @@ Claude builds features with plain, working markup. This file lists the screens w
 - Phone first: touch targets at least 44px, nothing wider than the screen at 375px.
 - Run `npm run build` before committing; it must pass.
 
+## Phase 2: theme options (Premium)
+
+- [x] **Colours, fonts and sections in the Theme step**: the plain block under the theme cards in `resources/js/dashboard/Components/Steps/Theme.vue`. The colour and font choices (radio chips, one per choice the theme offers), the countdown checkbox, and the section list with Show and ↑/↓. Basic plans see one line with an Upgrade link instead.
+  - The options come from each theme's `theme.json`, so draw them from the `v-for`, not one by one: a new option must show up without markup changes.
+  - A colour chip could show a swatch of its palette; the font chips could show "មង្គលការ" in that font. The fonts load only on the invitation page, so a swatch or sample needs the font added to the dashboard too.
+- [x] **Font pairings on the invitation**: `:root[data-font="modern"]` and `:root[data-font="traditional"]` in `resources/themes/base/assets/app.css`, and their Google Fonts families in `$extraFonts` at the top of `resources/themes/base/views/layout.blade.php`. Check the Khmer headings (Koulen, Moulpali) and body (Battambang) on a phone; swap a family if it reads badly, in both places.
+- [x] **Palettes for Angkor Gold and Romdoul Silk**: they offer only their own colours for now (`"choices": ["default"]` in their `theme.json`). To add some, define `:root[data-palette="…"]` in that theme's `app.css` (it must outrank the theme's `:root`) and list the names in its `choices`, plus a label in `theme.choices.palette` in both `lang/*/dashboard.php`.
+
 ## Phase 2: Bakong automatic payment
 
 - [x] **Bakong QR on the Upgrade page**: the plain block marked "Bakong" in `resources/js/dashboard/Pages/Invitations/Upgrade.vue` (shown when `pending.method === 'bakong'`). The QR (`pending.khqr`, an image), "scan to pay exactly…", the countdown (`role="timer"`), the expired state with "Make a new QR", and the "pay by transfer instead" link. The page polls by itself; once paid it turns live with no tap.

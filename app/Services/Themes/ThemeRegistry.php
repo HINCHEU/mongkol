@@ -83,6 +83,8 @@ class ThemeRegistry
                 }
 
                 $chain[] = $parent;
+                // Options merge one level down, so a child can replace one (its own palettes) and keep the rest.
+                $manifest['options'] = ($manifest['options'] ?? []) + ($raw[$parent]['options'] ?? []);
                 $manifest += $raw[$parent]; // the child's own keys win; ancestors fill the gaps
                 $parent = $raw[$parent]['extends'] ?? null;
             }
