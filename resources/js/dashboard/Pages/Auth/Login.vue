@@ -37,10 +37,10 @@
             <p class="mt-6 text-xs text-stone-600">
                 {{ $t('login.secure') }}
             </p>
-            <p class="mt-2 text-xs text-stone-500">
+            <p class="mt-2.5 text-xs text-stone-500 font-kantumruy leading-relaxed">
                 {{ $t('login.agree') }}
-                <a href="/terms" class="underline">{{ $t('login.terms') }}</a> ·
-                <a href="/privacy" class="underline">{{ $t('login.privacy') }}</a>
+                <a href="/terms" class="text-stone-700 underline decoration-stone-300 hover:text-[#7B1122] hover:decoration-[#7B1122] transition-colors font-medium">{{ $t('login.terms') }}</a> ·
+                <a href="/privacy" class="text-stone-700 underline decoration-stone-300 hover:text-[#7B1122] hover:decoration-[#7B1122] transition-colors font-medium">{{ $t('login.privacy') }}</a>
             </p>
         </div>
     </main>

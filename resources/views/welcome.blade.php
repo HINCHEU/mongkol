@@ -683,10 +683,12 @@
                 <a href="/themes/base" target="_blank" class="hover:text-[#7B1122]">គំរូសំបុត្រ (Live Demo)</a>
                 <a href="{{ route('login') }}" class="hover:text-[#7B1122]">ចូលគណនី</a>
             </div>
-            <div class="flex flex-wrap items-center justify-center gap-4 text-stone-500 text-[11px]">
-                <a href="{{ route('legal', 'privacy') }}" class="hover:text-[#7B1122]">គោលការណ៍ឯកជនភាព</a>
-                <a href="{{ route('legal', 'terms') }}" class="hover:text-[#7B1122]">លក្ខខណ្ឌប្រើប្រាស់</a>
-                <a href="{{ route('legal', 'refunds') }}" class="hover:text-[#7B1122]">គោលការណ៍សងប្រាក់វិញ</a>
+            <div class="flex flex-wrap items-center justify-center gap-2 sm:gap-4 text-stone-500 text-xs pt-1">
+                <a href="{{ route('legal', 'privacy') }}" class="inline-flex items-center min-h-[44px] px-2.5 py-1.5 hover:text-[#7B1122] transition-colors rounded-lg hover:bg-stone-50">គោលការណ៍ឯកជនភាព</a>
+                <span class="text-stone-300 hidden sm:inline" aria-hidden="true">·</span>
+                <a href="{{ route('legal', 'terms') }}" class="inline-flex items-center min-h-[44px] px-2.5 py-1.5 hover:text-[#7B1122] transition-colors rounded-lg hover:bg-stone-50">លក្ខខណ្ឌប្រើប្រាស់</a>
+                <span class="text-stone-300 hidden sm:inline" aria-hidden="true">·</span>
+                <a href="{{ route('legal', 'refunds') }}" class="inline-flex items-center min-h-[44px] px-2.5 py-1.5 hover:text-[#7B1122] transition-colors rounded-lg hover:bg-stone-50">គោលការណ៍សងប្រាក់វិញ</a>
             </div>
             <p class="text-stone-400 pt-4 text-[11px]">
                 &copy; {{ date('Y') }} Mongkol. All rights reserved.

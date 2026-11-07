@@ -13,8 +13,8 @@ Claude builds features with plain, working markup. This file lists the screens w
 
 ## M9: legal pages
 
-- [ ] **Privacy, terms and refunds**: `resources/views/public/legal.blade.php` (`/privacy`, `/terms`, `/refunds`, `?lang=en` for English). One plain template for all three; text comes from `lang/{km,en}/legal.php`. Make it calm and easy to read on a phone (long Khmer paragraphs: generous line height). Keep the ខ្មែរ/English links and the footer links between the pages.
-- [ ] **The small links that point to them**: the sign-in page's "By continuing, you agree…" line (`Pages/Auth/Login.vue`), the refund line under the pay button (`Pages/Invitations/Upgrade.vue`), the privacy link in the invitation footer (`resources/themes/base/views/layout.blade.php`) and the legal row in the landing footer (`resources/views/welcome.blade.php`).
+- [x] **Privacy, terms and refunds**: `resources/views/public/legal.blade.php` (`/privacy`, `/terms`, `/refunds`, `?lang=en` for English). One plain template for all three; text comes from `lang/{km,en}/legal.php`. Make it calm and easy to read on a phone (long Khmer paragraphs: generous line height). Keep the ខ្មែរ/English links and the footer links between the pages.
+- [x] **The small links that point to them**: the sign-in page's "By continuing, you agree…" line (`Pages/Auth/Login.vue`), the refund line under the pay button (`Pages/Invitations/Upgrade.vue`), the privacy link in the invitation footer (`resources/themes/base/views/layout.blade.php`) and the legal row in the landing footer (`resources/views/welcome.blade.php`).
 
 ## M8: two more themes
 

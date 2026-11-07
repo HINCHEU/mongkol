@@ -302,8 +302,15 @@ const features = (plan) => [
                     >
                         <span>{{ $t('upgrade.continue', { price: chosen?.prices[form.currency] }) }}</span>
                     </button>
-                    <!-- Plain; for the design pass -->
-                    <p class="mt-2 text-xs text-stone-500"><a href="/refunds" target="_blank" class="underline">{{ $t('upgrade.refund_link') }}</a></p>
+                    <!-- Refund Assurance Line -->
+                    <p class="mt-3 flex items-center gap-1.5 text-xs text-stone-500 font-kantumruy">
+                        <svg class="size-3.5 text-amber-800 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-11.25a.75.75 0 00-1.5 0v4.59L7.3 9.24a.75.75 0 00-1.1 1.02l3.25 3.5a.75.75 0 001.1 0l3.25-3.5a.75.75 0 10-1.1-1.02l-1.95 2.1V6.75z" clip-rule="evenodd" />
+                        </svg>
+                        <a href="/refunds" target="_blank" class="underline decoration-stone-300 hover:text-stone-900 transition-colors">
+                            {{ $t('upgrade.refund_link') }}
+                        </a>
+                    </p>
                 </div>
             </form>
 
