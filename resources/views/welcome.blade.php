@@ -683,6 +683,11 @@
                 <a href="/themes/base" target="_blank" class="hover:text-[#7B1122]">គំរូសំបុត្រ (Live Demo)</a>
                 <a href="{{ route('login') }}" class="hover:text-[#7B1122]">ចូលគណនី</a>
             </div>
+            <div class="flex flex-wrap items-center justify-center gap-4 text-stone-500 text-[11px]">
+                <a href="{{ route('legal', 'privacy') }}" class="hover:text-[#7B1122]">គោលការណ៍ឯកជនភាព</a>
+                <a href="{{ route('legal', 'terms') }}" class="hover:text-[#7B1122]">លក្ខខណ្ឌប្រើប្រាស់</a>
+                <a href="{{ route('legal', 'refunds') }}" class="hover:text-[#7B1122]">គោលការណ៍សងប្រាក់វិញ</a>
+            </div>
             <p class="text-stone-400 pt-4 text-[11px]">
                 &copy; {{ date('Y') }} Mongkol. All rights reserved.
             </p>

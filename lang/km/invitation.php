@@ -38,6 +38,7 @@ return [
     'owner_couple' => 'កូនកំលោះ កូនក្រមុំ',
     'account_number' => 'លេខគណនី',
     'made_with' => 'បង្កើតដោយ Mongkol',
+    'privacy' => 'ឯកជនភាព',
     'language' => 'ភាសា',
     'sections' => [
         'invitation' => 'សំបុត្រអញ្ជើញ',

@@ -121,6 +121,8 @@
             @if ($vm->data['show_credit'])
                 <p class="t-body-sm mt-5 text-accent-text/70"><x-base::t key="made_with" /></p>
             @endif
+            {{-- Guests' names are stored too, so every invitation links the privacy policy. --}}
+            <p class="t-body-sm mt-2 text-accent-text/60"><a href="{{ route('legal', 'privacy') }}" class="underline"><x-base::t key="privacy" /></a></p>
         </footer>
     </main>
 

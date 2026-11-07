@@ -11,6 +11,7 @@ use App\Http\Controllers\Dashboard\MediaController;
 use App\Http\Controllers\Dashboard\ShareController;
 use App\Http\Controllers\Dashboard\UpgradeController;
 use App\Http\Controllers\Public\InvitationController as PublicInvitationController;
+use App\Http\Controllers\Public\LegalController;
 use App\Http\Controllers\Public\ThemeController;
 use App\Models\Payment;
 use App\Models\Theme;
@@ -27,6 +28,8 @@ Route::get('/', function () {
 Route::get('/themes', [ThemeController::class, 'index'])->name('themes.index');
 Route::get('/themes/{slug}', [ThemeController::class, 'show'])->where('slug', '[a-z0-9-]+')->name('themes.show');
 Route::get('/themes/{slug}/calendar.ics', [ThemeController::class, 'calendar'])->where('slug', '[a-z0-9-]+')->name('themes.calendar');
+
+Route::get('/{page}', LegalController::class)->whereIn('page', LegalController::PAGES)->name('legal');
 
 Route::middleware(['guest', 'throttle:20,1'])->group(function () {
     Route::inertia('/login', 'Auth/Login')->name('login');

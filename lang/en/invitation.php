@@ -38,6 +38,7 @@ return [
     'owner_couple' => 'Couple',
     'account_number' => 'Account number',
     'made_with' => 'Made with Mongkol',
+    'privacy' => 'Privacy',
     'language' => 'Language',
     'sections' => [
         'invitation' => 'Invitation',

@@ -302,6 +302,8 @@ const features = (plan) => [
                     >
                         <span>{{ $t('upgrade.continue', { price: chosen?.prices[form.currency] }) }}</span>
                     </button>
+                    <!-- Plain; for the design pass -->
+                    <p class="mt-2 text-xs text-stone-500"><a href="/refunds" target="_blank" class="underline">{{ $t('upgrade.refund_link') }}</a></p>
                 </div>
             </form>
 

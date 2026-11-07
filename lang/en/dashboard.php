@@ -49,6 +49,9 @@ return [
         'subtitle' => 'Sign in to create and manage your wedding invitations',
         'google' => 'Continue with Google',
         'secure' => 'Secure sign-in. No password needed.',
+        'agree' => 'By continuing, you agree to our',
+        'terms' => 'Terms of use',
+        'privacy' => 'Privacy policy',
     ],
 
     'home' => [
@@ -317,5 +320,6 @@ return [
         'currency' => 'Currency',
         'continue' => 'Continue to pay :price',
         'top_plan' => 'You’re on the top plan. Thank you!',
+        'refund_link' => 'Refund policy: a full refund until we approve your payment',
     ],
 ];

@@ -37,6 +37,11 @@
             <p class="mt-6 text-xs text-stone-600">
                 {{ $t('login.secure') }}
             </p>
+            <p class="mt-2 text-xs text-stone-500">
+                {{ $t('login.agree') }}
+                <a href="/terms" class="underline">{{ $t('login.terms') }}</a> ·
+                <a href="/privacy" class="underline">{{ $t('login.privacy') }}</a>
+            </p>
         </div>
     </main>
 </template>

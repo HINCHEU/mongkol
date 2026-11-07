@@ -83,6 +83,10 @@ return [
     // Comma-separated Google emails allowed into /admin (also needs role = admin).
     'admin_emails' => array_values(array_filter(array_map('trim', explode(',', strtolower((string) env('ADMIN_EMAILS')))))),
 
+    // Who runs the service and how to reach them, as shown on /privacy, /terms and /refunds.
+    'operator' => env('LEGAL_OPERATOR') ?: 'Mongkol',
+    'contact_email' => env('CONTACT_EMAIL') ?: 'hincheu16@gmail.com',
+
     'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
 
     'faker_locale' => env('APP_FAKER_LOCALE', 'en_US'),

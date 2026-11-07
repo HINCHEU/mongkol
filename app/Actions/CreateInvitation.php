@@ -11,7 +11,7 @@ use Illuminate\Support\Str;
 class CreateInvitation
 {
     /** Paths the public /{slug} route must never swallow. */
-    public const RESERVED_SLUGS = ['app', 'admin', 'api', 'auth', 'themes', 'login', 'logout', 'up', 'build', 'storage', 'livewire', 'filament', 'css', 'js', 'fonts'];
+    public const RESERVED_SLUGS = ['app', 'admin', 'api', 'auth', 'themes', 'login', 'logout', 'up', 'build', 'storage', 'livewire', 'filament', 'css', 'js', 'fonts', 'privacy', 'terms', 'refunds'];
 
     /**
      * @param  array{theme_id: int, wedding_date: string, groom: array{name_km: string, name_en: string}, bride: array{name_km: string, name_en: string}}  $data
