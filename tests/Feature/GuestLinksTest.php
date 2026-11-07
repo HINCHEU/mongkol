@@ -120,3 +120,14 @@ it('unlocks the share page once there is a cover, and saves the message', functi
 
     $this->actingAs(User::factory()->create())->get("/app/invitations/{$invitation->id}/share")->assertForbidden();
 });
+
+it('tells the couple who opened their link and when', function () {
+    $invitation = linked();
+    $page = fn () => $this->actingAs($invitation->user)->get("/app/invitations/{$invitation->id}/share");
+
+    $page()->assertInertia(fn (AssertableInertia $p) => $p->where('guests.0.open_count', 0)->where('guests.0.last_opened', null));
+
+    $this->travelTo(now()->subHours(3), fn () => $this->post('/sokha-dara/k7Px2Q/opened')->assertNoContent());
+
+    $page()->assertInertia(fn (AssertableInertia $p) => $p->where('guests.0.open_count', 1)->where('guests.0.last_opened', '3 hours ago'));
+});

@@ -11,6 +11,10 @@ Claude builds features with plain, working markup. This file lists the screens w
 - Phone first: touch targets at least 44px, nothing wider than the screen at 375px.
 - Run `npm run build` before committing; it must pass.
 
+## Phase 2: open tracking
+
+- [ ] **Opened filter and last opened on the Share page**: `resources/js/dashboard/Pages/Invitations/Share.vue`. The All / Opened / Not opened chips under the search box, the "opened" counter next to "sent", and "last 3 hours ago" on each guest (mobile card and the Opens column). Plain for now; "Not opened" is the list the couple follows up on.
+
 ## Phase 2: RSVP and wishes
 
 - [ ] **RSVP section** on the invitation: `resources/themes/base/views/sections/rsvp.blade.php`. The two big choices (coming / can't come), the head count (shown only when coming), a note, Send, then the thank-you state with "Change my reply". The generic link also asks for a name.

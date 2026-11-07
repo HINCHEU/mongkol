@@ -39,9 +39,14 @@ const markSent = (guest) => guest && !guest.sent && router.put(`${base}/guests/$
 const toggleSent = (guest, sent) => router.put(`${base}/guests/${guest.id}/sent`, { sent }, keep);
 
 const search = ref('');
+// all | opened | unopened: "unopened" is who to nudge again.
+const filter = ref('all');
+const openedCount = computed(() => props.guests.filter((g) => g.open_count > 0).length);
+const filterCounts = computed(() => ({ all: props.guests.length, opened: openedCount.value, unopened: props.guests.length - openedCount.value }));
 const shown = computed(() => {
     const q = search.value.trim().toLowerCase();
-    return q ? props.guests.filter((g) => g.name.toLowerCase().includes(q)) : props.guests;
+    return props.guests.filter((g) =>
+        (filter.value === 'all' || (filter.value === 'opened') === g.open_count > 0) && (!q || g.name.toLowerCase().includes(q)));
 });
 const sentCount = computed(() => props.guests.filter((g) => g.sent).length);
 </script>
@@ -247,6 +252,9 @@ const sentCount = computed(() => props.guests.filter((g) => g.sent).length);
                                 <span class="size-2 rounded-full" :class="sentCount === guests.length && guests.length > 0 ? 'bg-emerald-500' : 'bg-amber-500'"></span>
                                 <span>{{ $t('share.sent_count', { sent: sentCount, total: guests.length }) }}</span>
                             </span>
+                            <span class="inline-flex items-center gap-1.5 rounded-full border border-stone-200 bg-stone-50 px-3 py-1 text-xs font-bold text-stone-700">
+                                <span>{{ $t('share.opened_count', { opened: openedCount, total: guests.length }) }}</span>
+                            </span>
                         </div>
                     </div>
 
@@ -272,6 +280,24 @@ const sentCount = computed(() => props.guests.filter((g) => g.sent).length);
                             />
                         </div>
 
+                        <!-- Opened / not opened filter -->
+                        <div class="flex flex-wrap gap-2" role="group" :aria-label="$t('share.filter')">
+                            <button
+                                v-for="key in ['all', 'opened', 'unopened']"
+                                :key="key"
+                                type="button"
+                                class="inline-flex items-center gap-1.5 rounded-full border px-3 min-h-[36px] text-xs font-bold transition-colors"
+                                :class="filter === key ? 'border-stone-900 bg-stone-900 text-white' : 'border-stone-200 bg-white text-stone-700 hover:bg-stone-50'"
+                                :aria-pressed="filter === key"
+                                @click="filter = key"
+                            >
+                                <span>{{ $t(`share.filter_${key}`) }}</span>
+                                <span class="opacity-70">{{ filterCounts[key] }}</span>
+                            </button>
+                        </div>
+
+                        <p v-if="!shown.length" class="text-sm text-stone-500 text-center py-6">{{ $t('share.no_match') }}</p>
+
                         <!-- 1. MOBILE RESPONSIVE CARDS (Phone first) -->
                         <div class="grid gap-3 md:hidden">
                             <div
@@ -282,7 +308,7 @@ const sentCount = computed(() => props.guests.filter((g) => g.sent).length);
                                 <div class="flex items-start justify-between gap-2">
                                     <div>
                                         <p class="font-bold text-stone-900 text-sm font-kantumruy" lang="km">{{ guest.name }}</p>
-                                        <div class="mt-0.5 flex items-center gap-2 text-xs text-stone-500">
+                                        <div class="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-stone-500">
                                             <span class="inline-flex items-center gap-1">
                                                 <svg class="size-3.5 text-stone-400" viewBox="0 0 20 20" fill="currentColor">
                                                     <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
@@ -290,6 +316,10 @@ const sentCount = computed(() => props.guests.filter((g) => g.sent).length);
                                                 </svg>
                                                 <span>{{ $t('share.opens', { count: guest.open_count }) }}</span>
                                             </span>
+                                            <template v-if="guest.last_opened">
+                                                <span>·</span>
+                                                <span>{{ $t('share.last_opened', { time: guest.last_opened }) }}</span>
+                                            </template>
                                             <span>·</span>
                                             <a :href="guest.qr" target="_blank" class="text-stone-700 underline font-semibold">{{ $t('share.view_qr') }}</a>
                                         </div>
@@ -413,6 +443,7 @@ const sentCount = computed(() => props.guests.filter((g) => g.sent).length);
                                                 </svg>
                                                 <span>{{ guest.open_count }}</span>
                                             </span>
+                                            <p v-if="guest.last_opened" class="mt-1 text-[11px] text-stone-500">{{ guest.last_opened }}</p>
                                         </td>
                                         <td class="py-3 px-4 text-center">
                                             <input

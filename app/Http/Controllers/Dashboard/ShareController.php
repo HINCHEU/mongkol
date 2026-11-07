@@ -35,6 +35,8 @@ class ShareController extends Controller
                 'qr' => url("{$invitation->slug}/{$g->code}/qr.svg"),
                 'sent' => $g->sent_at !== null,
                 'open_count' => $g->open_count,
+                // "3 hours ago" / "3 ម៉ោងមុន": Carbon follows the dashboard language.
+                'last_opened' => $g->last_opened_at?->diffForHumans(),
             ]),
         ]);
     }
